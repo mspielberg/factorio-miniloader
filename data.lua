@@ -1,16 +1,5 @@
-data.raw.recipe["loader"].enabled = true
---[[local loader_inserter = util.table.deepcopy(data.raw.inserter["stack-inserter"])
-loader_inserter.name = "loader-inserter"
-loader_inserter.flags = {}
-loader_inserter.allow_custom_vectors = true
-loader_inserter.minable = nil
-loader_inserter.corpse = nil
-loader_inserter.resistances = nil
-loader_inserter.energy_per_movement = 0.1
-loader_inserter.energy_per_rotation = 0.1
-loader_inserter.energy_source.drain = "0kW"
-loader_inserter.extension_speed = 0.5
-]]
+require "util"
+
 local empty_sheet = {
 	filename = "__core__/graphics/empty.png",
 	priority = "very-low",
@@ -20,6 +9,7 @@ local empty_sheet = {
 local loader_inserter = {
 	type = "inserter",
 	name = "loader-inserter",
+	flags = {"placeable-off-grid"},
 	stack = true,
 	allow_custom_vectors = true,
 	energy_per_movement = 1,
@@ -41,19 +31,108 @@ local loader_inserter = {
 }
 data.raw.inserter["loader-inserter"] = loader_inserter
 
-local loader_chest = {
-	type = "container",
-	name = "loader-chest",
-	collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
-	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-	inventory_size = 1,
-	picture =
+data.raw["underground-belt"]["railloader"] = util.table.deepcopy(data.raw["underground-belt"]["underground-belt"])
+data.raw["underground-belt"]["railloader"].name = "railloader"
+data.raw["underground-belt"]["railloader"].minable.result = "railloader"
+data.raw["underground-belt"]["railloader"].max_distance=0
+data.raw.item["railloader"] = util.table.deepcopy(data.raw.item["underground-belt"])
+data.raw.item["railloader"].name = "railloader"
+data.raw.item["railloader"].place_result = "railloader"
+data.raw.recipe["railloader"] = util.table.deepcopy(data.raw.recipe["underground-belt"])
+data.raw.recipe["railloader"].name = "railloader"
+data.raw.recipe["railloader"].result = "railloader"
+data.raw.recipe["railloader"].enabled = true
+data.raw.recipe["railloader"].result_count = nil
+
+--[[{
+	type = "underground-belt",
+	name = "railloader",
+	icon = "__base__/graphics/icons/underground-belt.png",
+	flags = {"placeable-neutral", "player-creation"},
+	minable = {hardness = 0.2, mining_time = 0.5, result = "underground-belt"},
+	max_health = 150,
+	corpse = "small-remnants",
+	max_distance = 5,
+	underground_sprite =
 	{
-		filename = "__base__/graphics/entity/steel-chest/steel-chest.png",
-		priority = "extra-high",
-		width = 48,
-		height = 34,
-		shift = {0.1875, 0}
+		filename = "__core__/graphics/arrows/underground-lines.png",
+		priority = "high",
+		width = 64,
+		height = 64,
+		x = 64,
+		scale = 0.5
 	},
+	resistances =
+	{
+		{
+			type = "fire",
+			percent = 60
+		},
+		{
+			type = "impact",
+			percent = 30
+		}
+	},
+	collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
+	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+	animation_speed_coefficient = 32,
+	belt_horizontal = basic_belt_horizontal,
+	belt_vertical = basic_belt_vertical,
+	ending_top = basic_belt_ending_top,
+	ending_bottom = basic_belt_ending_bottom,
+	ending_side = basic_belt_ending_side,
+	starting_top = basic_belt_starting_top,
+	starting_bottom = basic_belt_starting_bottom,
+	starting_side = basic_belt_starting_side,
+	fast_replaceable_group = "underground-belt",
+	speed = 0.03125,
+	structure =
+	{
+		direction_in =
+		{
+			sheet =
+			{
+				filename = "__base__/graphics/entity/underground-belt/underground-belt-structure.png",
+				priority = "extra-high",
+				shift = {0.25, 0},
+				width = 57,
+				height = 43,
+				y = 43,
+				hr_version =
+				{
+					filename = "__base__/graphics/entity/underground-belt/hr-underground-belt-structure.png",
+					priority = "extra-high",
+					shift = {0.15625, 0.0703125},
+					width = 106,
+					height = 85,
+					y = 85,
+					scale = 0.5
+				}
+			}
+		},
+		direction_out =
+		{
+			sheet =
+			{
+				filename = "__base__/graphics/entity/underground-belt/underground-belt-structure.png",
+				priority = "extra-high",
+				shift = {0.25, 0},
+				width = 57,
+				height = 43,
+				hr_version =
+				{
+					filename = "__base__/graphics/entity/underground-belt/hr-underground-belt-structure.png",
+					priority = "extra-high",
+					shift = {0.15625, 0.0703125},
+					width = 106,
+					height = 85,
+					scale = 0.5
+				}
+
+			}
+
+		}
+	},
+	ending_patch = ending_patch_prototype
 }
-data.raw.container["loader-chest"] = loader_chest
+]]

@@ -18,91 +18,105 @@ local function moveposition(position, direction, distance)
 	end
 end
 
-local function chest_direction(loader)
-	local dir = loader.direction
-	if loader.loader_type == "output" then
+local function opposite_direction(direction)
+	if direction >= 4 then
+		return direction - 4
+	end
+	return direction + 4
+end
+
+local function orthogonal_direction(direction)
+	if direction == defines.direction.west then
+		return defines.direction.north
+	else
+		return direction + 2
+	end
+end
+
+local function chest_direction(entity)
+	local dir = entity.direction
+	if entity.belt_to_ground_type == "output" then
 		return util.oppositedirection(dir)
 	end
 	return dir
 end
 
-local function inserter_position(loader)
-	return moveposition(loader.position, chest_direction(loader), 0.5)
+local function get_loader_inserters(entity)
+	return entity.surface.find_entities_filtered{
+		area = {
+			{entity.position.x - 0.3, entity.position.y - 0.3},
+			{entity.position.x + 0.3, entity.position.y + 0.3},
+		},
+		name = "loader-inserter"
+	}
 end
 
-local function chest_position(loader)
-	return moveposition(loader.position, chest_direction(loader), 1.5)
-end
-
-local function target_position(loader)
-	return moveposition(loader.position, chest_direction(loader), 2.7)
-end
-
-local function get_loader_inserter(loader)
-	return loader.surface.find_entity("loader-inserter", inserter_position(loader))
-end
-
-local function get_loader_chest(loader)
-	return loader.surface.find_entity("steel-chest", chest_position(loader))
-end
-
-local function update_inserter(loader)
-	local inserter = get_loader_inserter(loader)
-	if loader.loader_type == "input" then
-		inserter.pickup_position = chest_position(loader)
-		inserter.drop_position = target_position(loader)
-	else
-		inserter.pickup_position = target_position(loader)
-		inserter.drop_position = chest_position(loader)
+local function update_inserters(entity)
+	local inserters = get_loader_inserters(entity)
+	local chest_dir = chest_direction(entity)
+	local chest_position = moveposition(entity.position, chest_dir, 0.7)
+	for i = 1, 2 do
+		local inserter = inserters[i]
+		if entity.belt_to_ground_type == "output" then
+			inserter.pickup_position = chest_position
+			inserter.drop_position = moveposition(inserter.position, chest_dir, 0.3)
+		else
+			inserter.pickup_position = moveposition(inserter.position, chest_dir, 0.3)
+			inserter.drop_position = chest_position
+		end
+		inserter.direction = inserter.direction
 	end
-	inserter.direction = inserter.direction
+end
+
+-- Event Handlers
+
+local function on_init()
+	local force = game.create_force("railloader")
+	force.stack_inserter_capacity_bonus = 24
+	-- allow railloader force to access chests belonging to players
+	game.forces.player.set_friend(force, true)
 end
 
 local function on_built(event)
 	local entity = event.created_entity
-	if entity.type ~= "loader" then
+	if entity.name ~= "railloader" then
 		return
 	end
+	local ortho = orthogonal_direction(entity.direction)
 	local surface = entity.surface
 	surface.create_entity{
-		name = "steel-chest",
-		position = chest_position(entity),
-		force = entity.force,
-		--bar = 1,
-	}
-	local inserter = surface.create_entity{
 		name = "loader-inserter",
-		position = inserter_position(entity),
-		force = entity.force,
+		position = moveposition(entity.position, ortho, 0.25),
+		force = "railloader",
 	}
-	update_inserter(entity)
-	entity.update_connections()
+	surface.create_entity{
+		name = "loader-inserter",
+		position = moveposition(entity.position, ortho, -0.25),
+		force = "railloader",
+	}
+	update_inserters(entity)
 end
 
 local function on_rotated(event)
 	local entity = event.entity
-	if entity.type ~= "loader" then
+	if entity.name ~= "railloader" then
 		return
 	end
-	update_inserter(entity)
+	update_inserters(entity)
 end
 
 local function on_mined(event)
 	local entity = event.entity
-	if entity.type ~= "loader" then
+	if entity.name ~= "railloader" then
 		return
 	end
-	local inserter = get_loader_inserter(entity)
-	event.buffer.insert(inserter.held_stack)
-	inserter.destroy()
-	local chest = get_loader_chest(entity)
-	local chest_inventory = chest.get_inventory(defines.inventory.chest)
-	for i = 1, #chest_inventory do
-		event.buffer.insert(chest_inventory[i])
+	for _, inserter in pairs(get_loader_inserters(entity)) do
+		event.buffer.insert(inserter.held_stack)
+		inserter.destroy()
 	end
-	chest.destroy()
 end
 
+script.on_init(on_init)
 script.on_event(defines.events.on_built_entity, on_built)
 script.on_event(defines.events.on_robot_built_entity, on_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
