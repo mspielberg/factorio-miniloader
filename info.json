@@ -1,0 +1,10 @@
+{
+    "name": "rail-loader",
+    "version": "0.0.1",
+    "factorio_version": "0.15",
+    "title": "RailLoader",
+    "author": "Therax",
+    "homepage": "",
+    "description": "Efficient loaders for use for cargo wagons."
+  }
+  
