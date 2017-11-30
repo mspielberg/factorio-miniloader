@@ -1,5 +1,9 @@
 require "util"
 
+-- Constants
+
+-- Utility Functions
+
 local function moveposition(position, direction, distance)
 	if direction == defines.direction.north then
 		return {x=position.x, y=position.y - distance}
@@ -33,6 +37,10 @@ local function orthogonal_direction(direction)
 	end
 end
 
+local function is_railloader(entity)
+	return string.find(entity.name, "^railloader") ~= nil
+end
+
 local function chest_direction(entity)
 	local dir = entity.direction
 	if entity.belt_to_ground_type == "output" then
@@ -43,25 +51,27 @@ end
 
 local function get_loader_inserters(entity)
 	return entity.surface.find_entities_filtered{
-		area = {
-			{entity.position.x - 0.3, entity.position.y - 0.3},
-			{entity.position.x + 0.3, entity.position.y + 0.3},
-		},
-		name = "loader-inserter"
+		position = entity.position,
+		name = "railloader-inserter"
 	}
 end
 
 local function update_inserters(entity)
 	local inserters = get_loader_inserters(entity)
 	local chest_dir = chest_direction(entity)
-	local chest_position = moveposition(entity.position, chest_dir, 0.7)
+	local belt_base_position = moveposition(entity.position, chest_dir, 0.25)
+	local ortho = orthogonal_direction(entity.direction)
 	for i = 1, 2 do
 		local inserter = inserters[i]
+		local ortho_offset = (i == 1) and 0.25 or -0.25
+		local longi_offset = 0.5
+		local belt_position = moveposition(belt_base_position, ortho, ortho_offset)
+		local chest_position = moveposition(belt_position, chest_dir, longi_offset)
 		if entity.belt_to_ground_type == "output" then
 			inserter.pickup_position = chest_position
-			inserter.drop_position = moveposition(inserter.position, chest_dir, 0.3)
+			inserter.drop_position = belt_position
 		else
-			inserter.pickup_position = moveposition(inserter.position, chest_dir, 0.3)
+			inserter.pickup_position = belt_position
 			inserter.drop_position = chest_position
 		end
 		inserter.direction = inserter.direction
@@ -74,32 +84,32 @@ local function on_init()
 	local force = game.create_force("railloader")
 	force.stack_inserter_capacity_bonus = 24
 	-- allow railloader force to access chests belonging to players
-	game.forces.player.set_friend(force, true)
+	game.forces["player"].set_friend(force, true)
+	-- allow players to see power icons on railloader inserters
+	force.set_friend(game.forces["player"], true)
 end
 
 local function on_built(event)
 	local entity = event.created_entity
-	if entity.name ~= "railloader" then
+	if not is_railloader(entity) then
 		return
 	end
 	local ortho = orthogonal_direction(entity.direction)
 	local surface = entity.surface
-	surface.create_entity{
-		name = "loader-inserter",
-		position = moveposition(entity.position, ortho, 0.25),
-		force = "railloader",
-	}
-	surface.create_entity{
-		name = "loader-inserter",
-		position = moveposition(entity.position, ortho, -0.25),
-		force = "railloader",
-	}
+	for i = 1, 2 do
+		local inserter = surface.create_entity{
+			name = "railloader-inserter",
+			position = entity.position,
+			force = "railloader",
+		}
+		inserter.destructible = false
+	end
 	update_inserters(entity)
 end
 
 local function on_rotated(event)
 	local entity = event.entity
-	if entity.name ~= "railloader" then
+	if not is_railloader(entity) then
 		return
 	end
 	update_inserters(entity)
@@ -107,11 +117,14 @@ end
 
 local function on_mined(event)
 	local entity = event.entity
-	if entity.name ~= "railloader" then
+	if not is_railloader(entity) then
 		return
 	end
 	for _, inserter in pairs(get_loader_inserters(entity)) do
-		event.buffer.insert(inserter.held_stack)
+		-- return items to player / robot if mined
+		if event.buffer then
+			event.buffer.insert(inserter.held_stack)
+		end
 		inserter.destroy()
 	end
 end
@@ -122,3 +135,4 @@ script.on_event(defines.events.on_robot_built_entity, on_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
+script.on_event(defines.events.on_entity_died, on_mined)

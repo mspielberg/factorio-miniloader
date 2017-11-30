@@ -8,14 +8,14 @@ local empty_sheet = {
 }
 local loader_inserter = {
 	type = "inserter",
-	name = "loader-inserter",
+	name = "railloader-inserter",
 	flags = {"placeable-off-grid"},
 	stack = true,
 	allow_custom_vectors = true,
 	energy_per_movement = 1,
 	energy_per_rotation = 1,
-	extension_speed = 0.2,
-	rotation_speed = 0.1,
+	extension_speed = 1.0,
+	rotation_speed = 1.0,
 	collision_box = {{-0.15, -0.15}, {0.15, 0.15}},
 	selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
 	pickup_position = {0, 1.0},
@@ -29,8 +29,60 @@ local loader_inserter = {
 		usage_priority = "secondary-input",
 	}
 }
-data.raw.inserter["loader-inserter"] = loader_inserter
+data.raw.inserter["railloader-inserter"] = loader_inserter
 
+local function create_railloader(base_entity, tech_prereqs)
+	local name = "railloader-" .. base_entity.name
+	local entity = util.table.deepcopy(base_entity)
+	entity.name = name
+	entity.minable.result = "railloader-" .. base_entity.name
+	entity.max_distance = 0
+	data.raw["underground-belt"][name] = entity
+
+	local item = util.table.deepcopy(data.raw.item[base_entity.name])
+	item.name = name
+	item.place_result = name
+	data.raw["item"][name] = item
+
+	local recipe = {
+		type = "recipe",
+		name = name,
+		enabled = false,
+		energy_required = 1,
+		ingredients =
+		{
+			{base_entity.name, 2},
+			{"stack-inserter", 2},
+		},
+		result = name
+	}
+	data.raw["recipe"][name] = recipe
+
+	local main_prereq = data.raw["technology"][tech_prereqs[1]]
+	local technology = {
+		type = "technology",
+		name = name,
+		-- TODO technology icons
+		icon = "__base__/graphics/technology/logistics.png",
+		effects =
+		{
+			{
+				type = "unlock-recipe",
+				recipe = name
+			}
+		},
+		prerequisites = tech_prereqs,
+		unit = main_prereq.unit,
+		order = main_prereq.order
+	}
+	data.raw["technology"][name] = technology
+end
+
+create_railloader(data.raw["underground-belt"]["underground-belt"], {"stack-inserter"})
+create_railloader(data.raw["underground-belt"]["fast-underground-belt"], {"logistics-2", "railloader-underground-belt"})
+create_railloader(data.raw["underground-belt"]["express-underground-belt"], {"logistics-3", "railloader-fast-underground-belt"})
+
+--[[
 data.raw["underground-belt"]["railloader"] = util.table.deepcopy(data.raw["underground-belt"]["underground-belt"])
 data.raw["underground-belt"]["railloader"].name = "railloader"
 data.raw["underground-belt"]["railloader"].minable.result = "railloader"
@@ -43,7 +95,7 @@ data.raw.recipe["railloader"].name = "railloader"
 data.raw.recipe["railloader"].result = "railloader"
 data.raw.recipe["railloader"].enabled = true
 data.raw.recipe["railloader"].result_count = nil
-
+]]
 --[[{
 	type = "underground-belt",
 	name = "railloader",
