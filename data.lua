@@ -7,48 +7,35 @@ local empty_sheet = {
 	height = 0,
 }
 
-data.raw.container["miniloader-chest"] = {
-	type = "container",
-	name = "miniloader-chest",
-	collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
-	selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
-	fast_replaceable_group = "container",
-	inventory_size = 1,
-	picture = empty_sheet,
-}
+local function num_inserters(base_entity)
+end
 
 local function create_inserter(base_entity)
 	local name = base_entity.name .. "-miniloader-inserter"
 	local loader_inserter = {
 		type = "inserter",
 		name = name,
+		-- this icon appears in the power usage UI
 		icon = base_entity.icon,
 		flags = {"placeable-off-grid"},
 		max_health = base_entity.max_health,
-		stack = false,
 		allow_custom_vectors = true,
-		energy_per_movement = 20000,
-		energy_per_rotation = 20000,
+		energy_per_movement = 2000,
+		energy_per_rotation = 2000,
 		energy_source = {
 			type = "electric",
 			usage_priority = "secondary-input",
 		},
-		extension_speed = 1.0,
-		rotation_speed = 1.0,
+		extension_speed = 20.0,
+		rotation_speed = 20.0,
 		collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 		selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
 		pickup_position = {0, 0},
 		insert_position = {0, 1.0},
-		--[[
 		platform_picture = { sheet = empty_sheet },
 		hand_base_picture = empty_sheet,
 		hand_open_picture = empty_sheet,
 		hand_closed_picture = empty_sheet,
-		]]
-		platform_picture = data.raw.inserter["inserter"].platform_picture,
-		hand_base_picture = data.raw.inserter["inserter"].hand_base_picture,
-		hand_open_picture = data.raw.inserter["inserter"].hand_open_picture,
-		hand_closed_picture = data.raw.inserter["inserter"].hand_closed_picture,
 	}
 	data.raw.inserter[name] = loader_inserter
 end
@@ -75,7 +62,7 @@ local function create_miniloader(base_entity, tech_prereqs)
 		{
 			{base_entity.name, 2},
 			{"steel-plate", 8},
-			{"stack-inserter", 4},
+			{"stack-inserter", 2},
 		},
 		result = name
 	}
@@ -104,5 +91,11 @@ local function create_miniloader(base_entity, tech_prereqs)
 end
 
 create_miniloader(data.raw["underground-belt"]["underground-belt"], {"stack-inserter"})
-create_miniloader(data.raw["underground-belt"]["fast-underground-belt"], {"logistics-2", "underground-belt-miniloader"})
+create_miniloader(data.raw["underground-belt"]["fast-underground-belt"], {"underground-belt-miniloader"})
 create_miniloader(data.raw["underground-belt"]["express-underground-belt"], {"logistics-3", "fast-underground-belt-miniloader"})
+
+-- Bob's support
+if data.raw.technology["bob-logistics-5"] then
+	create_miniloader(data.raw["underground-belt"]["green-underground-belt"], {"bob-logistics-4", "express-underground-belt-miniloader"})
+	create_miniloader(data.raw["underground-belt"]["purple-underground-belt"], {"bob-logistics-5", "green-underground-belt-miniloader"})
+end

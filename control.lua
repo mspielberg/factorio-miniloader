@@ -1,5 +1,3 @@
-require "util"
-
 --[[
 	belt_to_ground_type = "input"
 	+------------------+
@@ -7,7 +5,7 @@ require "util"
 	|        P         |
 	|                  |
 	|                  |    |
-	|        C         |    | chest dir
+	|                  |    | chest dir
 	|                  |    |
 	|                  |    v
 	|                  |
@@ -20,14 +18,13 @@ require "util"
 	|  D            D  |
 	|                  |
 	|                  |    |
-	|        C         |    | chest dir
+	|                  |    | chest dir
 	|                  |    |
 	|                  |    v
 	|                  |
 	+------------------+
 	         P
 
-	C: miniloader-chest
 	D: drop positions
 	P: pickup position
 ]]
@@ -76,24 +73,17 @@ local function is_miniloader(entity)
 	return string.find(entity.name, "-miniloader$") ~= nil
 end
 
-local function chest_direction(entity)
-	if entity.belt_to_ground_type == "output" then
-		return util.oppositedirection(entity.direction)
-	end
-	return entity.direction
-end
-
 local function pickup_position(entity)
 	if entity.belt_to_ground_type == "output" then
 		return moveposition(entity.position, offset(opposite_direction(entity.direction), 0.75, 0))
 	end
-	return moveposition(entity.position, offset(entity.direction, -0.25, 0))
+	return moveposition(entity.position, offset(entity.direction, 0.25, 0))
 end
 
 local function drop_positions(entity)
 	if entity.belt_to_ground_type == "output" then
 		local chest_dir = opposite_direction(entity.direction)
-		local p1 = moveposition(entity.position, offset(chest_dir, -1, 0.25))
+		local p1 = moveposition(entity.position, offset(chest_dir, -0.25, 0.25))
 		local p2 = moveposition(p1, offset(chest_dir, 0, -0.5))
 		return {p1, p2}
 	end
@@ -112,31 +102,32 @@ end
 
 local function update_inserters(entity)
 	local inserters = get_loader_inserters(entity)
-	local chest_dir = chest_direction(entity)
-	local pickup = pickup_position(entity, chest_dir)
-	game.print("pickup = " .. serpent.line(pickup))
-	local drop = drop_positions(entity, chest_dir)
-	game.print("drop = " .. serpent.line(drop))
+	local pickup = pickup_position(entity)
+	local drop = drop_positions(entity)
 
-	-- drop inserters
-	inserters[1].pickup_position = entity.position
-	inserters[1].drop_position = drop[1]
-	inserters[2].pickup_position = entity.position
-	inserters[2].drop_position = drop[2]
-	-- pickup inserter
-	inserters[3].pickup_position = pickup
-	inserters[3].drop_position = entity.position
-
-	for i = 1, 3 do
+	local n = #inserters
+	for i = 1, n / 2 do
+		inserters[i].pickup_position = pickup
+		inserters[i].drop_position = drop[1]
 		inserters[i].direction = inserters[i].direction
 	end
+	for i = n / 2 + 1, n do
+		inserters[i].pickup_position = pickup
+		inserters[i].drop_position = drop[2]
+		inserters[i].direction = inserters[i].direction
+	end
+end
+
+local function num_inserters(entity)
+	local speed = entity.prototype.belt_speed
+	if speed < 0.1 then return 2
+	else return 6 end
 end
 
 -- Event Handlers
 
 local function on_init()
 	local force = game.create_force("miniloader")
-	force.stack_inserter_capacity_bonus = 24
 	-- allow miniloader force to access chests belonging to players
 	game.forces["player"].set_friend(force, true)
 	-- allow players to see power icons on miniloader inserters
@@ -149,13 +140,7 @@ local function on_built(event)
 		return
 	end
 	local surface = entity.surface
-	local chest = surface.create_entity{
-		name = "miniloader-chest",
-		position = entity.position,
-		force = "miniloader",
-	}
-	chest.destructible = false
-	for i = 1, 3 do
+	for i = 1, num_inserters(entity) do
 		local inserter = surface.create_entity{
 			name = entity.name .. "-inserter",
 			position = entity.position,
@@ -188,15 +173,6 @@ local function on_mined(event)
 		end
 		inserters[i].destroy()
 	end
-
-	local chest = entity.surface.find_entity("miniloader-chest", entity.position)
-	if event.buffer then
-		local chest_inventory = chest.get_inventory(defines.inventory.chest)
-		if not chest_inventory.is_empty() then
-			event.buffer.insert(chest_inventory[1])
-		end
-	end
-	chest.destroy()
 end
 
 script.on_init(on_init)
