@@ -20,11 +20,11 @@ and consume approximately the power of two fully-upgraded stack inserters.
 
 ## How it works
 
-Each miniloader hides a pair of very fast invisible inserters, one for each lane
-of the belt.  LUA scripting adjusts pickup and drop points accordingly when the
+Each miniloader hides a set of very fast invisible inserters, one for each lane
+of the belt.  Lua scripting adjusts pickup and drop points accordingly when the
 direction of the miniloader is changed.
 
-Since item movement is handled by inserters, there is no on_tick handler, no LUA
+Since item movement is handled by inserters, there is no on_tick handler, no Lua
 impact on UPS, and miniloaders will benefit from any future improvements to belt
 and inserter performance made by Wube in the Factorio core.
 
