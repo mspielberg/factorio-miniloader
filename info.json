@@ -1,10 +1,10 @@
 {
-    "name": "rail-loader",
+    "name": "miniloader",
     "version": "0.0.1",
     "factorio_version": "0.15",
-    "title": "RailLoader",
+    "title": "Miniloader",
     "author": "Therax",
     "homepage": "",
-    "description": "Efficient loaders for use for cargo wagons."
+    "description": "UPS-friendly 1x1 loaders for use for cargo wagons."
   }
   
