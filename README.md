@@ -4,12 +4,12 @@ This mod introduces miniloaders, 1x1 entities that efficiently transfer a full
 belt worth of items into and out of containers, including train cargo wagons,
 with minimal UPS impact.
 
-![Miniloaders in action with cargo wagons](https://github.com/mspielberg/factorio-miniloader/demo.gif)
+![Miniloaders in action with cargo wagons](https://github.com/mspielberg/factorio-miniloader/raw/master/demo.gif)
 
 They can also be used as compact priority splitters, or single-belt lane
 rebalancers.
 
-![Miniloaders in action with cargo wagons](https://github.com/mspielberg/factorio-miniloader/tricks.gif)
+![Miniloaders in action with cargo wagons](https://github.com/mspielberg/factorio-miniloader/raw/master/tricks.gif)
 
 Faster belts from Bob's Logistics are fully supported.
 
