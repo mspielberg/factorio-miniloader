@@ -46,6 +46,26 @@ local function create_miniloader(base_entity, tech_prereqs)
 	entity.name = name
 	entity.minable.result = name
 	entity.max_distance = 0
+	entity.fast_replaceable_group = "miniloader"
+	entity.structure = {
+		direction_in = {
+			sheet = {
+				filename = "__miniloader__/graphics/entity/express-miniloader.png",
+				priority = "extra-high",
+				width = 128,
+				height = 128,
+			}
+		},
+		direction_out = {
+			sheet = {
+				filename = "__miniloader__/graphics/entity/express-miniloader.png",
+				priority = "extra-high",
+				width = 128,
+				height = 128,
+				y = 128,
+			}
+		},
+	}
 	data.raw["underground-belt"][name] = entity
 
 	local item = util.table.deepcopy(data.raw.item[base_entity.name])
