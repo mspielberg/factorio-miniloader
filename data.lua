@@ -18,7 +18,7 @@ local function create_entity(prefix)
 	entity.structure = {
 		direction_in = {
 			sheet = {
-				filename = "__miniloader__/graphics/entity/"..name..".png",
+				filename = "__miniloader__/graphics/entity/" .. name .. ".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
@@ -26,7 +26,7 @@ local function create_entity(prefix)
 		},
 		direction_out = {
 			sheet = {
-				filename = "__miniloader__/graphics/entity/"..name..".png",
+				filename = "__miniloader__/graphics/entity/" .. name .. ".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
@@ -43,6 +43,7 @@ local function create_item(prefix)
 
 	local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
 	item.name = name
+	item.icon = "__miniloader__/graphics/item/" .. name ..".png"
 	item.place_result = name
 
 	data.raw["item"][name] = item
@@ -75,8 +76,8 @@ local function create_technology(prefix, tech_prereqs)
 	local technology = {
 		type = "technology",
 		name = name,
-		-- TODO technology icons
-		icon = "__base__/graphics/technology/logistics.png",
+		icon = "__miniloader__/graphics/technology/" .. name .. ".png",
+		icon_size = 128,
 		effects =
 		{
 			{
