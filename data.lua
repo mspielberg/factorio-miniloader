@@ -7,11 +7,95 @@ local empty_sheet = {
 	height = 0,
 }
 
-local function num_inserters(base_entity)
+local function create_entity(prefix)
+	local name = prefix .. "miniloader"
+
+	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
+	entity.name = name
+	entity.minable.result = name
+	entity.max_distance = 0
+	entity.fast_replaceable_group = "miniloader"
+	entity.structure = {
+		direction_in = {
+			sheet = {
+				filename = "__miniloader__/graphics/entity/"..name..".png",
+				priority = "extra-high",
+				width = 128,
+				height = 128,
+			}
+		},
+		direction_out = {
+			sheet = {
+				filename = "__miniloader__/graphics/entity/"..name..".png",
+				priority = "extra-high",
+				width = 128,
+				height = 128,
+				y = 128,
+			}
+		},
+	}
+
+	data:extend{entity}
 end
 
-local function create_inserter(base_entity)
-	local name = base_entity.name .. "-miniloader-inserter"
+local function create_item(prefix)
+	local name = prefix .. "miniloader"
+
+	local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
+	item.name = name
+	item.place_result = name
+
+	data.raw["item"][name] = item
+end
+
+local function create_recipe(prefix)
+	local name = prefix .. "miniloader"
+
+	local recipe = {
+		type = "recipe",
+		name = name,
+		enabled = false,
+		energy_required = 1,
+		ingredients =
+		{
+			{prefix .. "underground-belt", 2},
+			{"steel-plate", 8},
+			{"stack-inserter", 2},
+		},
+		result = name
+	}
+
+	data:extend{recipe}
+end
+
+local function create_technology(prefix, tech_prereqs)
+	local name = prefix .. "miniloader"
+
+	local main_prereq = data.raw["technology"][tech_prereqs[1]]
+	local technology = {
+		type = "technology",
+		name = name,
+		-- TODO technology icons
+		icon = "__base__/graphics/technology/logistics.png",
+		effects =
+		{
+			{
+				type = "unlock-recipe",
+				recipe = name
+			}
+		},
+		prerequisites = tech_prereqs,
+		unit = main_prereq.unit,
+		order = main_prereq.order
+	}
+
+	data:extend{technology}
+end
+
+local function create_inserter(prefix)
+	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
+	local name = prefix .. "miniloader-inserter"
+
 	local loader_inserter = {
 		type = "inserter",
 		name = name,
@@ -37,78 +121,16 @@ local function create_inserter(base_entity)
 		hand_open_picture = empty_sheet,
 		hand_closed_picture = empty_sheet,
 	}
-	data.raw.inserter[name] = loader_inserter
+
+	data:extend{loader_inserter}
 end
 
 local function create_miniloader(prefix, tech_prereqs)
-	local base_entity = data.raw["underground-belt"][prefix.."underground-belt"]
-	local name = prefix .. "miniloader"
-	local entity = util.table.deepcopy(base_entity)
-	entity.name = name
-	entity.minable.result = name
-	entity.max_distance = 0
-	entity.fast_replaceable_group = "miniloader"
-	entity.structure = {
-		direction_in = {
-			sheet = {
-				filename = "__miniloader__/graphics/entity/"..name..".png",
-				priority = "extra-high",
-				width = 128,
-				height = 128,
-			}
-		},
-		direction_out = {
-			sheet = {
-				filename = "__miniloader__/graphics/entity/"..name..".png",
-				priority = "extra-high",
-				width = 128,
-				height = 128,
-				y = 128,
-			}
-		},
-	}
-	data.raw["underground-belt"][name] = entity
-
-	local item = util.table.deepcopy(data.raw.item[base_entity.name])
-	item.name = name
-	item.place_result = name
-	data.raw["item"][name] = item
-
-	local recipe = {
-		type = "recipe",
-		name = name,
-		enabled = false,
-		energy_required = 1,
-		ingredients =
-		{
-			{base_entity.name, 2},
-			{"steel-plate", 8},
-			{"stack-inserter", 2},
-		},
-		result = name
-	}
-	data.raw["recipe"][name] = recipe
-
-	local main_prereq = data.raw["technology"][tech_prereqs[1]]
-	local technology = {
-		type = "technology",
-		name = name,
-		-- TODO technology icons
-		icon = "__base__/graphics/technology/logistics.png",
-		effects =
-		{
-			{
-				type = "unlock-recipe",
-				recipe = name
-			}
-		},
-		prerequisites = tech_prereqs,
-		unit = main_prereq.unit,
-		order = main_prereq.order
-	}
-	data.raw["technology"][name] = technology
-
-	create_inserter(base_entity)
+	create_entity(prefix)
+	create_inserter(prefix)
+	create_item(prefix)
+	create_recipe(prefix)
+	create_technology(prefix, tech_prereqs)
 end
 
 create_miniloader("", {"stack-inserter"})
