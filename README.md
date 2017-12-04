@@ -19,7 +19,7 @@ put them in your bus as compact priority splitters,
 
 or single-belt lane rebalancers.
 
-![Miniloaders land balancer](https://github.com/mspielberg/factorio-miniloader/raw/master/land_rebalance.png)
+![Miniloaders lane balancer](https://github.com/mspielberg/factorio-miniloader/raw/master/lane_rebalance.png)
 
 Green and purple belts from Bob's Logistics are fully supported.
 
