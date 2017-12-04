@@ -40,8 +40,9 @@ local function create_inserter(base_entity)
 	data.raw.inserter[name] = loader_inserter
 end
 
-local function create_miniloader(base_entity, tech_prereqs)
-	local name = base_entity.name .. "-miniloader"
+local function create_miniloader(prefix, tech_prereqs)
+	local base_entity = data.raw["underground-belt"][prefix.."underground-belt"]
+	local name = prefix .. "miniloader"
 	local entity = util.table.deepcopy(base_entity)
 	entity.name = name
 	entity.minable.result = name
@@ -50,7 +51,7 @@ local function create_miniloader(base_entity, tech_prereqs)
 	entity.structure = {
 		direction_in = {
 			sheet = {
-				filename = "__miniloader__/graphics/entity/express-miniloader.png",
+				filename = "__miniloader__/graphics/entity/"..name..".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
@@ -58,7 +59,7 @@ local function create_miniloader(base_entity, tech_prereqs)
 		},
 		direction_out = {
 			sheet = {
-				filename = "__miniloader__/graphics/entity/express-miniloader.png",
+				filename = "__miniloader__/graphics/entity/"..name..".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
@@ -110,12 +111,12 @@ local function create_miniloader(base_entity, tech_prereqs)
 	create_inserter(base_entity)
 end
 
-create_miniloader(data.raw["underground-belt"]["underground-belt"], {"stack-inserter"})
-create_miniloader(data.raw["underground-belt"]["fast-underground-belt"], {"underground-belt-miniloader"})
-create_miniloader(data.raw["underground-belt"]["express-underground-belt"], {"logistics-3", "fast-underground-belt-miniloader"})
+create_miniloader("", {"stack-inserter"})
+create_miniloader("fast-", {"miniloader"})
+create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-5"] then
-	create_miniloader(data.raw["underground-belt"]["green-underground-belt"], {"bob-logistics-4", "express-underground-belt-miniloader"})
-	create_miniloader(data.raw["underground-belt"]["purple-underground-belt"], {"bob-logistics-5", "green-underground-belt-miniloader"})
+	create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
+	create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
 end
