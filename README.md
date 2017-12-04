@@ -46,6 +46,6 @@ and inserter performance made by Wube in the Factorio core.
 
 ## Acknowledgements
 
-* Arch666Angel &emdash; for the original loader graphics.
+* Arch666Angel &mdash; for the original 2x1 loader graphics, cut down to 1x1 here.
 * Articulating &mdash; for the original Loader Snapping.
 * Optera &mdash; for the revised and improved loader snapping code adapted here.
