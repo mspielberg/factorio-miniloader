@@ -10,6 +10,7 @@ local snapTypes = {
 }
 
 -- set loader direction according to adjacent belts
+-- returns true if the loader and entity are directionally aligned
 local function snap_loader_to_target(loader, entity, event)
 	if not entity or not entity.valid or not loader or not loader.valid then
 		log("Entity or Loader where invalid.")
@@ -39,8 +40,8 @@ local function snap_loader_to_target(loader, entity, event)
 	local ey = entity.position.y
 	local edir = entity.direction
 
-	local direction = loader.direction
-	local belt_to_ground_type = loader.belt_to_ground_type
+	local direction
+	local belt_to_ground_type
 	if lx == ex and (edir == 0 or edir == 4) then -- loader and entity are aligned vertically
 		if ly > ey then -- entity to north
 			if edir == 4 then
@@ -79,10 +80,14 @@ local function snap_loader_to_target(loader, entity, event)
 		end
 	end
 
-	if loader.direction ~= direction or loader.belt_to_ground_type ~= belt_to_ground_type then
-		--loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {g=1}}
-		util.update_miniloader(loader, direction, belt_to_ground_type)
+	if belt_to_ground_type then
+		if loader.direction ~= direction or loader.belt_to_ground_type ~= belt_to_ground_type then
+			--loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {g=1}}
+			util.update_miniloader(loader, direction, belt_to_ground_type)
+		end
+		return true
 	end
+	return false
 end
 
 -- returns loaders next to a given entity
@@ -127,12 +132,12 @@ local function find_entity_by_loader(loader)
 	local areas = {
 		{{x - 0.5, y - 1}, {x + 0.5, y + 1}},
 		{{x - 1, y - 0.5}, {x + 1, y + 0.5}},
-		}
+	}
 
 	local out = {}
 	for i=1, 2 do
 		for _, ent in ipairs(loader.surface.find_entities_filtered{area=areas[i], force=loader.force}) do
-			if ent ~= loader then
+			if ent ~= loader and ent.type ~= "player" then
 				table.insert(out, ent)
 			end
 		end
@@ -167,30 +172,30 @@ function snapping.snap_loader(loader, event)
 	local x = loader.position.x
 	local y = loader.position.y
 	local entities = find_entity_by_loader(loader)
-	for _, ent in pairs(entities) do
+	for _, ent in ipairs(entities) do
 		-- log("target: "..ent.name.." position: "..ent.position.x..","..ent.position.y.."	direction: "..ent.direction)
 		if snapTypes[ent.type] then
-			snap_loader_to_target(loader, ent, event)
-			return
-		end
-	end
-
-	-- Idiot snapping, face away from non belt entities
-	for _, ent in pairs(entities) do
-		local direction = loader.direction
-		if y > ent.position.y then
-			direction = 4
-		elseif y < ent.position.y then
-			direction = 0
-		elseif x > ent.position.x then
-			direction = 2
-		elseif x < ent.position.x then
-			direction = 6
-		end
-		if loader.direction ~= direction or loader.belt_to_ground_type ~= belt_to_ground_type then
-			--loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {r=1}}
-			util.update_miniloader(loader, direction, "output")
-			return
+			if snap_loader_to_target(loader, ent, event) then
+				return
+			end
+		else
+			-- Idiot snapping, face away from non belt entities
+			local bounds = util.move_box(ent.prototype.selection_box, ent.position)
+			local direction = loader.direction
+			if y > bounds.right_bottom.y then
+				direction = 4
+			elseif y < bounds.left_top.y then
+				direction = 0
+			elseif x > bounds.right_bottom.x then
+				direction = 2
+			elseif x < bounds.left_top.x then
+				direction = 6
+			end
+			if loader.direction ~= direction or loader.belt_to_ground_type ~= "output" then
+				--loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {r=1}}
+				util.update_miniloader(loader, direction, "output")
+				return
+			end
 		end
 	end
 end
