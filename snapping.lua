@@ -32,20 +32,26 @@ local function snap_loader_to_target(loader, entity, event)
 	-- south 4: Loader 4 output or 0 input
 	-- west	6: Loader 6 output or 2 input
 
+	local lx = loader.position.x
+	local ly = loader.position.y
+
+	local ex = entity.position.x
+	local ey = entity.position.y
+	local edir = entity.direction
+
 	local direction = loader.direction
 	local belt_to_ground_type = loader.belt_to_ground_type
-
-	if loader.direction == 0 or loader.direction == 4 then -- loader and entity are aligned vertically
-		if loader.position.y > entity.position.y then
-			if entity.direction == 4 then
+	if lx == ex and (edir == 0 or edir == 4) then -- loader and entity are aligned vertically
+		if ly > ey then -- entity to north
+			if edir == 4 then
 				direction = 4
 				belt_to_ground_type = "input"
 			else
 				direction = 0
 				belt_to_ground_type = "output"
 			end
-		elseif loader.position.y < entity.position.y then
-			if entity.direction == 0 then
+		else -- entity to south
+			if edir == 0 then
 				direction = 0
 				belt_to_ground_type = "input"
 			else
@@ -53,17 +59,17 @@ local function snap_loader_to_target(loader, entity, event)
 				belt_to_ground_type = "output"
 			end
 		end
-	else -- loader and entity are aligned horizontally
-		if loader.position.x > entity.position.x then
-			if entity.direction == 2 then
+	elseif ly == ey and (edir == 2 or edir == 6) then -- loader and entity are aligned horizontally
+		if lx > ex then -- entity to west
+			if edir == 2 then
 				direction = 2
 				belt_to_ground_type = "input"
 			else
 				direction = 6
 				belt_to_ground_type = "output"
 			end
-		elseif loader.position.x < entity.position.x then
-			if entity.direction == 6 then
+		else -- entity to east
+			if edir == 6 then
 				direction = 6
 				belt_to_ground_type = "input"
 			else
@@ -73,7 +79,6 @@ local function snap_loader_to_target(loader, entity, event)
 		end
 	end
 
-	-- set belt_to_ground_type first or the loader will end up in different positions than intended
 	if loader.direction ~= direction or loader.belt_to_ground_type ~= belt_to_ground_type then
 		--loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {g=1}}
 		util.update_miniloader(loader, direction, belt_to_ground_type)
@@ -85,7 +90,7 @@ local function find_loader_by_entity(entity)
 	local position = entity.position
 	local box = entity.prototype.selection_box
 	local area = {
-		{position.x + box.left_top.x-1, position.y + box.left_top.y-1},
+		{position.x + box.left_top.x - 1, position.y + box.left_top.y - 1},
 		{position.x + box.right_bottom.x + 1, position.y + box.right_bottom.y + 1}
 	}
 	out = {}
@@ -97,25 +102,39 @@ local function find_loader_by_entity(entity)
 	return out
 end
 
+local function find_loader_by_underground_belt(entity)
+	local direction = entity.direction
+	if entity.belt_to_ground_type == "input" then
+		direction = util.opposite_direction(direction)
+	end
+	local entities = entity.surface.find_entities_filtered{
+		position = util.moveposition(entity.position, util.offset(direction, 1, 0)),
+		type = "underground-belt",
+	}
+	for _, entity in ipairs(entities) do
+		if util.is_miniloader(entity) then
+			return entity
+		end
+	end
+	return nil
+end
+
 -- returns entities in front and behind a given loader
 local function find_entity_by_loader(loader)
-	local lbox = loader.prototype.selection_box
-	local check
-	if loader.direction == 0 or loader.direction == 4 then
-		check = {
-			{loader.position.x -.4, loader.position.y + lbox.left_top.y -1},
-			{loader.position.x +.4, loader.position.y + lbox.right_bottom.y +1}
+	local x = loader.position.x
+	local y = loader.position.y
+
+	local areas = {
+		{{x - 0.5, y - 1}, {x + 0.5, y + 1}},
+		{{x - 1, y - 0.5}, {x + 1, y + 0.5}},
 		}
-	else
-		check = {
-			{loader.position.x + lbox.left_top.x - 1, loader.position.y - .4},
-			{loader.position.x + lbox.right_bottom.x + 1, loader.position.y + .4}
-		}
-	end
+
 	local out = {}
-	for _, ent in ipairs(loader.surface.find_entities_filtered{area=check, force=loader.force}) do
-		if ent ~= loader then
-			table.insert(out, ent)
+	for i=1, 2 do
+		for _, ent in ipairs(loader.surface.find_entities_filtered{area=areas[i], force=loader.force}) do
+			if ent ~= loader then
+				table.insert(out, ent)
+			end
 		end
 	end
 	return out
@@ -126,28 +145,20 @@ function snapping.check_for_loaders(event)
 	local entity = event.created_entity or event.entity
 	if snapTypes[entity.type] then
 		local loaders = find_loader_by_entity(entity)
-		for _, loader in pairs(loaders) do
-			local entities = find_entity_by_loader(loader)
-			for _, ent in pairs(entities) do
-				if ent == entity and ent ~= loader and snapTypes[ent.type] then
-					snap_loader_to_target(loader, ent, event)
+		for _, loader in ipairs(loaders) do
+			snap_loader_to_target(loader, entity, event)
 				end
-			end
-		end
 
 		-- also scan other exit of underground belt
-		if entity.type == "underground-belt" and entity.neighbours then
-			local loaders = find_loader_by_entity(entity.neighbours)
-			for _, loader in pairs(loaders) do
-				local entities = find_entity_by_loader(loader)
-				for _, ent in pairs(entities) do
-					if ent == entity.neighbours and ent ~= loader and snapTypes[ent.type] then
-						snap_loader_to_target(loader, ent, event)
-					end
+		if entity.type == "underground-belt" then
+			local partner = entity.neighbours
+			if partner then
+				local loader = find_loader_by_underground_belt(partner)
+				if loader then
+					snap_loader_to_target(loader, partner, event)
 				end
 			end
 		end
-
 	end
 end
 
@@ -156,7 +167,6 @@ function snapping.snap_loader(loader, event)
 	local x = loader.position.x
 	local y = loader.position.y
 	local entities = find_entity_by_loader(loader)
-	local snapped = false
 	for _, ent in pairs(entities) do
 		-- log("target: "..ent.name.." position: "..ent.position.x..","..ent.position.y.."	direction: "..ent.direction)
 		if snapTypes[ent.type] then
