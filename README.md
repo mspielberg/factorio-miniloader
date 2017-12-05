@@ -15,7 +15,7 @@ You can use them to feed your high-speed assemblers,
 
 put them in your bus as compact priority splitters,
 
-![Miniloader priority splitter](https://github.com/mspielberg/factorio-miniloader/raw/master/priority_split.gif))
+![Miniloader priority splitter](https://github.com/mspielberg/factorio-miniloader/raw/master/priority_split.gif)
 
 or single-belt lane rebalancers.
 
@@ -51,3 +51,9 @@ and inserter performance made by Wube in the Factorio core.
 * Articulating &mdash; for the original Loader Snapping.
 * Optera &mdash; for Loader Redux's revised and improved loader snapping code, adopted
   here for Miniloaders with permission.
+
+## Version History
+
+* 1.0.0 (2017-12-01) &mdash; Initial release.
+* 1.1.0 (2017-12-03) &mdash; Add graphics and loader snapping.
+* 1.1.1 (2017-12-05) &mdash; Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
