@@ -1,6 +1,6 @@
 local util = require("util")
 
-local use_snapping = settings.global["loader-snapping"].value
+local use_snapping = settings.global["miniloader-snapping"].value
 
 --[[
 	belt_to_ground_type = "input"
@@ -107,7 +107,7 @@ script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-	if event.setting == "loader-snapping" then
-		use_snapping = settings.global["loader-snapping"].value
+	if event.setting == "miniloader-snapping" then
+		use_snapping = settings.global["miniloader-snapping"].value
 	end
 end)

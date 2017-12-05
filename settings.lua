@@ -1,9 +1,9 @@
 data:extend{
 	{
 		type = "bool-setting",
-		name = "loader-snapping",
+		name = "miniloader-snapping",
 		setting_type = "runtime-global",
 		default_value = true,
-		order = "loader-snapping",
+		order = "miniloader-snapping",
     },
 }
