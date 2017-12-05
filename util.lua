@@ -22,6 +22,13 @@ function util.offset(direction, longitudinal, orthogonal)
 	end
 end
 
+function util.move_box(box, offset)
+	return {
+		left_top = util.moveposition(box.left_top, offset),
+		right_bottom = util.moveposition(box.right_bottom, offset),
+	}
+end
+
 function util.opposite_direction(direction)
 	if direction >= 4 then
 		return direction - 4
