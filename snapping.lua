@@ -11,7 +11,7 @@ local snapTypes = {
 
 -- set loader direction according to adjacent belts
 -- returns true if the loader and entity are directionally aligned
-local function snap_loader_to_target(loader, entity, event)
+local function snap_loader_to_target(loader, entity)
 	if not entity or not entity.valid or not loader or not loader.valid then
 		log("Entity or Loader where invalid.")
 		return
@@ -99,9 +99,9 @@ local function find_loader_by_entity(entity)
 		{position.x + box.right_bottom.x + 1, position.y + box.right_bottom.y + 1}
 	}
 	out = {}
-	for _, entity in ipairs(entity.surface.find_entities_filtered{type="underground-belt", area=area, force=entity.force}) do
-		if string.find(entity.name, "-miniloader$") ~= nil then
-			table.insert(out, entity)
+	for _, ent in ipairs(entity.surface.find_entities_filtered{type="underground-belt", area=area, force=entity.force}) do
+		if ent ~= entity and string.find(ent.name, "-miniloader$") ~= nil then
+			table.insert(out, ent)
 		end
 	end
 	return out
@@ -116,9 +116,9 @@ local function find_loader_by_underground_belt(entity)
 		position = util.moveposition(entity.position, util.offset(direction, 1, 0)),
 		type = "underground-belt",
 	}
-	for _, entity in ipairs(entities) do
-		if util.is_miniloader(entity) then
-			return entity
+	for _, ent in ipairs(entities) do
+		if util.is_miniloader(ent) then
+			return ent
 		end
 	end
 	return nil
@@ -151,8 +151,8 @@ function snapping.check_for_loaders(event)
 	if snapTypes[entity.type] then
 		local loaders = find_loader_by_entity(entity)
 		for _, loader in ipairs(loaders) do
-			snap_loader_to_target(loader, entity, event)
-				end
+			snap_loader_to_target(loader, entity)
+		end
 
 		-- also scan other exit of underground belt
 		if entity.type == "underground-belt" then
@@ -160,7 +160,7 @@ function snapping.check_for_loaders(event)
 			if partner then
 				local loader = find_loader_by_underground_belt(partner)
 				if loader then
-					snap_loader_to_target(loader, partner, event)
+					snap_loader_to_target(loader, partner)
 				end
 			end
 		end
@@ -175,7 +175,7 @@ function snapping.snap_loader(loader, event)
 	for _, ent in ipairs(entities) do
 		-- log("target: "..ent.name.." position: "..ent.position.x..","..ent.position.y.."	direction: "..ent.direction)
 		if snapTypes[ent.type] then
-			if snap_loader_to_target(loader, ent, event) then
+			if snap_loader_to_target(loader, ent) then
 				return
 			end
 		else
