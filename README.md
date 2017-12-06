@@ -57,3 +57,4 @@ and inserter performance made by Wube in the Factorio core.
 * 1.0.0 (2017-12-01) &mdash; Initial release.
 * 1.1.0 (2017-12-03) &mdash; Add graphics and loader snapping.
 * 1.1.1 (2017-12-05) &mdash; Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
+* 1.1.2 (2017-12-06) &mdash; Fix critical crash bug when rotating miniloaders.
