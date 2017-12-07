@@ -44,6 +44,7 @@ local function create_item(prefix)
 	local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
 	item.name = name
 	item.icon = "__miniloader__/graphics/item/" .. name ..".png"
+	item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
 	item.place_result = name
 
 	data.raw["item"][name] = item
