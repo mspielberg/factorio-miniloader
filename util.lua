@@ -84,6 +84,12 @@ function util.update_miniloader(entity, direction, type)
 		local name = entity.name
 		local position = entity.position
 		local force = entity.force
+		local from_transport_lines = {}
+		for i=1, 2 do
+			local tl = entity.get_transport_line(i)
+			from_transport_lines[i] = tl.get_contents()
+			tl.clear()
+		end
 		entity.destroy()
 		entity = surface.create_entity{
 			name = name,
@@ -92,6 +98,12 @@ function util.update_miniloader(entity, direction, type)
 			type = type,
 			force = force,
 		}
+		for i=1, 2 do
+			local tl = entity.get_transport_line(i)
+			for name, count in pairs(from_transport_lines[i]) do
+				tl.insert_at_back({name=name, count=count})
+			end
+		end
 	else
 		entity.direction = direction
 	end
