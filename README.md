@@ -42,7 +42,22 @@ and inserter performance made by Wube in the Factorio core.
 
 * Items currently held in the hand of the invisible inserters can still be seen,
   leading to odd graphical artifacts.  A mod
-  [API change in 0.16](https://forums.factorio.com/viewtopic.php?f=65&t=54345) will fix this.
+  [API change in 0.16](https://forums.factorio.com/viewtopic.php?f=65&t=54345)
+  will fix this.
+* The power usage UI counts each miniloader multiple times, since it shows the
+  power used by the invisible inserters, not the miniloaders themselves.
+* Miniloaders cannot be fast-replaced due to the invisible inserters blocking
+  placement of the new entity.
+* Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
+  * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
+  * Yellow icons when there is no power connection are not displayed.
+    You can fix with the console command:
+    `game.forces.player.set_friend("miniloader", true); game.forces.miniloader.set_friend("player",true)`
+  * Throughput when operating belt-to-belt is halved because Creative Mode
+    gives miniloader inserters unwanted stack bonuses.  You can fix this by
+    going into `Cheats` &rarr; `Team Cheats` &rarr; `miniloader` and setting
+    "Inserter capacity bonus" to 0.
+  * You may need to apply these fixes whenever you reload a save.
 
 ## Acknowledgements
 
@@ -54,7 +69,15 @@ and inserter performance made by Wube in the Factorio core.
 
 ## Version History
 
-* 1.0.0 (2017-12-01) &mdash; Initial release.
-* 1.1.0 (2017-12-03) &mdash; Add graphics and loader snapping.
-* 1.1.1 (2017-12-05) &mdash; Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
-* 1.1.2 (2017-12-06) &mdash; Fix critical crash bug when rotating miniloaders.
+* 1.0.0 (2017-12-01):
+  * Initial release.
+* 1.1.0 (2017-12-03):
+  * Add graphics and loader snapping.
+* 1.1.1 (2017-12-05):
+  * Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
+* 1.1.2 (2017-12-06):
+  * Fix critical crash bug when rotating miniloaders.
+* 1.1.3 (2017-12-06):
+    * Fix basic yellow miniloaders.  Oops.
+    * Fix a case where items could be spilled onto adjacent tiles when snapping
+      a miniloader to a belt.
