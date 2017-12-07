@@ -96,13 +96,14 @@ end
 
 local function create_inserter(prefix)
 	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
-	local name = prefix .. "miniloader-inserter"
+	local loader_name = prefix .. "miniloader"
 
 	local loader_inserter = {
 		type = "inserter",
-		name = name,
+		name = loader_name .. "-inserter",
+		localised_name = {"entity-name." .. loader_name},
 		-- this icon appears in the power usage UI
-		icon = base_entity.icon,
+		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
 		flags = {"placeable-off-grid"},
 		max_health = base_entity.max_health,
 		allow_custom_vectors = true,
