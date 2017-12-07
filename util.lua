@@ -44,7 +44,7 @@ function util.orthogonal_direction(direction)
 end
 
 function util.is_miniloader(entity)
-	return string.find(entity.name, "-miniloader$") ~= nil
+	return string.find(entity.name, "miniloader$") ~= nil
 end
 
 function util.pickup_position(entity)

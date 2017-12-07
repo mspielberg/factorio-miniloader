@@ -100,7 +100,7 @@ local function find_loader_by_entity(entity)
 	}
 	out = {}
 	for _, ent in ipairs(entity.surface.find_entities_filtered{type="underground-belt", area=area, force=entity.force}) do
-		if ent ~= entity and string.find(ent.name, "-miniloader$") ~= nil then
+		if ent ~= entity and util.is_miniloader(ent) then
 			table.insert(out, ent)
 		end
 	end
