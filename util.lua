@@ -1,5 +1,7 @@
 local util = {}
 
+-- Position adjustments
+
 function util.moveposition(position, offset)
 	return {x=position.x + offset.x, y=position.y + offset.y}
 end
@@ -29,6 +31,28 @@ function util.move_box(box, offset)
 	}
 end
 
+-- Direction adjustments
+
+-- returns north if direction is north/south, east if east/west
+function util.axis(direction)
+	if direction >= 4 then
+		return direction - 4
+	end
+	return direction
+end
+
+function util.is_ns(direction)
+	return direction == 0 or direction == 4
+end
+
+function util.is_ew(direction)
+	return direction == 2 or direction == 6
+end
+
+function util.are_parallel(dir1, dir2)
+	return util.axis(dir1) == util.axis(dir2)
+end
+
 function util.opposite_direction(direction)
 	if direction >= 4 then
 		return direction - 4
@@ -42,6 +66,41 @@ function util.orthogonal_direction(direction)
 	end
 	return direction + 2
 end
+
+-- underground-belt utilities
+
+-- underground_facing returns underground_dir, belt_dir
+function util.underground_facing(ug_belt)
+	if ug_belt.belt_to_ground_type == "output" then
+		return util.opposite_direction(ug_belt.direction), ug_belt.direction
+	end
+	return ug_belt.direction, util.opposite_direction(ug_belt.direction)
+end
+
+-- belt_dir returns the "back" or hood side of the underground belt
+function util.underground_side(ug_belt)
+	if ug_belt.belt_to_ground_type == "output" then
+		return util.opposite_direction(ug_belt.direction)
+	end
+	return ug_belt.direction
+end
+
+-- belt_dir returns the "front" side of the underground belt
+function util.belt_side(ug_belt)
+	if ug_belt.belt_to_ground_type == "input" then
+		return util.opposite_direction(ug_belt.direction)
+	end
+	return ug_belt.direction
+end
+
+function util.opposite_type(type)
+	if type == "output" then
+		return "input"
+	end
+	return "output"
+end
+
+-- miniloader utilities
 
 function util.is_miniloader(entity)
 	return string.find(entity.name, "miniloader$") ~= nil
@@ -84,12 +143,15 @@ function util.update_miniloader(entity, direction, type)
 		local name = entity.name
 		local position = entity.position
 		local force = entity.force
+
+		-- temporarily remove items on the belt so they don't spill on the ground
 		local from_transport_lines = {}
 		for i=1, 2 do
 			local tl = entity.get_transport_line(i)
 			from_transport_lines[i] = tl.get_contents()
 			tl.clear()
 		end
+
 		entity.destroy()
 		entity = surface.create_entity{
 			name = name,
@@ -98,6 +160,8 @@ function util.update_miniloader(entity, direction, type)
 			type = type,
 			force = force,
 		}
+
+		-- put items back on the belt now that we're in the proper orientation
 		for i=1, 2 do
 			local tl = entity.get_transport_line(i)
 			for name, count in pairs(from_transport_lines[i]) do
