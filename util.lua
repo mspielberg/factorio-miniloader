@@ -31,15 +31,7 @@ function util.move_box(box, offset)
 	}
 end
 
--- Direction adjustments
-
--- returns north if direction is north/south, east if east/west
-function util.axis(direction)
-	if direction >= 4 then
-		return direction - 4
-	end
-	return direction
-end
+-- Direction utilities
 
 function util.is_ns(direction)
 	return direction == 0 or direction == 4
@@ -49,10 +41,6 @@ function util.is_ew(direction)
 	return direction == 2 or direction == 6
 end
 
-function util.are_parallel(dir1, dir2)
-	return util.axis(dir1) == util.axis(dir2)
-end
-
 function util.opposite_direction(direction)
 	if direction >= 4 then
 		return direction - 4
@@ -60,24 +48,9 @@ function util.opposite_direction(direction)
 	return direction + 4
 end
 
-function util.orthogonal_direction(direction)
-	if direction == defines.direction.west then
-		return defines.direction.north
-	end
-	return direction + 2
-end
-
 -- underground-belt utilities
 
--- underground_facing returns underground_dir, belt_dir
-function util.underground_facing(ug_belt)
-	if ug_belt.belt_to_ground_type == "output" then
-		return util.opposite_direction(ug_belt.direction), ug_belt.direction
-	end
-	return ug_belt.direction, util.opposite_direction(ug_belt.direction)
-end
-
--- belt_dir returns the "back" or hood side of the underground belt
+-- underground_side returns the "back" or hood side of the underground belt
 function util.underground_side(ug_belt)
 	if ug_belt.belt_to_ground_type == "output" then
 		return util.opposite_direction(ug_belt.direction)
@@ -85,19 +58,12 @@ function util.underground_side(ug_belt)
 	return ug_belt.direction
 end
 
--- belt_dir returns the "front" side of the underground belt
+-- belt_side returns the "front" side of the underground belt
 function util.belt_side(ug_belt)
 	if ug_belt.belt_to_ground_type == "input" then
 		return util.opposite_direction(ug_belt.direction)
 	end
 	return ug_belt.direction
-end
-
-function util.opposite_type(type)
-	if type == "output" then
-		return "input"
-	end
-	return "output"
 end
 
 -- miniloader utilities
@@ -127,9 +93,6 @@ function util.drop_positions(entity)
 end
 
 function util.get_loader_inserters(entity)
-	if entity == nil then
-		error("got nil entity")
-	end
 	return entity.surface.find_entities_filtered{
 		position = entity.position,
 		name = entity.name .. "-inserter"
