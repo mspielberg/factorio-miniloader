@@ -1,14 +1,8 @@
 #!/bin/sh
 
 ZIP='7z'
-dir="$1"
-
-parse_info() {
-	v=`grep \"$1\" "$dir"/info.json | head -1`
-	v="${v%%\",}"
-	v="${v##*\"}"
-	echo $v
-}
+cd "$(dirname "$0")"
+zipfile="$(./canon_name.sh).zip"
 
 include=`
 cat <<- END
@@ -19,19 +13,13 @@ cat <<- END
 END
 `
 
-dirs=`ls -d $dir/*/`
+cd "$dir"
+dirs=`ls -d */`
 
-name=`parse_info name`
-version=`parse_info version`
-zipfile="${name}_${version}.zip"
-
-echo $include
-for i in $include
+echo "Zipping to $zipfile :"
+for f in $include $dirs
 do
-	"$ZIP" a -r "$zipfile" "$dir/$i"
+	echo $f
 done
-
-for i in $dirs
-do
-	"$ZIP" a -r "$zipfile" "$i"
-done
+echo
+"$ZIP" a -r "$zipfile" $include $dirs
