@@ -1,25 +1,31 @@
 #!/bin/sh
 
 ZIP='7z'
-cd "$(dirname "$0")"
-zipfile="$(./canon_name.sh).zip"
 
-include=`
+moddir="$(realpath $(dirname "$0"))"
+tmpdir=$(mktemp -d)
+canon_name="$("$moddir/canon_name.sh")"
+zipfile="$PWD/$canon_name.zip"
+ln -nsf "$moddir" "$tmpdir/$canon_name"
+cd "$tmpdir"
+
+include=$(
 cat <<- END
-	LICENSE
-	info.json
-	*.lua
-	*.md
+	$canon_name/LICENSE
+	$canon_name/info.json
+	$canon_name/*.lua
+	$canon_name/*.md
 END
-`
+)
 
-cd "$dir"
-dirs=`ls -d */`
 
-echo "Zipping to $zipfile :"
+dirs=$(ls -d "$canon_name"/*/ | grep -vF "$canon_name/$canon_name")
+
+echo "Zipping to $zipfile:"
 for f in $include $dirs
 do
 	echo $f
 done
 echo
-"$ZIP" a -r "$zipfile" $include $dirs
+
+"$ZIP" a "$zipfile" $include $dirs
