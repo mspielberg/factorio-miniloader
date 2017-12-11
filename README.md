@@ -78,6 +78,8 @@ and inserter performance made by Wube in the Factorio core.
 * 1.1.2 (2017-12-06):
   * Fix critical crash bug when rotating miniloaders.
 * 1.1.3 (2017-12-06):
-    * Fix basic yellow miniloaders.  Oops.
-    * Fix a case where items could be spilled onto adjacent tiles when snapping
-      a miniloader to a belt.
+  * Fix basic yellow miniloaders.  Oops.
+  * Fix a case where items could be spilled onto adjacent tiles when snapping a miniloader to a belt.
+* 1.1.4 (2017-12-11):
+  * Remove orphan inserters left behind by yellow miniloaders if removed while 1.1.0-1.1.2 was installed.
+  * Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
