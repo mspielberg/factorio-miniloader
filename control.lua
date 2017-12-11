@@ -1,3 +1,4 @@
+local configchange = require("configchange")
 local util = require("util")
 
 local use_snapping = settings.global["miniloader-snapping"].value
@@ -47,6 +48,13 @@ local function on_init()
 	game.forces["player"].set_friend(force, true)
 	-- allow players to see power icons on miniloader inserters
 	force.set_friend(game.forces["player"], true)
+end
+
+local function on_configuration_changed(configuration_changed_data)
+	local mod_change = configuration_changed_data.mod_changes["miniloader"]
+	if mod_change and mod_change.old_version and mod_change.old_version ~= mod_change.new_version then
+		configchange.on_mod_version_changed(mod_change.old_version)
+	end
 end
 
 local function on_built(event)
@@ -99,6 +107,7 @@ local function on_mined(event)
 end
 
 script.on_init(on_init)
+script.on_configuration_changed(on_configuration_changed)
 script.on_event(defines.events.on_built_entity, on_built)
 script.on_event(defines.events.on_robot_built_entity, on_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
