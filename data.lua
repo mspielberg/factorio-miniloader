@@ -104,7 +104,8 @@ local function create_inserter(prefix)
 		localised_name = {"entity-name." .. loader_name},
 		-- this icon appears in the power usage UI
 		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
-		flags = {"placeable-off-grid"},
+		icon_size = 32,
+		flags = {"placeable-off-grid", "hide-alt-info"},
 		max_health = base_entity.max_health,
 		allow_custom_vectors = true,
 		energy_per_movement = 2000,
@@ -119,6 +120,7 @@ local function create_inserter(prefix)
 		selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
 		pickup_position = {0, 0},
 		insert_position = {0, 1.0},
+		draw_held_item = false,
 		platform_picture = { sheet = empty_sheet },
 		hand_base_picture = empty_sheet,
 		hand_open_picture = empty_sheet,

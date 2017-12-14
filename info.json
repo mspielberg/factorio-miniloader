@@ -1,10 +1,10 @@
 {
 	"name": "miniloader",
-	"version": "1.1.5",
-	"factorio_version": "0.15",
+	"version": "1.2.0",
+	"factorio_version": "0.16",
 	"title": "Miniloader",
 	"author": "Therax",
 	"homepage": "https://forums.factorio.com/viewtopic.php?f=93&t=54343",
 	"description": "UPS-friendly 1x1 train-compatible loaders with support for Bob's faster belts.",
-	"dependencies": ["? boblogistics >= 0.15.0"]
+	"dependencies": ["? boblogistics >= 0.16.0"]
 }
