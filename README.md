@@ -49,7 +49,7 @@ and inserter performance made by Wube in the Factorio core.
 * Miniloaders cannot be fast-replaced due to the invisible inserters blocking
   placement of the new entity.
 * Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
-  * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
+    * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
 
 
 ## Acknowledgements
