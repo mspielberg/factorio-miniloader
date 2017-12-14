@@ -63,18 +63,18 @@ and inserter performance made by Wube in the Factorio core.
 ## Version History
 
 * 1.0.0 (2017-12-01):
-  * Initial release.
+    * Initial release.
 * 1.1.0 (2017-12-03):
-  * Add graphics and loader snapping.
+    * Add graphics and loader snapping.
 * 1.1.1 (2017-12-05):
-  * Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
+    * Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
 * 1.1.2 (2017-12-06):
-  * Fix critical crash bug when rotating miniloaders.
+    * Fix critical crash bug when rotating miniloaders.
 * 1.1.3 (2017-12-06):
-  * Fix basic yellow miniloaders.  Oops.
-  * Fix a case where items could be spilled onto adjacent tiles when snapping a miniloader to a belt.
+    * Fix basic yellow miniloaders.  Oops.
+    * Fix a case where items could be spilled onto adjacent tiles when snapping a miniloader to a belt.
 * 1.1.4 (2017-12-11):
-  * Remove orphan inserters left behind by yellow miniloaders if removed while 1.1.0-1.1.2 was installed.
-  * Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
+    * Remove orphan inserters left behind by yellow miniloaders if removed while 1.1.0-1.1.2 was installed.
+    * Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
 * 1.1.5 (2017-12-14):
-  * Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
+    * Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
