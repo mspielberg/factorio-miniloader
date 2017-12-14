@@ -40,10 +40,6 @@ and inserter performance made by Wube in the Factorio core.
 
 ## Known Issues
 
-* Items currently held in the hand of the invisible inserters can still be seen,
-  leading to odd graphical artifacts.  A mod
-  [API change in 0.16](https://forums.factorio.com/viewtopic.php?f=65&t=54345)
-  will fix this.
 * The power usage UI counts each miniloader multiple times, since it shows the
   power used by the invisible inserters, not the miniloaders themselves.
 * Miniloaders cannot be fast-replaced due to the invisible inserters blocking
@@ -78,3 +74,5 @@ and inserter performance made by Wube in the Factorio core.
     * Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
 * 1.1.5 (2017-12-14):
     * Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
+* 1.2.0 (2017-12-14):
+    * Update to Factorio 0.16.
