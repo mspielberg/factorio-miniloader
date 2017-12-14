@@ -34,21 +34,9 @@ local use_snapping = settings.global["miniloader-snapping"].value
 	P: pickup position
 ]]
 
--- Constants
-
--- Utility Functions
-
 -- Event Handlers
 
 local snapping = require("snapping")
-
-local function on_init()
-	local force = game.create_force("miniloader")
-	-- allow miniloader force to access chests belonging to players
-	game.forces["player"].set_friend(force, true)
-	-- allow players to see power icons on miniloader inserters
-	force.set_friend(game.forces["player"], true)
-end
 
 local function on_configuration_changed(configuration_changed_data)
 	local mod_change = configuration_changed_data.mod_changes["miniloader"]
@@ -65,9 +53,10 @@ local function on_built(event)
 			local inserter = surface.create_entity{
 				name = entity.name .. "-inserter",
 				position = entity.position,
-				force = "miniloader",
+				force = entity.force,
 			}
 			inserter.destructible = false
+			inserter.inserter_stack_size_override = 1
 		end
 		util.update_inserters(entity)
 
@@ -106,8 +95,12 @@ local function on_mined(event)
 	end
 end
 
-script.on_init(on_init)
+-- lifecycle events
+
 script.on_configuration_changed(on_configuration_changed)
+
+-- entity events
+
 script.on_event(defines.events.on_built_entity, on_built)
 script.on_event(defines.events.on_robot_built_entity, on_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
