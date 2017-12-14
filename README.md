@@ -50,14 +50,7 @@ and inserter performance made by Wube in the Factorio core.
   placement of the new entity.
 * Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
   * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
-  * Yellow icons when there is no power connection are not displayed.
-    You can fix with the console command:
-    `game.forces.player.set_friend("miniloader", true); game.forces.miniloader.set_friend("player",true)`
-  * Throughput when operating belt-to-belt is halved because Creative Mode
-    gives miniloader inserters unwanted stack bonuses.  You can fix this by
-    going into `Cheats` &rarr; `Team Cheats` &rarr; `miniloader` and setting
-    "Inserter capacity bonus" to 0.
-  * You may need to apply these fixes whenever you reload a save.
+
 
 ## Acknowledgements
 
@@ -83,3 +76,5 @@ and inserter performance made by Wube in the Factorio core.
 * 1.1.4 (2017-12-11):
   * Remove orphan inserters left behind by yellow miniloaders if removed while 1.1.0-1.1.2 was installed.
   * Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
+* 1.1.5 (2017-12-14):
+  * Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
