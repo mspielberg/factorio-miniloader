@@ -44,6 +44,7 @@ local function create_item(prefix)
 	local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
 	item.name = name
 	item.icon = "__miniloader__/graphics/item/" .. name ..".png"
+	item.icon_size = 32
 	item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
 	item.place_result = name
 
@@ -104,6 +105,7 @@ local function create_inserter(prefix)
 		localised_name = {"entity-name." .. loader_name},
 		-- this icon appears in the power usage UI
 		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
+		icon_size = 32,
 		flags = {"placeable-off-grid"},
 		max_health = base_entity.max_health,
 		allow_custom_vectors = true,
@@ -141,7 +143,9 @@ create_miniloader("fast-", {"miniloader"})
 create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
-if data.raw.technology["bob-logistics-5"] then
+if data.raw.technology["bob-logistics-4"] then
 	create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
+end
+if data.raw.technology["bob-logistics-5"] then
 	create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
 end
