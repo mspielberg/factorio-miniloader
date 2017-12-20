@@ -1,5 +1,38 @@
 require "util"
 
+local ingredients = {
+	["miniloader"] = {
+		{"underground-belt", 2},
+		{"fast-inserter", 6},
+		{"steel-plate", 8},
+		{"engine-unit", 2},
+	},
+	["fast-miniloader"] = {
+		{"fast-underground-belt", 2},
+		{"stack-inserter", 4},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 2},
+	},
+	["express-miniloader"] = {
+		{"express-underground-belt", 2},
+		{"stack-inserter", 6},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 2},
+	},
+	["green-miniloader"] = {
+		{"green-underground-belt", 2},
+		{"express-stack-inserter", 4},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 2},
+	},
+	["purple-miniloader"] = {
+		{"purple-underground-belt", 2},
+		{"express-stack-inserter", 6},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 2},
+	},
+}
+
 local empty_sheet = {
 	filename = "__core__/graphics/empty.png",
 	priority = "very-low",
@@ -58,12 +91,7 @@ local function create_recipe(prefix)
 		name = name,
 		enabled = false,
 		energy_required = 1,
-		ingredients =
-		{
-			{prefix .. "underground-belt", 2},
-			{"steel-plate", 8},
-			{"stack-inserter", 2},
-		},
+		ingredients = ingredients[name],
 		result = name
 	}
 
@@ -138,12 +166,14 @@ local function create_miniloader(prefix, tech_prereqs)
 	create_technology(prefix, tech_prereqs)
 end
 
-create_miniloader("", {"stack-inserter"})
-create_miniloader("fast-", {"miniloader"})
+create_miniloader("", {"logistics-2", "engine"})
+create_miniloader("fast-", {"miniloader", "stack-inserter"})
 create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
-if data.raw.technology["bob-logistics-5"] then
+if data.raw.technology["bob-logistics-4"] then
 	create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
-	create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
+	if data.raw.technology["bob-logistics-5"] then
+		create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
+	end
 end

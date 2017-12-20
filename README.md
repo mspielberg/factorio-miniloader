@@ -76,3 +76,6 @@ and inserter performance made by Wube in the Factorio core.
     * Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
 * 1.2.0 (2017-12-14):
     * Update to Factorio 0.16.
+* 1.3.0 (2017-12-18):
+    * Rebalance ingredient costs.
+    * Make yellow miniloader accessible before oil.
