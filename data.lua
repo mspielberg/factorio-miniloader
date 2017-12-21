@@ -1,35 +1,62 @@
 require "util"
 
 local ingredients = {
-	["miniloader"] = {
+	-- 52 I
+	["bulk-miniloader"] = {
 		{"underground-belt", 2},
-		{"fast-inserter", 6},
-		{"steel-plate", 8},
+		{"iron-plate", 16},
 		{"engine-unit", 2},
 	},
+	-- 105 I, 27 C
+	["miniloader"] = {
+		{"underground-belt", 2},
+		{"steel-plate", 8},
+		{"fast-inserter", 6},
+	},
+	-- 174 I
+	["fast-bulk-miniloader"] = {
+		{"fast-underground-belt", 2},
+		{"steel-plate", 8},
+		{"engine-unit", 4},
+	},
+	-- 358 I, 128 C, 89 O
 	["fast-miniloader"] = {
 		{"fast-underground-belt", 2},
-		{"stack-inserter", 4},
 		{"steel-plate", 8},
-		{"electric-engine-unit", 2},
+		{"stack-inserter", 4},
 	},
+	-- 342 I, 12 C, 333 O
+	["express-bulk-miniloader"] = {
+		{"express-underground-belt", 2},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 4},
+	},
+	-- 628 I, 384 C, 174 O
 	["express-miniloader"] = {
 		{"express-underground-belt", 2},
-		{"stack-inserter", 6},
 		{"steel-plate", 8},
-		{"electric-engine-unit", 2},
+		{"stack-inserter", 6},
+	},
+
+	["green-bulk-miniloader"] = {
+		{"green-underground-belt", 2},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 4},
 	},
 	["green-miniloader"] = {
 		{"green-underground-belt", 2},
-		{"express-stack-inserter", 4},
 		{"steel-plate", 8},
-		{"electric-engine-unit", 2},
+		{"express-stack-inserter", 4},
+	},
+	["purple-bulk-miniloader"] = {
+		{"green-underground-belt", 2},
+		{"steel-plate", 8},
+		{"electric-engine-unit", 4},
 	},
 	["purple-miniloader"] = {
 		{"purple-underground-belt", 2},
-		{"express-stack-inserter", 6},
 		{"steel-plate", 8},
-		{"electric-engine-unit", 2},
+		{"express-stack-inserter", 6},
 	},
 }
 
