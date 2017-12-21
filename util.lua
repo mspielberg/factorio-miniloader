@@ -74,21 +74,21 @@ end
 
 function util.pickup_position(entity)
 	if entity.belt_to_ground_type == "output" then
-		return util.moveposition(entity.position, util.offset(util.opposite_direction(entity.direction), 0.75, 0))
+		return util.moveposition(entity.position, util.offset(entity.direction, -0.75, 0))
 	end
 	return util.moveposition(entity.position, util.offset(entity.direction, 0.25, 0))
 end
 
 function util.drop_positions(entity)
 	if entity.belt_to_ground_type == "output" then
-		local chest_dir = util.opposite_direction(entity.direction)
-		local p1 = util.moveposition(entity.position, util.offset(chest_dir, -0.25, 0.25))
-		local p2 = util.moveposition(p1, util.offset(chest_dir, 0, -0.5))
+		local dir = entity.direction
+		local p1 = util.moveposition(entity.position, util.offset(dir, 0.25, -0.25))
+		local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
 		return {p1, p2}
 	end
-	local chest_dir = entity.direction
-	local p1 = util.moveposition(entity.position, util.offset(chest_dir, 0.75, 0.25))
-	local p2 = util.moveposition(p1, util.offset(chest_dir, 0, -0.5))
+	local dir = entity.direction
+	local p1 = util.moveposition(entity.position, util.offset(dir, 0.75, -0.25))
+	local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
 	return {p1, p2}
 end
 
