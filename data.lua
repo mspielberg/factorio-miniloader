@@ -65,6 +65,7 @@ local empty_sheet = {
 	priority = "very-low",
 	width = 0,
 	height = 0,
+	frame_count = 1,
 }
 
 local function create_entity(prefix)
@@ -75,6 +76,7 @@ local function create_entity(prefix)
 	entity.minable.result = name
 	entity.max_distance = 0
 	entity.fast_replaceable_group = "miniloader"
+	entity.selection_box = {{0, 0}, {0, 0}}
 	entity.structure = {
 		direction_in = {
 			sheet = {
@@ -94,7 +96,6 @@ local function create_entity(prefix)
 			}
 		},
 	}
-
 	data:extend{entity}
 end
 
@@ -169,8 +170,8 @@ local function create_inserter(prefix)
 			type = "electric",
 			usage_priority = "secondary-input",
 		},
-		extension_speed = 20.0,
-		rotation_speed = 20.0,
+		extension_speed = 1.0,
+		rotation_speed = 1.0,
 		collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 		selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
 		pickup_position = {0, 0},
@@ -180,13 +181,57 @@ local function create_inserter(prefix)
 		hand_base_picture = empty_sheet,
 		hand_open_picture = empty_sheet,
 		hand_closed_picture = empty_sheet,
+		circuit_wire_max_distance = default_circuit_wire_max_distance,
 	}
 
 	data:extend{loader_inserter}
 end
 
+local connector_definitions = circuit_connector_definitions.create(
+	universal_connector_template,
+	{
+		{ variation = 24, main_offset = util.by_pixel(-5, -8.5), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
+		{ variation = 18, main_offset = util.by_pixel(5, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 24, main_offset = util.by_pixel(-4.5, -8.5), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
+		{ variation = 18, main_offset = util.by_pixel(5, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+	}
+)
+
+local function create_circuit_proxy(prefix)
+	local name = prefix .. "miniloader-circuit-proxy"
+	local loader_name = prefix .. "miniloader"
+	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
+
+	local proxy = {
+		type = "pump",
+		name = name,
+		localised_name = {"entity-name."..loader_name},
+		mineable = { mining_time = 1, result = loader_name },
+		pumping_speed = 0,
+		animations = empty_sheet,
+		energy_source = {
+			type = "electric",
+			usage_priority = "secondary-input",
+			drain = "0kW",
+		},
+		energy_usage = (base_entity.speed / 0.03125 * 45) .. "kW",
+		fluid_box = {
+			pipe_connections = {},
+		},
+		circuit_wire_connection_points = connector_definitions.points,
+		circuit_connector_sprites = connector_definitions.sprites,
+		circuit_wire_max_distance = default_circuit_wire_max_distance,
+	}
+
+	for _,k in ipairs{"max_health", "collision_box", "selection_box", "resistances", "vehicle_impact_sound"} do
+		proxy[k] = base_entity[k]
+	end
+	data:extend{proxy}
+end
+
 local function create_miniloader(prefix, tech_prereqs)
 	create_entity(prefix)
+	create_circuit_proxy(prefix)
 	create_inserter(prefix)
 	create_item(prefix)
 	create_recipe(prefix)

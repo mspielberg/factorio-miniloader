@@ -1,6 +1,6 @@
 local snapping = {}
 
-local util = require("util")
+local util = require("lualib.util")
 
 local snapTypes = {
 	["loader"] = true,
@@ -104,19 +104,12 @@ local function find_loader_by_entity(entity)
 		{position.x + box.left_top.x - 1, position.y + box.left_top.y - 1},
 		{position.x + box.right_bottom.x + 1, position.y + box.right_bottom.y + 1}
 	}
-	local entities = entity.surface.find_entities_filtered{
+	return util.find_miniloaders{
+		surface = entity.surface,
 		type="underground-belt",
 		area=area,
 		force=entity.force,
 	}
-	out = {}
-	for i = 1, #entities do 
-		local ent = entities[i]
-		if  util.is_miniloader(ent) and ent ~= entity then
-			out[#out+1] = ent
-		end
-	end
-	return out
 end
 
 -- returns the miniloader connected to the belt of `entity`, if it exists
@@ -163,10 +156,12 @@ function snapping.check_for_loaders(event)
 		return
 	end
 
+	game.print(serpent.line(entity))
 	local loaders = find_loader_by_entity(entity)
 	for _, loader in ipairs(loaders) do
 		snap_loader_to_target(loader, entity)
 	end
+	game.print(serpent.line(entity))
 
 	-- also scan other exit of underground belt
 	if entity.type == "underground-belt" then
