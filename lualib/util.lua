@@ -68,8 +68,25 @@ end
 
 -- miniloader utilities
 
+function util.find_miniloaders(params)
+	params.type = "underground-belt"
+	local entities = params.surface.find_entities_filtered(params)
+	out = {}
+	for i = 1, #entities do 
+		local ent = entities[i]
+		if  util.is_miniloader(ent) and ent ~= entity then
+			out[#out+1] = ent
+		end
+	end
+	return out
+end
+
 function util.is_miniloader(entity)
 	return string.find(entity.name, "miniloader$") ~= nil
+end
+
+function util.is_circuit_proxy(entity)
+	return string.find(entity.name, "miniloader%-circuit%-proxy$") ~= nil
 end
 
 function util.pickup_position(entity)
@@ -95,7 +112,7 @@ end
 function util.get_loader_inserters(entity)
 	return entity.surface.find_entities_filtered{
 		position = entity.position,
-		name = entity.name .. "-inserter"
+		type = "inserter",
 	}
 end
 

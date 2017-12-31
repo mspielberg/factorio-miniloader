@@ -1,5 +1,7 @@
+local circuit = require("circuit")
 local configchange = require("configchange")
-local util = require("util")
+local snapping = require("snapping")
+local util = require("lualib.util")
 
 local use_snapping = settings.global["miniloader-snapping"].value
 
@@ -36,8 +38,6 @@ local use_snapping = settings.global["miniloader-snapping"].value
 
 -- Event Handlers
 
-local snapping = require("snapping")
-
 local function on_configuration_changed(configuration_changed_data)
 	local mod_change = configuration_changed_data.mod_changes["miniloader"]
 	if mod_change and mod_change.old_version and mod_change.old_version ~= mod_change.new_version then
@@ -49,6 +49,16 @@ local function on_built(event)
 	local entity = event.created_entity
 	if util.is_miniloader(entity) then
 		local surface = entity.surface
+		entity.destructible = false
+
+		local proxy = surface.create_entity{
+			name = entity.name .. "-circuit-proxy",
+			position = entity.position,
+			force = entity.force,
+			direction = entity.direction,
+		}
+		circuit.register_proxy(proxy)
+
 		for i = 1, util.num_inserters(entity) do
 			local inserter = surface.create_entity{
 				name = entity.name .. "-inserter",
@@ -57,6 +67,13 @@ local function on_built(event)
 			}
 			inserter.destructible = false
 			inserter.inserter_stack_size_override = 1
+
+			for wire_type=2,3 do
+				proxy.connect_neighbour{
+					wire = wire_type,
+					target_entity = inserter,
+				}
+			end
 		end
 		util.update_inserters(entity)
 
@@ -74,14 +91,21 @@ local function on_rotated(event)
 	if use_snapping then
 		snapping.check_for_loaders(event)
 	end
-	if util.is_miniloader(entity) then
-		util.update_inserters(entity)
+	if util.is_circuit_proxy(entity) then
+		local miniloader = util.find_miniloaders{
+			surface = entity.surface,
+			position = entity.position,
+			force = entity.force
+		}[1]
+		miniloader.rotate{ by_player = game.players[event.player_index] }
+		util.update_inserters(miniloader)
+		entity.direction = miniloader.direction
 	end
 end
 
 local function on_mined(event)
 	local entity = event.entity
-	if not util.is_miniloader(entity) then
+	if not util.is_circuit_proxy(entity) then
 		return
 	end
 
@@ -93,6 +117,17 @@ local function on_mined(event)
 		end
 		inserters[i].destroy()
 	end
+
+	local loader = entity.surface.find_entities_filtered{ type = "underground-belt" }[1]
+	if event.buffer then
+		for i=1,2 do
+			local tl = loader.get_transport_line(i)
+			for j=1,#tl do
+				event.buffer.insert(tl[j])
+			end
+		end
+	end
+	loader.destroy()
 end
 
 -- lifecycle events
@@ -113,3 +148,5 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 		use_snapping = settings.global["miniloader-snapping"].value
 	end
 end)
+
+script.on_event(defines.events.on_tick, circuit.on_tick)
