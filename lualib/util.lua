@@ -31,6 +31,10 @@ function util.move_box(box, offset)
 	}
 end
 
+function util.entity_key(entity)
+	return entity.surface.name.."@"..entity.position.x..","..entity.position.y
+end
+
 -- Direction utilities
 
 function util.is_ns(direction)
@@ -72,7 +76,7 @@ function util.find_miniloaders(params)
 	params.type = "underground-belt"
 	local entities = params.surface.find_entities_filtered(params)
 	out = {}
-	for i = 1, #entities do 
+	for i=1,#entities do
 		local ent = entities[i]
 		if  util.is_miniloader(ent) and ent ~= entity then
 			out[#out+1] = ent
@@ -85,8 +89,8 @@ function util.is_miniloader(entity)
 	return string.find(entity.name, "miniloader$") ~= nil
 end
 
-function util.is_circuit_proxy(entity)
-	return string.find(entity.name, "miniloader%-circuit%-proxy$") ~= nil
+function util.is_miniloader_inserter(entity)
+	return string.find(entity.name, "miniloader%-inserter$") ~= nil
 end
 
 function util.pickup_position(entity)
@@ -118,39 +122,9 @@ end
 
 function util.update_miniloader(entity, direction, type)
 	if entity.belt_to_ground_type ~= type then
-		-- need to destroy and recreate since belt_to_ground_type is read-only
-		local surface = entity.surface
-		local name = entity.name
-		local position = entity.position
-		local force = entity.force
-
-		-- temporarily remove items on the belt so they don't spill on the ground
-		local from_transport_lines = {}
-		for i=1, 2 do
-			local tl = entity.get_transport_line(i)
-			from_transport_lines[i] = tl.get_contents()
-			tl.clear()
-		end
-
-		entity.destroy()
-		entity = surface.create_entity{
-			name = name,
-			position = position,
-			direction = direction,
-			type = type,
-			force = force,
-		}
-
-		-- put items back on the belt now that we're in the proper orientation
-		for i=1, 2 do
-			local tl = entity.get_transport_line(i)
-			for name, count in pairs(from_transport_lines[i]) do
-				tl.insert_at_back({name=name, count=count})
-			end
-		end
-	else
-		entity.direction = direction
+		entity.rotate()
 	end
+	entity.direction = direction
 	util.update_inserters(entity)
 end
 
@@ -160,12 +134,14 @@ function util.update_inserters(entity)
 	local drop = util.drop_positions(entity)
 
 	local n = #inserters
-	for i = 1, n / 2 do
+	for i=1,n / 2 do
+		inserters[i].direction = entity.direction
 		inserters[i].pickup_position = pickup
 		inserters[i].drop_position = drop[1]
 		inserters[i].direction = inserters[i].direction
 	end
-	for i = n / 2 + 1, n do
+	for i=n / 2 + 1,n do
+		inserters[i].direction = entity.direction
 		inserters[i].pickup_position = pickup
 		inserters[i].drop_position = drop[2]
 		inserters[i].direction = inserters[i].direction

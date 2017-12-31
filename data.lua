@@ -73,7 +73,7 @@ local function create_entity(prefix)
 
 	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
 	entity.name = name
-	entity.minable.result = name
+	entity.minable = nil
 	entity.max_distance = 0
 	entity.fast_replaceable_group = "miniloader"
 	entity.selection_box = {{0, 0}, {0, 0}}
@@ -120,7 +120,7 @@ local function create_recipe(prefix)
 		enabled = false,
 		energy_required = 1,
 		ingredients = ingredients[name],
-		result = name
+		result = name,
 	}
 
 	data:extend{recipe}
@@ -139,7 +139,7 @@ local function create_technology(prefix, tech_prereqs)
 		{
 			{
 				type = "unlock-recipe",
-				recipe = name
+				recipe = name,
 			}
 		},
 		prerequisites = tech_prereqs,
@@ -148,43 +148,6 @@ local function create_technology(prefix, tech_prereqs)
 	}
 
 	data:extend{technology}
-end
-
-local function create_inserter(prefix)
-	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
-	local loader_name = prefix .. "miniloader"
-
-	local loader_inserter = {
-		type = "inserter",
-		name = loader_name .. "-inserter",
-		localised_name = {"entity-name." .. loader_name},
-		-- this icon appears in the power usage UI
-		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
-		icon_size = 32,
-		flags = {"placeable-off-grid", "hide-alt-info"},
-		max_health = base_entity.max_health,
-		allow_custom_vectors = true,
-		energy_per_movement = 2000,
-		energy_per_rotation = 2000,
-		energy_source = {
-			type = "electric",
-			usage_priority = "secondary-input",
-		},
-		extension_speed = 1.0,
-		rotation_speed = 1.0,
-		collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
-		selection_box = {{-0.0, -0.0}, {0.0, 0.0}},
-		pickup_position = {0, 0},
-		insert_position = {0, 1.0},
-		draw_held_item = false,
-		platform_picture = { sheet = empty_sheet },
-		hand_base_picture = empty_sheet,
-		hand_open_picture = empty_sheet,
-		hand_closed_picture = empty_sheet,
-		circuit_wire_max_distance = default_circuit_wire_max_distance,
-	}
-
-	data:extend{loader_inserter}
 end
 
 local connector_definitions = circuit_connector_definitions.create(
@@ -197,41 +160,47 @@ local connector_definitions = circuit_connector_definitions.create(
 	}
 )
 
-local function create_circuit_proxy(prefix)
-	local name = prefix .. "miniloader-circuit-proxy"
-	local loader_name = prefix .. "miniloader"
+local function create_inserter(prefix)
 	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
+	local loader_name = prefix .. "miniloader"
 
-	local proxy = {
-		type = "pump",
-		name = name,
-		localised_name = {"entity-name."..loader_name},
-		mineable = { mining_time = 1, result = loader_name },
-		pumping_speed = 0,
-		animations = empty_sheet,
+	local loader_inserter = {
+		type = "inserter",
+		name = loader_name .. "-inserter",
+		-- this name and icon appear in the power usage UI
+		localised_name = {"entity-name." .. loader_name},
+		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
+		icon_size = 32,
+		minable = { mining_time = 1, result = loader_name },
+		allow_custom_vectors = true,
+		energy_per_movement = 2000,
+		energy_per_rotation = 2000,
 		energy_source = {
 			type = "electric",
 			usage_priority = "secondary-input",
-			drain = "0kW",
 		},
-		energy_usage = (base_entity.speed / 0.03125 * 45) .. "kW",
-		fluid_box = {
-			pipe_connections = {},
-		},
+		extension_speed = 1.0,
+		rotation_speed = 1.0,
+		pickup_position = {0, 0},
+		insert_position = {0, 1.0},
+		draw_held_item = false,
+		platform_picture = { sheet = empty_sheet },
+		hand_base_picture = empty_sheet,
+		hand_open_picture = empty_sheet,
+		hand_closed_picture = empty_sheet,
 		circuit_wire_connection_points = connector_definitions.points,
 		circuit_connector_sprites = connector_definitions.sprites,
 		circuit_wire_max_distance = default_circuit_wire_max_distance,
 	}
 
 	for _,k in ipairs{"max_health", "collision_box", "selection_box", "resistances", "vehicle_impact_sound"} do
-		proxy[k] = base_entity[k]
+		loader_inserter[k] = base_entity[k]
 	end
-	data:extend{proxy}
+	data:extend{loader_inserter}
 end
 
 local function create_miniloader(prefix, tech_prereqs)
 	create_entity(prefix)
-	create_circuit_proxy(prefix)
 	create_inserter(prefix)
 	create_item(prefix)
 	create_recipe(prefix)

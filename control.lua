@@ -1,5 +1,6 @@
 local circuit = require("circuit")
 local configchange = require("configchange")
+local _ = require("gui")
 local snapping = require("snapping")
 local util = require("lualib.util")
 
@@ -51,14 +52,6 @@ local function on_built(event)
 		local surface = entity.surface
 		entity.destructible = false
 
-		local proxy = surface.create_entity{
-			name = entity.name .. "-circuit-proxy",
-			position = entity.position,
-			force = entity.force,
-			direction = entity.direction,
-		}
-		circuit.register_proxy(proxy)
-
 		for i = 1, util.num_inserters(entity) do
 			local inserter = surface.create_entity{
 				name = entity.name .. "-inserter",
@@ -67,13 +60,6 @@ local function on_built(event)
 			}
 			inserter.destructible = false
 			inserter.inserter_stack_size_override = 1
-
-			for wire_type=2,3 do
-				proxy.connect_neighbour{
-					wire = wire_type,
-					target_entity = inserter,
-				}
-			end
 		end
 		util.update_inserters(entity)
 
@@ -91,7 +77,7 @@ local function on_rotated(event)
 	if use_snapping then
 		snapping.check_for_loaders(event)
 	end
-	if util.is_circuit_proxy(entity) then
+	if util.is_miniloader_inserter(entity) then
 		local miniloader = util.find_miniloaders{
 			surface = entity.surface,
 			position = entity.position,
@@ -99,35 +85,39 @@ local function on_rotated(event)
 		}[1]
 		miniloader.rotate{ by_player = game.players[event.player_index] }
 		util.update_inserters(miniloader)
-		entity.direction = miniloader.direction
 	end
 end
 
 local function on_mined(event)
 	local entity = event.entity
-	if not util.is_circuit_proxy(entity) then
+	if not util.is_miniloader_inserter(entity) then
 		return
 	end
+	log(serpent.line(event.buffer.get_contents()))
 
-	local inserters = util.get_loader_inserters(entity)
-	for i=1, #inserters do
-		-- return items to player / robot if mined
-		if event.buffer then
-			event.buffer.insert(inserters[i].held_stack)
-		end
-		inserters[i].destroy()
-	end
-
-	local loader = entity.surface.find_entities_filtered{ type = "underground-belt" }[1]
+	local loader = entity.surface.find_entities_filtered{
+		position = entity.position,
+		type = "underground-belt",
+	}[1]
 	if event.buffer then
 		for i=1,2 do
 			local tl = loader.get_transport_line(i)
 			for j=1,#tl do
 				event.buffer.insert(tl[j])
 			end
+			tl.clear()
 		end
 	end
 	loader.destroy()
+
+	local inserters = util.get_loader_inserters(entity)
+	for i=1, #inserters do
+		-- return items to player / robot if mined
+		if event.buffer and inserters[i] ~= entity then
+			event.buffer.insert(inserters[i].held_stack)
+		end
+		inserters[i].destroy()
+	end
 end
 
 -- lifecycle events
@@ -148,5 +138,3 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 		use_snapping = settings.global["miniloader-snapping"].value
 	end
 end)
-
-script.on_event(defines.events.on_tick, circuit.on_tick)
