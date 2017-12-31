@@ -156,12 +156,10 @@ function snapping.check_for_loaders(event)
 		return
 	end
 
-	game.print(serpent.line(entity))
 	local loaders = find_loader_by_entity(entity)
 	for _, loader in ipairs(loaders) do
 		snap_loader_to_target(loader, entity)
 	end
-	game.print(serpent.line(entity))
 
 	-- also scan other exit of underground belt
 	if entity.type == "underground-belt" then

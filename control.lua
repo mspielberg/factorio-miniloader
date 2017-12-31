@@ -58,7 +58,6 @@ local function on_built(event)
 				position = entity.position,
 				force = entity.force,
 			}
-			inserter.destructible = false
 			inserter.inserter_stack_size_override = 1
 		end
 		util.update_inserters(entity)
@@ -88,13 +87,20 @@ local function on_rotated(event)
 	end
 end
 
-local function on_mined(event)
+local function on_miniloader_mined(event)
 	local entity = event.entity
-	if not util.is_miniloader_inserter(entity) then
-		return
+	local inserters = util.get_loader_inserters(entity)
+	for i=1,#inserters do
+		-- return items to player / robot if mined
+		if event.buffer and inserters[i] ~= entity then
+			event.buffer.insert(inserters[i].held_stack)
+		end
+		inserters[i].destroy()
 	end
-	log(serpent.line(event.buffer.get_contents()))
+end
 
+local function on_miniloader_inserter_mined(event)
+	local entity = event.entity
 	local loader = entity.surface.find_entities_filtered{
 		position = entity.position,
 		type = "underground-belt",
@@ -111,12 +117,40 @@ local function on_mined(event)
 	loader.destroy()
 
 	local inserters = util.get_loader_inserters(entity)
-	for i=1, #inserters do
+	for i=2,#inserters do
 		-- return items to player / robot if mined
 		if event.buffer and inserters[i] ~= entity then
 			event.buffer.insert(inserters[i].held_stack)
 		end
 		inserters[i].destroy()
+	end
+end
+
+local function on_mined(event)
+	local entity = event.entity
+	if util.is_miniloader(entity) then
+		on_miniloader_mined(event)
+	elseif util.is_miniloader_inserter(entity) then
+		on_miniloader_inserter_mined(event)
+	end
+end
+
+local function on_player_pipette(event)
+	local item_proto = event.item
+	if not util.is_miniloader_inserter(item_proto) then
+		return
+	end
+	local inserter_name = item_proto.name
+	log(inserter_name)
+	local loader_name = string.gsub(item_proto.name, "%-inserter$", "")
+	log(loader_name)
+	local player = game.players[event.player_index]
+	local selected = player.selected
+	local count = math.min(player.get_item_count(loader_name), item_proto.stack_size)
+	log(count)
+	if count > 0 then
+		player.cursor_stack.set_stack{ name = loader_name, count = count }
+		player.remove_item{ name = loader_name, count = count }
 	end
 end
 
@@ -132,6 +166,7 @@ script.on_event(defines.events.on_player_rotated_entity, on_rotated)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
+script.on_event(defines.events.on_player_pipette, on_player_pipette)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 	if event.setting == "miniloader-snapping" then

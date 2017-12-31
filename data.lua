@@ -73,7 +73,7 @@ local function create_entity(prefix)
 
 	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
 	entity.name = name
-	entity.minable = nil
+	entity.minable.result = name
 	entity.max_distance = 0
 	entity.fast_replaceable_group = "miniloader"
 	entity.selection_box = {{0, 0}, {0, 0}}
@@ -163,10 +163,11 @@ local connector_definitions = circuit_connector_definitions.create(
 local function create_inserter(prefix)
 	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
 	local loader_name = prefix .. "miniloader"
+	local name = loader_name .. "-inserter"
 
 	local loader_inserter = {
 		type = "inserter",
-		name = loader_name .. "-inserter",
+		name = name,
 		-- this name and icon appear in the power usage UI
 		localised_name = {"entity-name." .. loader_name},
 		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
@@ -197,6 +198,18 @@ local function create_inserter(prefix)
 		loader_inserter[k] = base_entity[k]
 	end
 	data:extend{loader_inserter}
+
+	-- temporarily given when player uses pipette
+	local item = {
+		type = "item",
+		name = name,
+		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
+		icon_size = 32,
+		flags = {},
+		place_result = name,
+		stack_size = data.raw["item"][base_entity.name].stack_size,
+	}
+	data:extend{item}
 end
 
 local function create_miniloader(prefix, tech_prereqs)
