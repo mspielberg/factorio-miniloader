@@ -39,36 +39,20 @@ add_migration{
 }
 
 add_migration{
-	name = "v1_1_5_miniloader_inserter_stack_size",
-	low = {1,0,0},
-	high = {1,1,5},
-	task = function()
-		for _, surface in pairs(game.surfaces) do
-			for _, inserter in ipairs(surface.find_entities_filtered{type="inserter"}) do
-				if string.match(inserter.name, "-miniloader-inserter$") then
-					inserter.inserter_stack_size_override = 1
-				end
-			end
-		end
-	end,
-}
-
-add_migration{
-	name = "v1_4_0_add_circuit_proxies",
+	name = "v1_4_0_expose_inserters",
 	low = {1,0,0},
 	high = {1,4,0},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
 			for _, entity in ipairs(surface.find_entities_filtered{type="underground-belt"}) do
 				if util.is_miniloader(entity) then
+					local inserters = util.get_loader_inserters(entity)
+					for i=1,#inserters do
+						inserters[i].destructible = true
+						inserters[i].health = entity.health
+						inserters[i].inserter_stack_size_override = 1
+					end
 					entity.destructible = false
-					local proxy = surface.create_entity{
-						name = entity.name .. "-circuit-proxy",
-						position = entity.position,
-						direction = entity.direction,
-						force = entity.force,
-					}
-					proxy.health = entity.health
 				end
 			end
 		end
