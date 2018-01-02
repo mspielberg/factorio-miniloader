@@ -86,7 +86,7 @@ function util.find_miniloaders(params)
 end
 
 function util.is_miniloader(entity)
-	return string.find(entity.name, "miniloader$") ~= nil
+	return string.find(entity.name, "miniloader%-underground%-belt$") ~= nil
 end
 
 function util.is_miniloader_inserter(entity)
@@ -95,20 +95,20 @@ end
 
 function util.pickup_position(entity)
 	if entity.belt_to_ground_type == "output" then
-		return util.moveposition(entity.position, util.offset(entity.direction, -0.75, 0))
+		return util.moveposition(entity.position, util.offset(entity.direction, -0.8, 0))
 	end
-	return util.moveposition(entity.position, util.offset(entity.direction, 0.25, 0))
+	return util.moveposition(entity.position, util.offset(entity.direction, -0.2, 0))
 end
 
 function util.drop_positions(entity)
 	if entity.belt_to_ground_type == "output" then
 		local dir = entity.direction
-		local p1 = util.moveposition(entity.position, util.offset(dir, 0.25, -0.25))
+		local p1 = util.moveposition(entity.position, util.offset(dir, 0.2, -0.25))
 		local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
 		return {p1, p2}
 	end
 	local dir = entity.direction
-	local p1 = util.moveposition(entity.position, util.offset(dir, 0.75, -0.25))
+	local p1 = util.moveposition(entity.position, util.offset(dir, 0.8, -0.25))
 	local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
 	return {p1, p2}
 end
@@ -132,19 +132,23 @@ function util.update_inserters(entity)
 	local inserters = util.get_loader_inserters(entity)
 	local pickup = util.pickup_position(entity)
 	local drop = util.drop_positions(entity)
+	local direction = entity.direction
+	if entity.belt_to_ground_type == "input" then
+		direction = util.opposite_direction(direction)
+	end
 
 	local n = #inserters
 	for i=1,n / 2 do
-		inserters[i].direction = entity.direction
+		inserters[i].direction = direction
 		inserters[i].pickup_position = pickup
 		inserters[i].drop_position = drop[1]
-		inserters[i].direction = inserters[i].direction
+		inserters[i].direction = direction
 	end
 	for i=n / 2 + 1,n do
-		inserters[i].direction = entity.direction
+		inserters[i].direction = direction
 		inserters[i].pickup_position = pickup
 		inserters[i].drop_position = drop[2]
-		inserters[i].direction = inserters[i].direction
+		inserters[i].direction = direction
 	end
 end
 

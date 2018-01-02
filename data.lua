@@ -68,32 +68,43 @@ local empty_sheet = {
 	frame_count = 1,
 }
 
-local function create_entity(prefix)
-	local name = prefix .. "miniloader"
+local function create_underground(prefix)
+	local loader_name = prefix .. "miniloader"
+	local name = loader_name .. "-underground-belt"
 
 	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
 	entity.name = name
-	entity.minable.result = name
+	entity.flags = {}
+	entity.localised_name = {"entity-name." .. loader_name}
+	entity.minable = nil
 	entity.max_distance = 0
 	entity.fast_replaceable_group = "miniloader"
 	entity.selection_box = {{0, 0}, {0, 0}}
+	entity.belt_horizontal = empty_sheet
+	entity.belt_vertical = empty_sheet
+	entity.ending_top = empty_sheet
+	entity.ending_bottom = empty_sheet
+	entity.ending_side = empty_sheet
+	entity.starting_top = empty_sheet
+	entity.starting_bottom = empty_sheet
+	entity.starting_side = empty_sheet
 	entity.structure = {
 		direction_in = {
-			sheet = {
-				filename = "__miniloader__/graphics/entity/" .. name .. ".png",
+			sheet = empty_sheet, --[[{
+				filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
-			}
+			}]]
 		},
 		direction_out = {
-			sheet = {
-				filename = "__miniloader__/graphics/entity/" .. name .. ".png",
+			sheet = empty_sheet --[[{
+				filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
 				y = 128,
-			}
+			}]]
 		},
 	}
 	data:extend{entity}
@@ -106,7 +117,7 @@ local function create_item(prefix)
 	item.name = name
 	item.icon = "__miniloader__/graphics/item/" .. name ..".png"
 	item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
-	item.place_result = name
+	item.place_result = name .. "-inserter"
 
 	data.raw["item"][name] = item
 end
@@ -153,10 +164,10 @@ end
 local connector_definitions = circuit_connector_definitions.create(
 	universal_connector_template,
 	{
-		{ variation = 24, main_offset = util.by_pixel(-5, -8.5), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
-		{ variation = 18, main_offset = util.by_pixel(5, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
-		{ variation = 24, main_offset = util.by_pixel(-4.5, -8.5), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
-		{ variation = 18, main_offset = util.by_pixel(5, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 23, main_offset = util.by_pixel(10, -3), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
+		{ variation = 22, main_offset = util.by_pixel(-10, -4), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 21, main_offset = util.by_pixel(-12, -14), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
+		{ variation = 18, main_offset = util.by_pixel(10, -4), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
 	}
 )
 
@@ -182,10 +193,17 @@ local function create_inserter(prefix)
 		},
 		extension_speed = 1.0,
 		rotation_speed = 1.0,
-		pickup_position = {0, 0},
-		insert_position = {0, 1.0},
+		pickup_position = {0, -0.2},
+		insert_position = {0, 0.8},
 		draw_held_item = false,
-		platform_picture = { sheet = empty_sheet },
+		platform_picture = {
+			sheet = {
+				filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
+				priority = "extra-high",
+				width = 128,
+				height = 128,
+			}
+		},
 		hand_base_picture = empty_sheet,
 		hand_open_picture = empty_sheet,
 		hand_closed_picture = empty_sheet,
@@ -194,26 +212,14 @@ local function create_inserter(prefix)
 		circuit_wire_max_distance = default_circuit_wire_max_distance,
 	}
 
-	for _,k in ipairs{"max_health", "collision_box", "selection_box", "resistances", "vehicle_impact_sound"} do
+	for _,k in ipairs{"flags", "max_health", "collision_box", "selection_box", "resistances", "vehicle_impact_sound"} do
 		loader_inserter[k] = base_entity[k]
 	end
 	data:extend{loader_inserter}
-
-	-- temporarily given when player uses pipette
-	local item = {
-		type = "item",
-		name = name,
-		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
-		icon_size = 32,
-		flags = {},
-		place_result = name,
-		stack_size = data.raw["item"][base_entity.name].stack_size,
-	}
-	data:extend{item}
 end
 
 local function create_miniloader(prefix, tech_prereqs)
-	create_entity(prefix)
+	create_underground(prefix)
 	create_inserter(prefix)
 	create_item(prefix)
 	create_recipe(prefix)

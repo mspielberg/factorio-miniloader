@@ -53,12 +53,12 @@ add_migration{
 						inserters[i].inserter_stack_size_override = 1
 					end
 					entity.destructible = false
+					util.update_inserters(entity)
 				end
 			end
 		end
 	end,
 }
-
 
 function configchange.on_mod_version_changed(old)
 	old = version.parse(old)
