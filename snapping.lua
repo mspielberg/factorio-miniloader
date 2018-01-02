@@ -104,12 +104,20 @@ local function find_loader_by_entity(entity)
 		{position.x + box.left_top.x - 1, position.y + box.left_top.y - 1},
 		{position.x + box.right_bottom.x + 1, position.y + box.right_bottom.y + 1}
 	}
-	return util.find_miniloaders{
+	local loaders = util.find_miniloaders{
 		surface = entity.surface,
 		type="underground-belt",
 		area=area,
 		force=entity.force,
 	}
+	local out = {}
+	for _, loader in ipairs(loaders) do
+		local lpos = loader.position
+		if lpos.x ~= position.x or lpos.y ~= position.y then
+			out[#out+1] = loader
+		end
+	end
+	return out
 end
 
 -- returns the miniloader connected to the belt of `entity`, if it exists

@@ -20,7 +20,7 @@ function M.sync_behavior(inserter)
     local inserters = util.get_loader_inserters(inserter)
     for i=1,#inserters do
         local inserter = inserters[i]
-        local behavior = inserter.get_control_behavior()
+        local behavior = inserter.get_or_create_control_behavior()
         behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
         behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
         behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode

@@ -1,0 +1,9 @@
+{
+    "entity": [
+        ["miniloader", "miniloader-underground-belt"],
+        ["fast-miniloader", "fast-miniloader-underground-belt"],
+        ["express-miniloader", "express-miniloader-underground-belt"],
+        ["green-miniloader", "green-miniloader-underground-belt"],
+        ["purple-miniloader", "purple-miniloader-underground-belt"]
+    ]
+}

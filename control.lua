@@ -48,23 +48,33 @@ end
 
 local function on_built(event)
 	local entity = event.created_entity
-	if util.is_miniloader(entity) then
+	if util.is_miniloader_inserter(entity) then
 		local surface = entity.surface
+
+		local underground_name = string.gsub(entity.name, "inserter", "underground-belt")
+		local underground = surface.create_entity{
+			name = underground_name,
+			position = entity.position,
+			direction = util.opposite_direction(entity.direction),
+			force = entity.force,
+			type = "input",
+		}
 		entity.destructible = false
 
-		for i = 1, util.num_inserters(entity) do
+		for i = 2, util.num_inserters(underground) do
 			local inserter = surface.create_entity{
-				name = entity.name .. "-inserter",
+				name = entity.name,
 				position = entity.position,
+				direction = entity.direction,
 				force = entity.force,
 			}
 			inserter.inserter_stack_size_override = 1
 		end
-		util.update_inserters(entity)
+		util.update_inserters(underground)
 
 		if use_snapping then
 			-- adjusts direction & belt_to_ground_type
-			snapping.snap_loader(entity, event)
+			snapping.snap_loader(underground, event)
 		end
 	elseif use_snapping then
 		snapping.check_for_loaders(event)
@@ -73,17 +83,17 @@ end
 
 local function on_rotated(event)
 	local entity = event.entity
-	if use_snapping then
-		snapping.check_for_loaders(event)
-	end
+	game.print(serpent.line({ev=event, ent=entity.name}))
 	if util.is_miniloader_inserter(entity) then
 		local miniloader = util.find_miniloaders{
 			surface = entity.surface,
 			position = entity.position,
-			force = entity.force
+			force = entity.force,
 		}[1]
 		miniloader.rotate{ by_player = game.players[event.player_index] }
 		util.update_inserters(miniloader)
+	elseif use_snapping then
+		snapping.check_for_loaders(event)
 	end
 end
 
@@ -166,7 +176,7 @@ script.on_event(defines.events.on_player_rotated_entity, on_rotated)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
-script.on_event(defines.events.on_player_pipette, on_player_pipette)
+-- script.on_event(defines.events.on_player_pipette, on_player_pipette)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 	if event.setting == "miniloader-snapping" then
