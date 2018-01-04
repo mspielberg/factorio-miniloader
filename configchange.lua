@@ -17,11 +17,9 @@ add_migration{
 	high = {1,1,4},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
-			log("searching surface "..surface.name.." for orphan miniloader-inserter entities")
 			for _, inserter in ipairs(surface.find_entities_filtered{name="miniloader-inserter"}) do
-				local loader = surface.find_entity("miniloader", inserter.position)
+				local loader = surface.find_entity("miniloader-loader", inserter.position)
 				if not loader then
-					log("destroying orphan at "..serpent.line(inserter.position))
 					inserter.destroy()
 				end
 			end
@@ -39,12 +37,56 @@ add_migration{
 }
 
 add_migration{
+	name = "v1_4_0_reattach_loaders",
+	low = {1,0,0},
+	high = {1,4,0},
+	task = function()
+		for _, surface in pairs(game.surfaces) do
+			for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do
+				if util.is_miniloader(entity) then
+					local orientation = util.orientation_from_inserters(entity)
+					local name = entity.name
+					local position = entity.position
+					local force = entity.force
+
+					-- clear transport lines to prevent spill during replacement
+					local from_tl = {}
+					for i=1,2 do
+						local tl = entity.get_transport_line(i)
+						from_tl[i] = tl.get_contents()
+						tl.clear()
+					end
+
+					entity.destroy()
+
+					local new = surface.create_entity{
+						name = name,
+						position = position,
+						direction = orientation.direction,
+						force = force,
+						type = orientation.type,
+					}
+					util.update_inserters(new)
+
+					for i=1,2 do
+						local tl = new.get_transport_line(i)
+						for name, count in pairs(from_tl[i]) do
+							tl.insert_at_back({name=name, count=count})
+						end
+					end
+				end
+			end
+		end
+	end
+}
+
+add_migration{
 	name = "v1_4_0_expose_inserters",
 	low = {1,0,0},
 	high = {1,4,0},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
-			for _, entity in ipairs(surface.find_entities_filtered{type="underground-belt"}) do
+			for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do
 				if util.is_miniloader(entity) then
 					local inserters = util.get_loader_inserters(entity)
 					for i=1,#inserters do

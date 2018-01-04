@@ -68,45 +68,45 @@ local empty_sheet = {
 	frame_count = 1,
 }
 
-local function create_underground(prefix)
+local function create_loader(prefix)
 	local loader_name = prefix .. "miniloader"
-	local name = loader_name .. "-underground-belt"
+	local name = loader_name .. "-loader"
 
 	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
+	entity.type = "loader"
 	entity.name = name
 	entity.flags = {}
 	entity.localised_name = {"entity-name." .. loader_name}
 	entity.minable = nil
-	entity.max_distance = 0
-	entity.fast_replaceable_group = "miniloader"
+	entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
 	entity.selection_box = {{0, 0}, {0, 0}}
 	entity.belt_horizontal = empty_sheet
 	entity.belt_vertical = empty_sheet
-	entity.ending_top = empty_sheet
-	entity.ending_bottom = empty_sheet
-	entity.ending_side = empty_sheet
-	entity.starting_top = empty_sheet
-	entity.starting_bottom = empty_sheet
-	entity.starting_side = empty_sheet
+	entity.filter_count = 0
 	entity.structure = {
 		direction_in = {
-			sheet = empty_sheet, --[[{
-				filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
+			sheet = empty_sheet,
+			_ = {
+				filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
-			}]]
+			}
 		},
 		direction_out = {
-			sheet = empty_sheet --[[{
-				filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
+			sheet = empty_sheet,
+			_ = {
+				filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
 				priority = "extra-high",
 				width = 128,
 				height = 128,
 				y = 128,
-			}]]
+			}
 		},
 	}
+	entity.belt_distance = 0
+	entity.container_distance = 0
+	entity.belt_length = 0.1
 	data:extend{entity}
 end
 
@@ -164,10 +164,10 @@ end
 local connector_definitions = circuit_connector_definitions.create(
 	universal_connector_template,
 	{
-		{ variation = 23, main_offset = util.by_pixel(10, -3), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
-		{ variation = 22, main_offset = util.by_pixel(-10, -4), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
-		{ variation = 21, main_offset = util.by_pixel(-12, -14), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
-		{ variation = 18, main_offset = util.by_pixel(10, -4), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 26, main_offset = util.by_pixel(3, 4), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
+		{ variation = 22, main_offset = util.by_pixel(-10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 21, main_offset = util.by_pixel(-12, -15), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
+		{ variation = 18, main_offset = util.by_pixel(10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
 	}
 )
 
@@ -219,7 +219,7 @@ local function create_inserter(prefix)
 end
 
 local function create_miniloader(prefix, tech_prereqs)
-	create_underground(prefix)
+	create_loader(prefix)
 	create_inserter(prefix)
 	create_item(prefix)
 	create_recipe(prefix)

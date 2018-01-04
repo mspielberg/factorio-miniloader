@@ -73,7 +73,7 @@ end
 -- miniloader utilities
 
 function util.find_miniloaders(params)
-	params.type = "underground-belt"
+	params.type = "loader"
 	local entities = params.surface.find_entities_filtered(params)
 	out = {}
 	for i=1,#entities do
@@ -86,7 +86,7 @@ function util.find_miniloaders(params)
 end
 
 function util.is_miniloader(entity)
-	return string.find(entity.name, "miniloader%-underground%-belt$") ~= nil
+	return string.find(entity.name, "miniloader%-loader$") ~= nil
 end
 
 function util.is_miniloader_inserter(entity)
@@ -94,14 +94,14 @@ function util.is_miniloader_inserter(entity)
 end
 
 function util.pickup_position(entity)
-	if entity.belt_to_ground_type == "output" then
+	if entity.loader_type == "output" then
 		return util.moveposition(entity.position, util.offset(entity.direction, -0.8, 0))
 	end
 	return util.moveposition(entity.position, util.offset(entity.direction, -0.2, 0))
 end
 
 function util.drop_positions(entity)
-	if entity.belt_to_ground_type == "output" then
+	if entity.loader_type == "output" then
 		local dir = entity.direction
 		local p1 = util.moveposition(entity.position, util.offset(dir, 0.2, -0.25))
 		local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
@@ -121,7 +121,7 @@ function util.get_loader_inserters(entity)
 end
 
 function util.update_miniloader(entity, direction, type)
-	if entity.belt_to_ground_type ~= type then
+	if entity.loader_type ~= type then
 		entity.rotate()
 	end
 	entity.direction = direction
@@ -133,7 +133,7 @@ function util.update_inserters(entity)
 	local pickup = util.pickup_position(entity)
 	local drop = util.drop_positions(entity)
 	local direction = entity.direction
-	if entity.belt_to_ground_type == "input" then
+	if entity.loader_type == "input" then
 		direction = util.opposite_direction(direction)
 	end
 
@@ -156,6 +156,30 @@ function util.num_inserters(entity)
 	local speed = entity.prototype.belt_speed
 	if speed < 0.1 then return 2
 	else return 6 end
+end
+
+function util.orientation_from_inserters(entity)
+	local inserter = entity.surface.find_entities_filtered{
+		type = "inserter",
+		position = entity.position,
+	}[1]
+	if inserter.drop_position.x > inserter.position.x + 0.5 then
+		return {direction=defines.direction.east, type="input"}
+	elseif inserter.drop_position.x < inserter.position.x - 0.5 then
+		return {direction=defines.direction.west, type="input"}
+	elseif inserter.drop_position.y > inserter.position.y + 0.5 then
+		return {direction=defines.direction.south, type="input"}
+	elseif inserter.drop_position.y < inserter.position.y - 0.5 then
+		return {direction=defines.direction.north, type="input"}
+	elseif inserter.pickup_position.x > inserter.position.x + 0.5 then
+		return {direction=defines.direction.west, type="output"}
+	elseif inserter.pickup_position.x < inserter.position.x - 0.5 then
+		return {direction=defines.direction.east, type="output"}
+	elseif inserter.pickup_position.y > inserter.position.y + 0.5 then
+		return {direction=defines.direction.north, type="output"}
+	elseif inserter.pickup_position.y < inserter.position.y - 0.5 then
+		return {direction=defines.direction.south, type="output"}
+	end
 end
 
 return util

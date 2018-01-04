@@ -3,7 +3,7 @@ local ontick = require "lualib.ontick"
 local util = require "lualib.util"
 
 -- how often to poll ControlBehavior settings when a miniloader-inserter GUI is open
-local POLL_INTERVAL = 5
+local POLL_INTERVAL = 15
 
 local monitored_inserters = {}
 
@@ -26,6 +26,7 @@ end
 
 local function on_gui_closed(event)
     if event.entity and util.is_miniloader_inserter(event.entity) then
+        circuit.sync_behavior(event.entity)
         monitored_inserters[util.entity_key(event.entity)] = nil
     end
 end
