@@ -51,7 +51,7 @@ local function on_built(event)
 	if util.is_miniloader_inserter(entity) then
 		local surface = entity.surface
 
-		local underground_name = string.gsub(entity.name, "inserter", "underground-belt")
+		local underground_name = string.gsub(entity.name, "inserter", "loader")
 		local underground = surface.create_entity{
 			name = underground_name,
 			position = entity.position,
@@ -83,7 +83,6 @@ end
 
 local function on_rotated(event)
 	local entity = event.entity
-	game.print(serpent.line({ev=event, ent=entity.name}))
 	if util.is_miniloader_inserter(entity) then
 		local miniloader = util.find_miniloaders{
 			surface = entity.surface,
@@ -113,8 +112,14 @@ local function on_miniloader_inserter_mined(event)
 	local entity = event.entity
 	local loader = entity.surface.find_entities_filtered{
 		position = entity.position,
-		type = "underground-belt",
+		type = "loader",
 	}[1]
+	if not loader then
+		if event.buffer then
+			event.buffer.clear()
+		end
+		return
+	end
 	if event.buffer then
 		for i=1,2 do
 			local tl = loader.get_transport_line(i)
@@ -145,22 +150,17 @@ local function on_mined(event)
 	end
 end
 
-local function on_player_pipette(event)
-	local item_proto = event.item
-	if not util.is_miniloader_inserter(item_proto) then
-		return
-	end
-	local inserter_name = item_proto.name
-	log(inserter_name)
-	local loader_name = string.gsub(item_proto.name, "%-inserter$", "")
-	log(loader_name)
-	local player = game.players[event.player_index]
-	local selected = player.selected
-	local count = math.min(player.get_item_count(loader_name), item_proto.stack_size)
-	log(count)
-	if count > 0 then
-		player.cursor_stack.set_stack{ name = loader_name, count = count }
-		player.remove_item{ name = loader_name, count = count }
+local function on_entity_settings_pasted(event)
+	local src = event.source
+	local dst = event.destination
+	if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst) then
+		circuit.sync_behavior(dst)
+		local src_loader = src.surface.find_entities_filtered{type="loader",position=src.position}[1]
+		local dst_loader = dst.surface.find_entities_filtered{type="loader",position=dst.position}[1]
+		if src_loader and dst_loader then
+			dst_loader.loader_type = src_loader.loader_type
+			util.update_inserters(dst_loader)
+		end
 	end
 end
 
@@ -176,7 +176,7 @@ script.on_event(defines.events.on_player_rotated_entity, on_rotated)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
--- script.on_event(defines.events.on_player_pipette, on_player_pipette)
+script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 	if event.setting == "miniloader-snapping" then

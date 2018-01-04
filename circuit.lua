@@ -4,7 +4,7 @@ local util = require "lualib.util"
 local M = {}
 
 -- how often to poll circuit network connections when the player is holding wire over an entity
-local POLL_INTERVAL = 5
+local POLL_INTERVAL = 1
 
 local NO_CONNECTIONS = 0
 local ONLY_PARTNERS = 1
@@ -67,7 +67,7 @@ local function connected_to_network(inserter)
 end
 
 local function sync_partner_connections(inserter)
-    local connections = connected_to_network(inserter, connected_positions)
+    local connections = connected_to_network(inserter)
     if connections == NO_CONNECTIONS then
         return
     elseif connections == ONLY_PARTNERS then
@@ -85,14 +85,6 @@ local function sync_partner_connections(inserter)
         end
         M.sync_behavior(inserter)
     end
-end
-
-local function positions(entities)
-    local out = {}
-    for i=1,#entities do
-        out[#out+1] = entities[i].position
-    end
-    return out
 end
 
 local function position_set(entities)
@@ -178,7 +170,6 @@ local function on_selected_entity_changed(event)
 
     selections[player_index] = find_connected_miniloader_inserters(selected)
     ontick.register(monitor_selections, POLL_INTERVAL)
-    log("monitoring selection for player "..player_index..": "..serpent.line(selected.position))
 end
 
 local function on_player_holding_wire(player_index)
