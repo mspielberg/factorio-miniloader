@@ -85,8 +85,7 @@ local function create_loader(prefix)
 	entity.filter_count = 0
 	entity.structure = {
 		direction_in = {
-			sheet = empty_sheet,
-			_ = {
+			sheet = {
 				filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
 				priority = "extra-high",
 				width = 128,
@@ -94,8 +93,7 @@ local function create_loader(prefix)
 			}
 		},
 		direction_out = {
-			sheet = empty_sheet,
-			_ = {
+			sheet = {
 				filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
 				priority = "extra-high",
 				width = 128,
@@ -165,9 +163,9 @@ local connector_definitions = circuit_connector_definitions.create(
 	universal_connector_template,
 	{
 		{ variation = 26, main_offset = util.by_pixel(3, 4), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
-		{ variation = 22, main_offset = util.by_pixel(-10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 18, main_offset = util.by_pixel(-10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
 		{ variation = 21, main_offset = util.by_pixel(-12, -15), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
-		{ variation = 18, main_offset = util.by_pixel(10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+		{ variation = 22, main_offset = util.by_pixel(10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
 	}
 )
 
