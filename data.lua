@@ -248,7 +248,7 @@ create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
-	create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
+	create_miniloader("green-", {"bob-logistics-4", "express-miniloader", "stack-inserter-2"})
 	if data.raw.technology["bob-logistics-5"] then
 		create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
 	end

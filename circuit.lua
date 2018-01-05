@@ -13,8 +13,9 @@ local PARTNERS_AND_OTHERS = 3
 
 function M.sync_behavior(inserter)
     local source_behavior = inserter.get_control_behavior()
+    local slots = inserter.filter_slot_count
     local filters = {}
-    for i=1,inserter.filter_slot_count do
+    for i=1,slots do
         filters[i] = inserter.get_filter(i)
     end
     local inserters = util.get_loader_inserters(inserter)
@@ -32,7 +33,7 @@ function M.sync_behavior(inserter)
             behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
         end
         inserter.inserter_stack_size_override = 1
-        for j=1,#filters do
+        for j=1,slots do
             inserter.set_filter(j, filters[j])
         end
     end
