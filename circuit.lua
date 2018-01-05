@@ -4,7 +4,7 @@ local util = require "lualib.util"
 local M = {}
 
 -- how often to poll circuit network connections when the player is holding wire over an entity
-local POLL_INTERVAL = 1
+local POLL_INTERVAL = 15
 
 local NO_CONNECTIONS = 0
 local ONLY_PARTNERS = 1
@@ -13,23 +13,28 @@ local PARTNERS_AND_OTHERS = 3
 
 function M.sync_behavior(inserter)
     local source_behavior = inserter.get_control_behavior()
-    if not source_behavior then
-        inserter.inserter_stack_size_override = 1
-        return
+    local filters = {}
+    for i=1,inserter.filter_slot_count do
+        filters[i] = inserter.get_filter(i)
     end
     local inserters = util.get_loader_inserters(inserter)
     for i=1,#inserters do
         local inserter = inserters[i]
-        local behavior = inserter.get_or_create_control_behavior()
-        behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
-        behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
-        behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
-        behavior.circuit_set_stack_size = false
-        behavior.circuit_stack_control_signal = {type="item"}
-        behavior.circuit_condition = source_behavior.circuit_condition
-        behavior.logistic_condition = source_behavior.logistic_condition
-        behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+        if source_behavior then
+            local behavior = inserter.get_or_create_control_behavior()
+            behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
+            behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
+            behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
+            behavior.circuit_set_stack_size = false
+            behavior.circuit_stack_control_signal = {type="item"}
+            behavior.circuit_condition = source_behavior.circuit_condition
+            behavior.logistic_condition = source_behavior.logistic_condition
+            behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+        end
         inserter.inserter_stack_size_override = 1
+        for j=1,#filters do
+            inserter.set_filter(j, filters[j])
+        end
     end
 end
 
@@ -130,6 +135,16 @@ local function find_connected_miniloader_inserters(entity)
     return out
 end
 
+local function check_connected_entities(old, new)
+    local removed, added = diff_entity_lists(old or {}, new)
+    for _, inserter in ipairs(removed) do
+        sync_partner_connections(inserter)
+    end
+    for _, inserter in ipairs(added) do
+        sync_partner_connections(inserter)
+    end
+end
+
 local function monitor_selections(event)
     if not next(selections) then
         ontick.unregister(monitor_selections)
@@ -141,13 +156,7 @@ local function monitor_selections(event)
             sync_partner_connections(selected)
         else
             local new = find_connected_miniloader_inserters(selected)
-            local removed, added = diff_entity_lists(old, new)
-            for _, inserter in ipairs(removed) do
-                sync_partner_connections(inserter)
-            end
-            for _, inserter in ipairs(added) do
-                sync_partner_connections(inserter)
-            end
+            check_connected_entities(selections[player_index], new)
             selections[player_index] = new
         end
     end
@@ -162,14 +171,18 @@ local function on_selected_entity_changed(event)
     end
 
     local player_index = event.player_index
-    local selected = game.players[player_index].selected
-    if not selected then
-        selections[player_index] = nil
-        return
+    if event.last_entity then
+        local new = find_connected_miniloader_inserters(event.last_entity)
+        check_connected_entities(selections[player_index], new)
     end
 
-    selections[player_index] = find_connected_miniloader_inserters(selected)
-    ontick.register(monitor_selections, POLL_INTERVAL)
+    local selected = game.players[player_index].selected
+    if selected then
+        selections[player_index] = find_connected_miniloader_inserters(selected)
+        ontick.register(monitor_selections, POLL_INTERVAL)
+        return
+    end
+    selections[player_index] = nil
 end
 
 local function on_player_holding_wire(player_index)
@@ -178,6 +191,10 @@ local function on_player_holding_wire(player_index)
 end
 
 local function on_player_not_holding_wire(player_index)
+    local player = game.players[player_index]
+    if player.selected then
+        check_connected_entities(selections[player_index], find_connected_miniloader_inserters(player.selected))
+    end
     monitored_players[player_index] = nil
     selections[player_index] = nil
 end
