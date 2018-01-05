@@ -60,6 +60,12 @@ local ingredients = {
 	},
 }
 
+local filter_inserters = {
+	["fast-inserter"] = "filter-inserter",
+	["stack-inserter"] = "stack-filter-inserter",
+	["express-stack-inserter"] = "express-stack-filter-inserter",
+}
+
 local empty_sheet = {
 	filename = "__core__/graphics/empty.png",
 	priority = "very-low",
@@ -132,6 +138,10 @@ local function create_recipe(prefix)
 		result = name,
 	}
 
+	if settings.startup["miniloader-filters"].value then
+		recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
+	end
+
 	data:extend{recipe}
 end
 
@@ -173,6 +183,7 @@ local function create_inserter(prefix)
 	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
 	local loader_name = prefix .. "miniloader"
 	local name = loader_name .. "-inserter"
+	local speed = base_entity.speed * 0.2 / 0.03125
 
 	local loader_inserter = {
 		type = "inserter",
@@ -182,15 +193,17 @@ local function create_inserter(prefix)
 		icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
 		icon_size = 32,
 		minable = { mining_time = 1, result = loader_name },
+		collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
+		selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 		allow_custom_vectors = true,
-		energy_per_movement = 2000,
-		energy_per_rotation = 2000,
+		energy_per_movement = 4000,
+		energy_per_rotation = 4000,
 		energy_source = {
 			type = "electric",
 			usage_priority = "secondary-input",
 		},
-		extension_speed = 1.0,
-		rotation_speed = 1.0,
+		extension_speed = speed,
+		rotation_speed = speed,
 		pickup_position = {0, -0.2},
 		insert_position = {0, 0.8},
 		draw_held_item = false,
@@ -210,9 +223,14 @@ local function create_inserter(prefix)
 		circuit_wire_max_distance = default_circuit_wire_max_distance,
 	}
 
-	for _,k in ipairs{"flags", "max_health", "collision_box", "selection_box", "resistances", "vehicle_impact_sound"} do
+	for _,k in ipairs{"flags", "max_health", "resistances", "vehicle_impact_sound"} do
 		loader_inserter[k] = base_entity[k]
 	end
+
+	if settings.startup["miniloader-filters"].value then
+		loader_inserter.filter_count = 5
+	end
+
 	data:extend{loader_inserter}
 end
 
