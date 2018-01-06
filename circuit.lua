@@ -138,14 +138,17 @@ local function find_connected_miniloader_inserters(entity)
     return out
 end
 
-local function check_connected_entities(old, new)
-    local removed, added = diff_entity_lists(old or {}, new)
+local function check_connected_entities(player_index, entity)
+    local old = selections[player_index] or {}
+    local new = find_connected_miniloader_inserters(entity)
+    local removed, added = diff_entity_lists(old, new)
     for _, inserter in ipairs(removed) do
         sync_partner_connections(inserter)
     end
     for _, inserter in ipairs(added) do
         sync_partner_connections(inserter)
     end
+    selections[player_index] = new
 end
 
 local function monitor_selections(event)
@@ -158,14 +161,22 @@ local function monitor_selections(event)
         if util.is_miniloader_inserter(selected) then
             sync_partner_connections(selected)
         else
-            local new = find_connected_miniloader_inserters(selected)
-            check_connected_entities(selections[player_index], new)
-            selections[player_index] = new
+            check_connected_entities(player_index, selected)
         end
     end
 end
 
 local monitored_players = {}
+
+local function start_monitoring_selection(player_index)
+    local selected = game.players[player_index].selected
+    if selected then
+        selections[player_index] = find_connected_miniloader_inserters(selected)
+        ontick.register(monitor_selections, POLL_INTERVAL)
+        return
+    end
+    selections[player_index] = nil
+end
 
 local function on_selected_entity_changed(event)
     if not next(monitored_players) then
@@ -179,17 +190,10 @@ local function on_selected_entity_changed(event)
     end
 
     if event.last_entity then
-        local new = find_connected_miniloader_inserters(event.last_entity)
-        check_connected_entities(selections[player_index], new)
+        check_connected_entities(player_index, event.last_entity)
     end
 
-    local selected = game.players[player_index].selected
-    if selected then
-        selections[player_index] = find_connected_miniloader_inserters(selected)
-        ontick.register(monitor_selections, POLL_INTERVAL)
-        return
-    end
-    selections[player_index] = nil
+    start_monitoring_selection(player_index)
 end
 
 local function on_player_holding_wire(player_index)
@@ -198,10 +202,7 @@ local function on_player_holding_wire(player_index)
         -- already had selection, probably placed a wire
         monitor_selections()
     else
-        local selected = game.players[player_index].selected
-        if selected then
-            selections[player_index] = find_connected_miniloader_inserters(selected)
-        end
+        start_monitoring_selection(player_index)
     end
     script.on_event(defines.events.on_selected_entity_changed, on_selected_entity_changed)
 end
@@ -210,7 +211,7 @@ local function on_player_not_holding_wire(player_index)
     local selected = game.players[player_index].selected
     if selected then
         -- one last check since we will no longer be monitoring this player's selection
-        check_connected_entities(selections[player_index], find_connected_miniloader_inserters(selected))
+        check_connected_entities(player_index, selected)
     end
     monitored_players[player_index] = nil
     selections[player_index] = nil
