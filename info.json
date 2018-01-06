@@ -5,6 +5,6 @@
 	"title": "Miniloader",
 	"author": "Therax",
 	"homepage": "https://forums.factorio.com/viewtopic.php?f=93&t=54343",
-	"description": "UPS-friendly 1x1 train-compatible loaders with support for Bob's faster belts.",
+	"description": "Compact and UPS-friendly 1x1 loaders.  Works with train cargo wagons, circuits, filters, and Bob's faster belts.",
 	"dependencies": ["? boblogistics >= 0.16.0"]
 }
