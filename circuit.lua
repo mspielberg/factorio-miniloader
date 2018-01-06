@@ -50,52 +50,86 @@ end
 -- to the player's selected entity
 local selections = {}
 
-local function connected_to_network(inserter)
+local function connected_non_partners(inserters)
+    local out = {red = {}, green = {}}
+    for _, inserter in ipairs(inserters) do
     local connected = inserter.circuit_connected_entities
-    if not next(connected.red) and not next(connected.green) then
-        return NO_CONNECTIONS
-    end
     local pos = inserter.position
-    local saw_partner = false
-    local saw_others = false
-    for _, connected_entities in pairs(connected) do
+        for wire_type, connected_entities in pairs(connected) do
+            local color = out[wire_type]
         for _, other in ipairs(connected_entities) do
             local otherpos = other.position
             if otherpos.x ~= pos.x or otherpos.y ~= pos.y then
-                saw_others = true
-            else
-                saw_partner = true
+                    color[util.entity_key(other)] = other
             end
-            if saw_others and saw_partner then
-                return PARTNERS_AND_OTHERS
             end
         end
     end
-    if saw_partner then
-        return ONLY_PARTNERS
+    return out
+end
+
+local function partner_connections_need_sync(inserters, connections)
+    local master_inserter = inserters[1]
+    for _, wire_type in ipairs{"red", "green"} do
+        local wire_id = defines.wire_type[wire_type]
+        local network = master_inserter.get_circuit_network(wire_id)
+        if network then
+            if not next(connections[wire_type]) then
+                return true
+            end
+            local network_id = network.network_id
+            for i=2,#inserters do
+                local slave_inserter = inserters[i]
+                local slave_network = slave_inserter.get_circuit_network(wire_id)
+                if not slave_network or slave_network.network_id ~= network_id then
+                    return true
+                end
+                if #slave_inserter.circuit_connected_entities[wire_type] ~= 1 then
+                    return true
+                end
+            end
+        else
+            for i=2,#inserters do
+                local slave_inserter = inserters[i]
+                local slave_network = slave_inserter.get_circuit_network(wire_id)
+                if slave_network then
+                    return true
+                end
+            end
+        end
     end
-    return ONLY_OTHERS
+    return false
 end
 
 function M.sync_partner_connections(inserter)
-    local connections = connected_to_network(inserter)
-    if connections == NO_CONNECTIONS then
+    local inserters = util.get_loader_inserters(inserter)
+    local connections = connected_non_partners(inserters)
+
+    if not partner_connections_need_sync(inserters, connections) then
+        M.sync_behavior(inserter)
         return
-    elseif connections == ONLY_PARTNERS then
-        inserter.disconnect_neighbour(defines.wire_type.red)
-        inserter.disconnect_neighbour(defines.wire_type.green)
-        return
-    elseif connections == ONLY_OTHERS then
-        local inserters = util.get_loader_inserters(inserter)
-        for i=1,#inserters do
-            local other = inserters[i]
-            if other ~= inserter then
-                other.connect_neighbour{wire = defines.wire_type.red, target_entity = inserter}
-                other.connect_neighbour{wire = defines.wire_type.green, target_entity = inserter}
+    end
+
+    local master_inserter = inserters[1]
+    for wire_type, entities in pairs(connections) do
+        local wire_id = defines.wire_type[wire_type]
+        if not next(entities) then
+            for _, inserter in ipairs(inserters) do
+                inserter.disconnect_neighbour(wire_id)
+            end
+        else
+            master_inserter.disconnect_neighbour(wire_id)
+            for i=2,#inserters do
+                local inserter = inserters[i]
+                inserter.disconnect_neighbour(wire_id)
+                inserter.connect_neighbour{wire=wire_id, target_entity=master_inserter}
+            end
+            for _, other in pairs(entities) do
+                master_inserter.connect_neighbour{wire = wire_id, target_entity = other}
             end
         end
-        M.sync_behavior(inserter)
     end
+    M.sync_behavior(inserter)
 end
 
 local function position_set(entities)
@@ -171,9 +205,8 @@ local function monitor_selections(event)
         local selected = game.players[player_index].selected
         if util.is_miniloader_inserter(selected) then
             M.sync_partner_connections(selected)
-        else
-            check_connected_entities(player_index, selected)
         end
+        check_connected_entities(player_index, selected)
     end
 end
 

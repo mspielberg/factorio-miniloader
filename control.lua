@@ -173,6 +173,7 @@ local function on_entity_settings_pasted(event)
 	local dst = event.destination
 	if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst) then
 		circuit.sync_behavior(dst)
+		circuit.sync_filters(dst)
 		local src_loader = src.surface.find_entities_filtered{type="loader",position=src.position}[1]
 		local dst_loader = dst.surface.find_entities_filtered{type="loader",position=dst.position}[1]
 		if src_loader and dst_loader then
