@@ -47,7 +47,7 @@ local selections = {}
 
 local function connected_to_network(inserter)
     local connected = inserter.circuit_connected_entities
-    if not connected or (not next(connected.red) and not next(connected.green)) then
+    if not next(connected.red) and not next(connected.green) then
         return NO_CONNECTIONS
     end
     local pos = inserter.position
@@ -96,7 +96,9 @@ end
 local function position_set(entities)
     local out = {}
     for _, entity in ipairs(entities) do
+        if entity.valid then
         out[util.entity_key(entity)] = entity
+    end
     end
     return out
 end
@@ -126,10 +128,10 @@ local function find_connected_miniloader_inserters(entity)
         return {}
     end
     local out = {}
-    for wire_type, connected in pairs(connected) do
-        for _, entity in ipairs(connected) do
-            if util.is_miniloader_inserter(entity) then
-                out[#out+1] = entity
+    for _, entities in pairs(connected) do
+        for _, e in ipairs(entities) do
+            if util.is_miniloader_inserter(e) then
+                out[#out+1] = e
             end
         end
     end
@@ -172,6 +174,10 @@ local function on_selected_entity_changed(event)
     end
 
     local player_index = event.player_index
+    if not monitored_players[player_index] then
+        return
+    end
+
     if event.last_entity then
         local new = find_connected_miniloader_inserters(event.last_entity)
         check_connected_entities(selections[player_index], new)
@@ -188,13 +194,23 @@ end
 
 local function on_player_holding_wire(player_index)
     monitored_players[player_index] = true
+    if selections[player_index] then
+        -- already had selection, probably placed a wire
+        monitor_selections()
+    else
+        local selected = game.players[player_index].selected
+        if selected then
+            selections[player_index] = find_connected_miniloader_inserters(selected)
+        end
+    end
     script.on_event(defines.events.on_selected_entity_changed, on_selected_entity_changed)
 end
 
 local function on_player_not_holding_wire(player_index)
-    local player = game.players[player_index]
-    if player.selected then
-        check_connected_entities(selections[player_index], find_connected_miniloader_inserters(player.selected))
+    local selected = game.players[player_index].selected
+    if selected then
+        -- one last check since we will no longer be monitoring this player's selection
+        check_connected_entities(selections[player_index], find_connected_miniloader_inserters(selected))
     end
     monitored_players[player_index] = nil
     selections[player_index] = nil
