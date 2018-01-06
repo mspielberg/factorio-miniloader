@@ -46,38 +46,56 @@ local function on_configuration_changed(configuration_changed_data)
 	end
 end
 
-local function on_built(event)
+local function on_built_miniloader(entity, orientation)
+	if not orientation then
+		orientation = {direction = entity.direction, type = "input"}
+	end
+
+	local surface = entity.surface
+
+	local loader_name = string.gsub(entity.name, "inserter", "loader")
+	local loader = surface.create_entity{
+		name = loader_name,
+		position = entity.position,
+		direction = orientation.direction,
+		force = entity.force,
+		type = orientation.type,
+	}
+	entity.destructible = false
+
+	for _ = 2, util.num_inserters(loader) do
+		local inserter = surface.create_entity{
+			name = entity.name,
+			position = entity.position,
+			direction = entity.direction,
+			force = entity.force,
+		}
+		inserter.inserter_stack_size_override = 1
+	end
+	util.update_inserters(loader)
+end
+
+local function on_player_built(event)
 	local entity = event.created_entity
 	if util.is_miniloader_inserter(entity) then
-		local surface = entity.surface
-
-		local underground_name = string.gsub(entity.name, "inserter", "loader")
-		local underground = surface.create_entity{
-			name = underground_name,
-			position = entity.position,
-			direction = util.opposite_direction(entity.direction),
-			force = entity.force,
-			type = "input",
-		}
-		entity.destructible = false
-
-		for i = 2, util.num_inserters(underground) do
-			local inserter = surface.create_entity{
-				name = entity.name,
-				position = entity.position,
-				direction = entity.direction,
-				force = entity.force,
-			}
-			inserter.inserter_stack_size_override = 1
-		end
-		util.update_inserters(underground)
-
+		on_built_miniloader(entity)
 		if use_snapping then
 			-- adjusts direction & belt_to_ground_type
-			snapping.snap_loader(underground, event)
+			snapping.snap_loader(loader, event)
 		end
-	elseif use_snapping then
+	else
 		snapping.check_for_loaders(event)
+	end
+end
+
+local function on_robot_built(event)
+	local entity = event.created_entity
+	if util.is_miniloader_inserter(entity) then
+		on_built_miniloader(entity, util.orientation_from_inserters(entity))
+		circuit.sync_filters(entity)
+		circuit.sync_partner_connections(entity)
+	else
+		circuit.update_connected_miniloader_inserters(entity)
 	end
 end
 
@@ -170,8 +188,8 @@ script.on_configuration_changed(on_configuration_changed)
 
 -- entity events
 
-script.on_event(defines.events.on_built_entity, on_built)
-script.on_event(defines.events.on_robot_built_entity, on_built)
+script.on_event(defines.events.on_built_entity, on_player_built)
+script.on_event(defines.events.on_robot_built_entity, on_robot_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)

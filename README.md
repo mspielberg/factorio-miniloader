@@ -38,6 +38,17 @@ Since item movement is handled by inserters, there is no on_tick handler, no Lua
 impact on UPS, and miniloaders will benefit from any future improvements to belt
 and inserter performance made by Wube in the Factorio core.
 
+## Filtering
+
+Filters can be enabled for miniloaders in the game options before loading a game.
+As you would expect, to build a miniloader capable of filtering, you must use
+filter inserters as ingredients.
+
+Note that miniloaders behave like filter inserters, and not like vanilla loaders:
+if no filters are set then no items will be moved. You must set at least one filter.
+Filtering defaults to __disabled__ to prevent this behavior from breaking existing
+saves.
+
 ## Known Issues
 
 * The power usage UI counts each miniloader multiple times, since it shows the
@@ -79,3 +90,5 @@ and inserter performance made by Wube in the Factorio core.
 * 1.3.0 (2017-12-18):
     * Rebalance ingredient costs.
     * Make yellow miniloader accessible before oil.
+* 1.4.0 (2018-01-06):
+    * Add optional 
