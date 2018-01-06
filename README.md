@@ -52,8 +52,8 @@ saves.
 ## Known Issues
 
 * The power usage UI counts each miniloader multiple times, since it shows the
-  power used by the invisible inserters, not the miniloaders themselves.
-* Miniloaders cannot be fast-replaced due to the invisible inserters blocking
+  power used by the inserters, not the miniloaders themselves.
+* Miniloaders cannot be fast-replaced due to the invisible entities blocking
   placement of the new entity.
 * Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
     * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
@@ -91,4 +91,6 @@ saves.
     * Rebalance ingredient costs.
     * Make yellow miniloader accessible before oil.
 * 1.4.0 (2018-01-06):
-    * Add optional 
+    * Redesign using 0.16 customized loader entities instead of underground belt to provide belt connectivity.
+    * Add support for controlling miniloaders through the circuit network. 
+    * Add optional filtering support for miniloaders.
