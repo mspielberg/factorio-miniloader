@@ -11,16 +11,24 @@ local ONLY_PARTNERS = 1
 local ONLY_OTHERS = 2
 local PARTNERS_AND_OTHERS = 3
 
-function M.sync_behavior(inserter)
-    local source_behavior = inserter.get_control_behavior()
-    local slots = inserter.filter_slot_count
+function M.sync_filters(inserter)
     local filters = {}
+    local slots = inserter.filter_slot_count
     for i=1,slots do
         filters[i] = inserter.get_filter(i)
     end
     local inserters = util.get_loader_inserters(inserter)
-    for i=1,#inserters do
-        local inserter = inserters[i]
+    for _, inserter in ipairs(inserters) do
+        for j=1,slots do
+            inserter.set_filter(j, filters[j])
+        end
+    end
+end
+
+function M.sync_behavior(inserter)
+    local source_behavior = inserter.get_control_behavior()
+    local inserters = util.get_loader_inserters(inserter)
+    for _, inserter in ipairs(inserters) do
         if source_behavior then
             local behavior = inserter.get_or_create_control_behavior()
             behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
@@ -33,9 +41,6 @@ function M.sync_behavior(inserter)
             behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
         end
         inserter.inserter_stack_size_override = 1
-        for j=1,slots do
-            inserter.set_filter(j, filters[j])
-        end
     end
 end
 
@@ -72,7 +77,7 @@ local function connected_to_network(inserter)
     return ONLY_OTHERS
 end
 
-local function sync_partner_connections(inserter)
+function M.sync_partner_connections(inserter)
     local connections = connected_to_network(inserter)
     if connections == NO_CONNECTIONS then
         return
@@ -138,15 +143,21 @@ local function find_connected_miniloader_inserters(entity)
     return out
 end
 
+function M.update_connected_miniloader_inserters(entity)
+    for _, inserter in ipairs(find_connected_miniloader_inserters(entity)) do
+        M.sync_partner_connections(inserter)
+    end
+end
+
 local function check_connected_entities(player_index, entity)
     local old = selections[player_index] or {}
     local new = find_connected_miniloader_inserters(entity)
     local removed, added = diff_entity_lists(old, new)
     for _, inserter in ipairs(removed) do
-        sync_partner_connections(inserter)
+        M.sync_partner_connections(inserter)
     end
     for _, inserter in ipairs(added) do
-        sync_partner_connections(inserter)
+        M.sync_partner_connections(inserter)
     end
     selections[player_index] = new
 end
@@ -159,7 +170,7 @@ local function monitor_selections(event)
     for player_index, old in pairs(selections) do
         local selected = game.players[player_index].selected
         if util.is_miniloader_inserter(selected) then
-            sync_partner_connections(selected)
+            M.sync_partner_connections(selected)
         else
             check_connected_entities(player_index, selected)
         end
