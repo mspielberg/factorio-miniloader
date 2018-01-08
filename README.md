@@ -57,6 +57,7 @@ saves.
   placement of the new entity.
 * Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
     * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
+* Miniloaders don't necessarily appear correctly in blueprints.
 
 
 ## Acknowledgements
@@ -90,7 +91,7 @@ saves.
 * 1.3.0 (2017-12-18):
     * Rebalance ingredient costs.
     * Make yellow miniloader accessible before oil.
-* 1.4.0 (2018-01-06):
+* 1.4.0 (2018-01-07):
     * Redesign using 0.16 customized loader entities instead of underground belt to provide belt connectivity.
     * Add support for controlling miniloaders through the circuit network. 
     * Add optional filtering support for miniloaders.
