@@ -48,7 +48,7 @@ end
 
 local function on_built_miniloader(entity, orientation)
 	if not orientation then
-		orientation = {direction = entity.direction, type = "input"}
+		orientation = {direction = util.opposite_direction(entity.direction), type = "input"}
 	end
 
 	local surface = entity.surface
@@ -73,12 +73,14 @@ local function on_built_miniloader(entity, orientation)
 		inserter.inserter_stack_size_override = 1
 	end
 	util.update_inserters(loader)
+
+	return loader
 end
 
 local function on_player_built(event)
 	local entity = event.created_entity
 	if util.is_miniloader_inserter(entity) then
-		on_built_miniloader(entity)
+		local loader = on_built_miniloader(entity)
 		if use_snapping then
 			-- adjusts direction & belt_to_ground_type
 			snapping.snap_loader(loader, event)
