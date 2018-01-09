@@ -74,6 +74,36 @@ local empty_sheet = {
 	frame_count = 1,
 }
 
+-- underground belt solely for the purpose of migrations from pre-1.4.0 versions
+local function create_legacy_underground(prefix)
+	local name = prefix .. "miniloader-legacy-underground"
+
+	local entity = {}
+	entity.type = "underground-belt"
+	entity.name = name
+	entity.flags = {}
+	entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
+	entity.selection_box = {{0, 0}, {0, 0}}
+	entity.belt_horizontal = empty_sheet
+	entity.belt_vertical = empty_sheet
+	entity.ending_top = empty_sheet
+	entity.ending_side = empty_sheet
+	entity.ending_bottom = empty_sheet
+	entity.starting_top = empty_sheet
+	entity.starting_side = empty_sheet
+	entity.starting_bottom = empty_sheet
+	entity.ending_patch = empty_sheet
+	entity.speed = data.raw["underground-belt"][prefix .. "underground-belt"].speed
+	entity.max_distance = 0
+	entity.underground_sprite = empty_sheet
+	entity.underground_remove_belts_sprite = empty_sheet
+	entity.structure = {
+		direction_in = empty_sheet,
+		direction_out = empty_sheet,
+	}
+	data:extend{entity}
+end
+
 local function create_loader(prefix)
 	local loader_name = prefix .. "miniloader"
 	local name = loader_name .. "-loader"
@@ -235,6 +265,7 @@ local function create_inserter(prefix)
 end
 
 local function create_miniloader(prefix, tech_prereqs)
+	create_legacy_underground(prefix)
 	create_loader(prefix)
 	create_inserter(prefix)
 	create_item(prefix)

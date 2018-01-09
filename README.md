@@ -95,3 +95,6 @@ saves.
     * Redesign using 0.16 customized loader entities instead of underground belt to provide belt connectivity.
     * Add support for controlling miniloaders through the circuit network. 
     * Add optional filtering support for miniloaders.
+* 1.4.1 (2018-01-09):
+    * Fix crash when placing underground belt with a miniloader on the opposite side.
+    * Fix migration issue from 1.2.0-1.3.0 causing belt items to spill on the ground.
