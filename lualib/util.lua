@@ -52,22 +52,28 @@ function util.opposite_direction(direction)
 	return direction + 4
 end
 
--- underground-belt utilities
+-- orientation utilities
 
--- underground_side returns the "back" or hood side of the underground belt
-function util.underground_side(ug_belt)
-	if ug_belt.belt_to_ground_type == "output" then
-		return util.opposite_direction(ug_belt.direction)
+-- hood_side returns the "back" or hood side of a loader or underground belt
+function util.hood_side(entity)
+	if entity.type == "loader" and entity.loader_type == "output" then
+		return util.opposite_direction(entity.direction)
 	end
-	return ug_belt.direction
+	if entity.type == "underground-belt" and entity.belt_to_ground_type == "output" then
+		return util.opposite_direction(entity.direction)
+	end
+	return entity.direction
 end
 
--- belt_side returns the "front" side of the underground belt
-function util.belt_side(ug_belt)
-	if ug_belt.belt_to_ground_type == "input" then
-		return util.opposite_direction(ug_belt.direction)
+-- belt_side returns the "front" side of a loader or underground belt
+function util.belt_side(entity)
+	if entity.type == "loader" and entity.loader_type == "input" then
+		return util.opposite_direction(entity.direction)
 	end
-	return ug_belt.direction
+	if entity.type == "underground-belt" and entity.belt_to_ground_type == "input" then
+		return util.opposite_direction(entity.direction)
+	end
+	return entity.direction
 end
 
 -- miniloader utilities
