@@ -123,14 +123,12 @@ end
 -- returns the miniloader connected to the belt of `entity`, if it exists
 local function find_loader_by_underground_belt(ug_belt)
 	local ug_dir = util.belt_side(ug_belt)
-	local entities = ug_belt.surface.find_entities_filtered{
+	local loader = util.find_miniloaders{
+		surface = ug_belt.surface,
 		position = util.moveposition(ug_belt.position, util.offset(ug_dir, 1, 0)),
-		type = "loader",
-	}
-	for _, ent in ipairs(entities) do
-		if util.is_miniloader(ent) and util.underground_side(ent) == ug_dir then
-			return ent
-		end
+	}[1]
+	if loader and util.hood_side(loader) == ug_dir then
+		return loader
 	end
 	return nil
 end
