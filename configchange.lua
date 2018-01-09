@@ -37,15 +37,15 @@ add_migration{
 }
 
 add_migration{
-	name = "v1_4_0_reattach_loaders",
+	name = "v1_4_1_replace_legacy_undergrounds",
 	low = {1,0,0},
-	high = {1,4,0},
+	high = {1,4,1},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
-			for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do
-				if util.is_miniloader(entity) then
+			for _, entity in ipairs(surface.find_entities_filtered{type="underground-belt"}) do
+				local prefix = string.match(entity.name, "(.+)miniloader%-legacy%-underground")
+				if prefix then
 					local orientation = util.orientation_from_inserters(entity)
-					local name = entity.name
 					local position = entity.position
 					local force = entity.force
 
@@ -60,7 +60,7 @@ add_migration{
 					entity.destroy()
 
 					local new = surface.create_entity{
-						name = name,
+						name = prefix .. "miniloader-loader",
 						position = position,
 						direction = orientation.direction,
 						force = force,
@@ -81,9 +81,9 @@ add_migration{
 }
 
 add_migration{
-	name = "v1_4_0_expose_inserters",
+	name = "v1_4_1_expose_inserters",
 	low = {1,0,0},
-	high = {1,4,0},
+	high = {1,4,1},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
 			for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do
