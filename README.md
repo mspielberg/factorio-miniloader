@@ -98,3 +98,6 @@ saves.
 * 1.4.1 (2018-01-09):
     * Fix crash when placing underground belt with a miniloader on the opposite side.
     * Fix migration issue from 1.2.0-1.3.0 causing belt items to spill on the ground.
+* 1.4.2 (2018-01-09):
+    * Fix broken migration of yellow miniloaders.
+    * Fix broken localization of items in hand.

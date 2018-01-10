@@ -43,7 +43,7 @@ add_migration{
 	task = function()
 		for _, surface in pairs(game.surfaces) do
 			for _, entity in ipairs(surface.find_entities_filtered{type="underground-belt"}) do
-				local prefix = string.match(entity.name, "(.+)miniloader%-legacy%-underground")
+				local prefix = string.match(entity.name, "(.*)miniloader%-legacy%-underground$")
 				if prefix then
 					local orientation = util.orientation_from_inserters(entity)
 					local position = entity.position
