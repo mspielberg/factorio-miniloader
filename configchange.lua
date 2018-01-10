@@ -83,7 +83,7 @@ add_migration{
 add_migration{
 	name = "v1_4_1_expose_inserters",
 	low = {1,0,0},
-	high = {1,4,1},
+	high = {1,4,3},
 	task = function()
 		for _, surface in pairs(game.surfaces) do
 			for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do

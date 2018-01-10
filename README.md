@@ -101,3 +101,5 @@ saves.
 * 1.4.2 (2018-01-09):
     * Fix broken migration of yellow miniloaders.
     * Fix broken localization of items in hand.
+* 1.4.3 (2018-01-09):
+    * Apply migration to saves with v1.4.1.
