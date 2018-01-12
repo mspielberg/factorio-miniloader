@@ -51,47 +51,55 @@ end
 local selections = {}
 
 local function connected_non_partners(inserters)
-    local out = {red = {}, green = {}}
+    local out = {[defines.wire_type.red] = {}, [defines.wire_type.green] = {}}
     for _, inserter in ipairs(inserters) do
-    local connected = inserter.circuit_connected_entities
-    local pos = inserter.position
-        for wire_type, connected_entities in pairs(connected) do
-            local color = out[wire_type]
-        for _, other in ipairs(connected_entities) do
+        local connections = inserter.circuit_connection_definitions
+        local pos = inserter.position
+        for _, connection in ipairs(connections) do
+            local wire_type = connection.wire
+            local other = connection.target_entity
             local otherpos = other.position
             if otherpos.x ~= pos.x or otherpos.y ~= pos.y then
-                    color[util.entity_key(other)] = other
-            end
+                out[wire_type][#out[wire_type]+1] = connection
             end
         end
     end
     return out
 end
 
+local function count_connections_on_wire(entity, wire_type)
+    local count = 0
+    for _, connection in ipairs(entity.circuit_connection_definitions) do
+        if connection.wire == wire_type then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 local function partner_connections_need_sync(inserters, connections)
     local master_inserter = inserters[1]
-    for _, wire_type in ipairs{"red", "green"} do
-        local wire_id = defines.wire_type[wire_type]
-        local network = master_inserter.get_circuit_network(wire_id)
+    for wire_type, wire_connections in pairs(connections) do
+        local network = master_inserter.get_circuit_network(wire_type)
         if network then
-            if not next(connections[wire_type]) then
+            if not next(wire_connections) then
                 return true
             end
             local network_id = network.network_id
             for i=2,#inserters do
                 local slave_inserter = inserters[i]
-                local slave_network = slave_inserter.get_circuit_network(wire_id)
+                local slave_network = slave_inserter.get_circuit_network(wire_type)
                 if not slave_network or slave_network.network_id ~= network_id then
                     return true
                 end
-                if #slave_inserter.circuit_connected_entities[wire_type] ~= 1 then
+                if count_connections_on_wire(slave_inserter, wire_type) ~= 1 then
                     return true
                 end
             end
         else
             for i=2,#inserters do
                 local slave_inserter = inserters[i]
-                local slave_network = slave_inserter.get_circuit_network(wire_id)
+                local slave_network = slave_inserter.get_circuit_network(wire_type)
                 if slave_network then
                     return true
                 end
@@ -111,21 +119,20 @@ function M.sync_partner_connections(inserter)
     end
 
     local master_inserter = inserters[1]
-    for wire_type, entities in pairs(connections) do
-        local wire_id = defines.wire_type[wire_type]
-        if not next(entities) then
+    for wire_type, wire_connections in pairs(connections) do
+        if not next(wire_connections) then
             for _, inserter in ipairs(inserters) do
-                inserter.disconnect_neighbour(wire_id)
+                inserter.disconnect_neighbour(wire_type)
             end
         else
-            master_inserter.disconnect_neighbour(wire_id)
+            master_inserter.disconnect_neighbour(wire_type)
             for i=2,#inserters do
                 local inserter = inserters[i]
-                inserter.disconnect_neighbour(wire_id)
-                inserter.connect_neighbour{wire=wire_id, target_entity=master_inserter}
+                inserter.disconnect_neighbour(wire_type)
+                inserter.connect_neighbour{wire=wire_type, target_entity=master_inserter}
             end
-            for _, other in pairs(entities) do
-                master_inserter.connect_neighbour{wire = wire_id, target_entity = other}
+            for _, wire_connection in ipairs(wire_connections) do
+                master_inserter.connect_neighbour(wire_connection)
             end
         end
     end
@@ -136,8 +143,8 @@ local function position_set(entities)
     local out = {}
     for _, entity in ipairs(entities) do
         if entity.valid then
-        out[util.entity_key(entity)] = entity
-    end
+            out[util.entity_key(entity)] = entity
+        end
     end
     return out
 end
