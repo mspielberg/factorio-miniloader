@@ -104,8 +104,9 @@ local function create_legacy_underground(prefix)
 	data:extend{entity}
 end
 
-local function create_loader(prefix)
+local function create_loaders(prefix)
 	local loader_name = prefix .. "miniloader"
+	local filter_loader_name = prefix .. "filter-miniloader"
 	local name = loader_name .. "-loader"
 
 	local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
@@ -141,11 +142,21 @@ local function create_loader(prefix)
 	entity.belt_distance = 0
 	entity.container_distance = 0
 	entity.belt_length = 0.1
-	data:extend{entity}
+
+	local filter_entity = util.table.deepcopy(entity)
+	filter_entity.name = filter_loader_name .. "-loader"
+	filter_entity.structure.direction_in.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+	filter_entity.structure.direction_out.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+
+	data:extend{
+		entity,
+		filter_entity,
+	}
 end
 
-local function create_item(prefix)
+local function create_items(prefix)
 	local name = prefix .. "miniloader"
+	local filter_name = prefix .. "filter-miniloader"
 
 	local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
 	item.name = name
@@ -154,11 +165,22 @@ local function create_item(prefix)
 	item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
 	item.place_result = name .. "-inserter"
 
-	data.raw["item"][name] = item
+	local filter_item = util.table.deepcopy(item)
+	filter_item.name = filter_name
+	filter_item.localised_name = {"entity-name." .. filter_name}
+	filter_item.icon = "__miniloader__/graphics/item/" .. filter_name ..".png"
+	filter_item.order, _ = string.gsub(item.order, "^e%[miniloader%]", "f[filter-miniloader]", 1)
+	filter_item.place_result = filter_name .. "-inserter"
+
+	data:extend{
+		item,
+		filter_item,
+	}
 end
 
-local function create_recipe(prefix)
+local function create_recipes(prefix)
 	local name = prefix .. "miniloader"
+	local filter_name = prefix .. "filter-miniloader"
 
 	local recipe = {
 		type = "recipe",
@@ -169,15 +191,20 @@ local function create_recipe(prefix)
 		result = name,
 	}
 
-	if settings.startup["miniloader-filters"].value then
-		recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
-	end
+	local filter_recipe = util.table.deepcopy(recipe)
+	filter_recipe.name = filter_name
+	filter_recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
+	filter_recipe.result = filter_name
 
-	data:extend{recipe}
+	data:extend{
+		recipe,
+		filter_recipe,
+	}
 end
 
 local function create_technology(prefix, tech_prereqs)
 	local name = prefix .. "miniloader"
+	local filter_name = prefix .. "filter-miniloader"
 
 	local main_prereq = data.raw["technology"][tech_prereqs[1]]
 	local technology = {
@@ -190,6 +217,10 @@ local function create_technology(prefix, tech_prereqs)
 			{
 				type = "unlock-recipe",
 				recipe = name,
+			},
+			{
+				type = "unlock-recipe",
+				recipe = filter_name,
 			}
 		},
 		prerequisites = tech_prereqs,
@@ -210,10 +241,12 @@ local connector_definitions = circuit_connector_definitions.create(
 	}
 )
 
-local function create_inserter(prefix)
+local function create_inserters(prefix)
 	local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
 	local loader_name = prefix .. "miniloader"
 	local name = loader_name .. "-inserter"
+	local filter_loader_name = prefix .. "filter-miniloader"
+	local filter_name = filter_loader_name .. "-inserter"
 	local speed = base_entity.speed * 0.2 / 0.03125
 
 	local loader_inserter = {
@@ -258,19 +291,24 @@ local function create_inserter(prefix)
 		loader_inserter[k] = base_entity[k]
 	end
 
-	if settings.startup["miniloader-filters"].value then
-		loader_inserter.filter_count = 5
-	end
+	local filter_loader_inserter = util.table.deepcopy(loader_inserter)
+	filter_loader_inserter.name = filter_name
+	filter_loader_inserter.localised_name = {"entity-name." .. filter_loader_name}
+	filter_loader_inserter.minable.result = filter_loader_name
+	filter_loader_inserter.filter_count = 5
 
-	data:extend{loader_inserter}
+	data:extend{
+		loader_inserter,
+		filter_loader_inserter,
+	}
 end
 
 local function create_miniloader(prefix, tech_prereqs)
 	create_legacy_underground(prefix)
-	create_loader(prefix)
-	create_inserter(prefix)
-	create_item(prefix)
-	create_recipe(prefix)
+	create_loaders(prefix)
+	create_inserters(prefix)
+	create_items(prefix)
+	create_recipes(prefix)
 	create_technology(prefix, tech_prereqs)
 end
 
