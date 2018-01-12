@@ -103,3 +103,7 @@ saves.
     * Fix broken localization of items in hand.
 * 1.4.3 (2018-01-09):
     * Apply migration to saves with v1.4.1.
+* 1.5.0 (2018-01-12):
+    * Separate filter miniloaders into their own entities.
+    * Fix crash when connecting miniloaders directly to arithmetic or decider combinators.
+    * Existing miniloaders will lose their filtering capabilities. Sorry for the inconvenience!
