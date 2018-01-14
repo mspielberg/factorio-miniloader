@@ -40,14 +40,13 @@ and inserter performance made by Wube in the Factorio core.
 
 ## Filtering
 
-Filters can be enabled for miniloaders in the game options before loading a game.
-As you would expect, to build a miniloader capable of filtering, you must use
-filter inserters as ingredients.
+Versions of miniloaders with and without filtering are available once the
+appropriate technology has been researched.  As you would expect, to build a
+miniloader capable of filtering, you must use filter inserters as ingredients.
 
-Note that miniloaders behave like filter inserters, and not like vanilla loaders:
-if no filters are set then no items will be moved. You must set at least one filter.
-Filtering defaults to __disabled__ to prevent this behavior from breaking existing
-saves.
+Note that filter miniloaders behave like filter inserters, and not like vanilla
+loaders: if no filters are set then no items will be moved. You must set at
+least one filter.
 
 ## Known Issues
 
@@ -107,3 +106,5 @@ saves.
     * Separate filter miniloaders into their own entities.
     * Fix crash when connecting miniloaders directly to arithmetic or decider combinators.
     * Existing miniloaders will lose their filtering capabilities. Sorry for the inconvenience!
+* 1.5.1 (2018-01-14):
+    * Enable filter inserter recipes when migrating from pre-1.5.0.
