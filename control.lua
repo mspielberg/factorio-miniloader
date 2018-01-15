@@ -77,7 +77,24 @@ local function on_built_miniloader(entity, orientation)
   return loader
 end
 
+local function on_robot_built(event)
+  local entity = event.created_entity
+  if util.is_miniloader_inserter(entity) then
+    on_built_miniloader(entity, util.orientation_from_inserters(entity))
+    circuit.sync_filters(entity)
+    circuit.sync_partner_connections(entity)
+  else
+    circuit.update_connected_miniloader_inserters(entity)
+  end
+end
+
 local function on_player_built(event)
+  if event.revived then
+    -- rebuilt by nanobots
+    on_robot_built(event)
+    return
+  end
+
   local entity = event.created_entity
   if util.is_miniloader_inserter(entity) then
     local loader = on_built_miniloader(entity)
@@ -87,17 +104,6 @@ local function on_player_built(event)
     end
   else
     snapping.check_for_loaders(event)
-  end
-end
-
-local function on_robot_built(event)
-  local entity = event.created_entity
-  if util.is_miniloader_inserter(entity) then
-    on_built_miniloader(entity, util.orientation_from_inserters(entity))
-    circuit.sync_filters(entity)
-    circuit.sync_partner_connections(entity)
-  else
-    circuit.update_connected_miniloader_inserters(entity)
   end
 end
 
