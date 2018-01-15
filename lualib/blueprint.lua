@@ -101,6 +101,9 @@ end
 
 function M.filter_miniloaders(bp)
   local bp_entities = bp.get_blueprint_entities()
+  if not bp_entities then
+    return
+  end
   for i, ent in ipairs(bp_entities) do
     if util.is_miniloader_inserter(ent) then
       local overlapping = inserters_in_position(bp_entities, i, ent.position.x, ent.position.y)
