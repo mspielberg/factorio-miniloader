@@ -34,7 +34,6 @@ local function on_dolly_moved(event)
     force = loader.force,
     type = loader.loader_type,
   }
-  new_loader.destructible = false
 
   -- move items on belt
   for i=1,2 do

@@ -73,7 +73,6 @@ local function on_built_miniloader(entity, orientation)
     force = entity.force,
     type = orientation.type,
   }
-  entity.destructible = false
 
   for _ = 2, util.num_inserters(loader) do
     local inserter = surface.create_entity{
