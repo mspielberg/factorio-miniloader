@@ -112,3 +112,6 @@ least one filter.
     * Fix blueprints having duplicate overlapping miniloaders.  Any blueprints in your inventory should be fixed, but blueprints in chests may need to be cleared and re-created.
     * Fix building miniloaders with Nanorobots.
     * Disable PickerExtended's dolly feature, since it can only move parts of miniloaders, breaking them.
+* 1.5.3 (208-01-15):
+    * Reenable PickerExtended dolly. Thanks to Nexela for the fix suggestion.
+    * Fix setting a blueprint that includes no entities, only tiles.
