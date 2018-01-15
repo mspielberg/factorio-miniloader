@@ -25,22 +25,33 @@ function M.sync_filters(inserter)
   end
 end
 
-function M.sync_behavior(inserter)
-  local source_behavior = inserter.get_control_behavior()
-  local inserters = util.get_loader_inserters(inserter)
+local function inserter_with_control_behavior(inserters)
   for _, inserter in ipairs(inserters) do
-    if source_behavior then
-      local behavior = inserter.get_or_create_control_behavior()
-      behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
-      behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
-      behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
-      behavior.circuit_set_stack_size = false
-      behavior.circuit_stack_control_signal = {type="item"}
-      behavior.circuit_condition = source_behavior.circuit_condition
-      behavior.logistic_condition = source_behavior.logistic_condition
-      behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+    if inserter.get_control_behavior() then
+      return inserter
     end
-    inserter.inserter_stack_size_override = 1
+  end
+  return nil
+end
+
+function M.sync_behavior(inserter)
+  local inserters = util.get_loader_inserters(inserter)
+  local template_inserter = inserter_with_control_behavior(inserters)
+  if not template_inserter then
+    return
+  end
+  local source_behavior = template_inserter.get_control_behavior()
+  for _, target in ipairs(inserters) do
+    local behavior = target.get_or_create_control_behavior()
+    behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
+    behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
+    behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
+    behavior.circuit_set_stack_size = false
+    behavior.circuit_stack_control_signal = {type="item"}
+    behavior.circuit_condition = source_behavior.circuit_condition
+    behavior.logistic_condition = source_behavior.logistic_condition
+    behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+    target.inserter_stack_size_override = 1
   end
 end
 
@@ -83,6 +94,7 @@ local function partner_connections_need_sync(inserters, connections)
     local network = master_inserter.get_circuit_network(wire_type)
     if network then
       if not next(wire_connections) then
+        --log("no external connections on wire color")
         return true
       end
       local network_id = network.network_id
@@ -90,9 +102,11 @@ local function partner_connections_need_sync(inserters, connections)
         local slave_inserter = inserters[i]
         local slave_network = slave_inserter.get_circuit_network(wire_type)
         if not slave_network or slave_network.network_id ~= network_id then
+          --log("slave connected to no or different network")
           return true
         end
         if count_connections_on_wire(slave_inserter, wire_type) ~= 1 then
+          --log("slave has bad connection count")
           return true
         end
       end
@@ -101,11 +115,13 @@ local function partner_connections_need_sync(inserters, connections)
         local slave_inserter = inserters[i]
         local slave_network = slave_inserter.get_circuit_network(wire_type)
         if slave_network then
+          --log("slave has network connection")
           return true
         end
       end
     end
   end
+  --log("no sync needed")
   return false
 end
 
@@ -114,10 +130,10 @@ function M.sync_partner_connections(inserter)
   local connections = connected_non_partners(inserters)
 
   if not partner_connections_need_sync(inserters, connections) then
-    M.sync_behavior(inserter)
     return
   end
 
+  M.sync_behavior(inserter)
   local master_inserter = inserters[1]
   for wire_type, wire_connections in pairs(connections) do
     if not next(wire_connections) then
@@ -136,7 +152,6 @@ function M.sync_partner_connections(inserter)
       end
     end
   end
-  M.sync_behavior(inserter)
 end
 
 local function position_set(entities)
