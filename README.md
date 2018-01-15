@@ -109,5 +109,6 @@ least one filter.
 * 1.5.1 (2018-01-14):
     * Enable filter inserter recipes when migrating from pre-1.5.0.
 * 1.5.2 (2018-01-14):
-    * Fix some issues around blueprinting, particularly compatibility with Nanorobots.
+    * Fix blueprints having duplicate overlapping miniloaders.  Any blueprints in your inventory should be fixed, but blueprints in chests may need to be cleared and re-created.
+    * Fix building miniloaders with Nanorobots.
     * Disable PickerExtended's dolly feature, since it can only move parts of miniloaders, breaking them.
