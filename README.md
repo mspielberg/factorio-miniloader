@@ -108,3 +108,6 @@ least one filter.
     * Existing miniloaders will lose their filtering capabilities. Sorry for the inconvenience!
 * 1.5.1 (2018-01-14):
     * Enable filter inserter recipes when migrating from pre-1.5.0.
+* 1.5.2 (2018-01-14):
+    * Fix some issues around blueprinting, particularly compatibility with Nanorobots.
+    * Disable PickerExtended's dolly feature, since it can only move parts of miniloaders, breaking them.
