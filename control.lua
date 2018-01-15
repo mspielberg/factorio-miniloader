@@ -1,9 +1,11 @@
-blueprint = require("lualib.blueprint")
+local blueprint = require("lualib.blueprint")
 local circuit = require("circuit")
 local configchange = require("configchange")
 local _ = require("gui")
 local snapping = require("snapping")
 local util = require("lualib.util")
+
+local compat_pickerextended = require("compat.pickerextended")
 
 local use_snapping = settings.global["miniloader-snapping"].value
 
@@ -39,6 +41,15 @@ local use_snapping = settings.global["miniloader-snapping"].value
 ]]
 
 -- Event Handlers
+
+local function on_init()
+  compat_pickerextended.on_load()
+end
+
+local function on_load()
+  compat_pickerextended.on_load()
+end
+
 
 local function on_configuration_changed(configuration_changed_data)
   local mod_change = configuration_changed_data.mod_changes["miniloader"]
@@ -200,6 +211,8 @@ end
 
 -- lifecycle events
 
+script.on_init(on_init)
+script.on_load(on_load)
 script.on_configuration_changed(on_configuration_changed)
 
 -- entity events
