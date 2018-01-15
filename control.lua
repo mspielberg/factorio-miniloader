@@ -1,3 +1,4 @@
+blueprint = require("lualib.blueprint")
 local circuit = require("circuit")
 local configchange = require("configchange")
 local _ = require("gui")
@@ -191,6 +192,12 @@ local function on_entity_settings_pasted(event)
   end
 end
 
+local function on_setup_blueprint(event)
+  local player = game.players[event.player_index]
+  local bp = player.blueprint_to_setup
+  blueprint.filter_miniloaders(bp)
+end
+
 -- lifecycle events
 
 script.on_configuration_changed(on_configuration_changed)
@@ -204,6 +211,7 @@ script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
 script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
+script.on_event(defines.events.on_player_setup_blueprint, on_setup_blueprint)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
   if event.setting == "miniloader-snapping" then

@@ -1,3 +1,4 @@
+local blueprint = require("../lualib/blueprint")
 local circuit = require "circuit"
 local util = require "lualib.util"
 
@@ -97,6 +98,32 @@ add_migration{
           entity.destructible = false
           util.update_inserters(entity)
         end
+      end
+    end
+  end,
+}
+
+add_migration{
+  name = "v1_5_2_remove_duplicate_inserters_in_blueprints",
+  low = {1,0,0},
+  high = {1,5,2},
+  task = function()
+    -- adjust all player inventories
+    for _, p in pairs(game.players) do
+      log("checking player " .. p.name)
+      for i=1,2 do
+        log("checking inventory " .. i)
+        local inv = p.get_inventory(i)
+        for slot=1,#inv do
+          local stack = inv[slot]
+          if blueprint.is_setup_bp(stack) then
+            log("found blueprint in slot " .. slot)
+            blueprint.filter_miniloaders(stack)
+          end
+        end
+      end
+      if blueprint.is_setup_bp(p.cursor_stack) then
+        blueprint.filter_miniloaders(p.cursor_stack)
       end
     end
   end,
