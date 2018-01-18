@@ -84,7 +84,7 @@ function util.find_miniloaders(params)
   out = {}
   for i=1,#entities do
     local ent = entities[i]
-    if  util.is_miniloader(ent) and ent ~= entity then
+    if util.is_miniloader(ent) and ent ~= entity then
       out[#out+1] = ent
     end
   end

@@ -118,3 +118,6 @@ least one filter.
 * 1.5.4 (2018-01-17):
     * Fix crash when alt-selecting with blueprint.
     * Fix crash during blueprinting.
+* 1.5.5 (2018-01-18):
+    * Add compatibility with upgrade-planner.
+    * Ghosts can now be placed over miniloaders marked for deconstruction.
