@@ -112,9 +112,9 @@ local function create_loaders(prefix)
   local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
   entity.type = "loader"
   entity.name = name
-  entity.flags = {}
+  entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
-  entity.minable = nil
+  entity.minable = { mining_time = 1, count = 0, result = "raw-wood" }
   entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.belt_horizontal = empty_sheet
@@ -268,6 +268,7 @@ local function create_inserters(prefix)
     },
     extension_speed = speed,
     rotation_speed = speed,
+    fast_replaceable_group = "miniloader-inserter",
     pickup_position = {0, -0.2},
     insert_position = {0, 0.8},
     draw_held_item = false,

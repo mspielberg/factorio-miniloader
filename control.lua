@@ -6,6 +6,7 @@ local snapping = require("snapping")
 local util = require("lualib.util")
 
 local compat_pickerextended = require("compat.pickerextended")
+local compat_upgradeplanner = require("compat.upgradeplanner")
 
 local use_snapping = settings.global["miniloader-snapping"].value
 
@@ -100,13 +101,16 @@ local function on_robot_built(event)
 end
 
 local function on_player_built(event)
-  if event.revived then
-    -- rebuilt by nanobots
+  local entity = event.created_entity
+  if event.mod_name then
+    -- might be circuit connected or have filter settings
     on_robot_built(event)
+    if event.mod_name == "upgrade-planner" then
+      compat_upgradeplanner.on_built_entity(event)
+    end
     return
   end
 
-  local entity = event.created_entity
   if util.is_miniloader_inserter(entity) then
     local loader = on_built_miniloader(entity)
     if use_snapping then
@@ -130,6 +134,12 @@ local function on_rotated(event)
     util.update_inserters(miniloader)
   elseif use_snapping then
     snapping.check_for_loaders(event)
+  end
+end
+
+local function on_pre_player_mined_item(event)
+  if event.mod_name == "upgrade-planner" then
+    return compat_upgradeplanner.on_pre_player_mined_item(event)
   end
 end
 
@@ -211,6 +221,28 @@ local function on_setup_blueprint(event)
   blueprint.filter_miniloaders(bp)
 end
 
+local function on_marked_for_deconstruction(event)
+  local entity = event.entity
+  for _, ent in ipairs(entity.surface.find_entities_filtered{position=entity.position}) do
+    if util.is_miniloader(ent) or util.is_miniloader_inserter(ent) then
+      if not ent.to_be_deconstructed(ent.force) then
+        ent.order_deconstruction(ent.force)
+      end
+    end
+  end
+end
+
+local function on_canceled_deconstruction(event)
+  local entity = event.entity
+  for _, ent in ipairs(entity.surface.find_entities_filtered{position=entity.position}) do
+    if util.is_miniloader(ent) or util.is_miniloader_inserter(ent) then
+      if ent.to_be_deconstructed(ent.force) then
+        ent.cancel_deconstruction(ent.force)
+      end
+    end
+  end
+end
+
 -- lifecycle events
 
 script.on_init(on_init)
@@ -222,11 +254,17 @@ script.on_configuration_changed(on_configuration_changed)
 script.on_event(defines.events.on_built_entity, on_player_built)
 script.on_event(defines.events.on_robot_built_entity, on_robot_built)
 script.on_event(defines.events.on_player_rotated_entity, on_rotated)
+
+script.on_event(defines.events.on_pre_player_mined_item, on_pre_player_mined_item)
 script.on_event(defines.events.on_player_mined_entity, on_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_mined)
 script.on_event(defines.events.on_entity_died, on_mined)
+
 script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
+
 script.on_event(defines.events.on_player_setup_blueprint, on_setup_blueprint)
+script.on_event(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)
+script.on_event(defines.events.on_canceled_deconstruction, on_canceled_deconstruction)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
   if event.setting == "miniloader-snapping" then
