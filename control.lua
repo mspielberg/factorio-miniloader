@@ -205,6 +205,9 @@ end
 local function on_setup_blueprint(event)
   local player = game.players[event.player_index]
   local bp = player.blueprint_to_setup
+  if not bp or not bp.valid_for_read then
+    bp = player.cursor_stack
+  end
   blueprint.filter_miniloaders(bp)
 end
 
