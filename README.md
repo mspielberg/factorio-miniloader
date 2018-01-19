@@ -58,6 +58,22 @@ least one filter.
     * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
 * Miniloaders don't necessarily appear correctly in blueprints.
 
+## Ultimate Belts Caveats and Warnings
+
+__Ultimate Belts support is in BETA state.__
+
+There appear to be Factorio core engine limitations when inserters pull from
+belts faster than 5x yellow speed.
+
+Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities
+to give full throughput when interacting with chests and other containers.
+
+They will _not_ give full throughput when loading cargo wagons.
+
+Filter miniloaders for these speeds are disabled, and circuit control is broken.
+Do not upgrade miniloaders to these speeds if you are using circuit control.
+
+Use with due caution and at your own risk to your factory.
 
 ## Acknowledgements
 
@@ -121,3 +137,5 @@ least one filter.
 * 1.5.5 (2018-01-18):
     * Add compatibility with upgrade-planner.
     * Ghosts can now be placed over miniloaders marked for deconstruction.
+* 1.5.6 (2018-01-19):
+    * Add BETA support for Ultimate Belts mod.  See caveats and warnings above.

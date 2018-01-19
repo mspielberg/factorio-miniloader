@@ -1,62 +1,63 @@
 require "util"
 
 local ingredients = {
-  -- 52 I
-  ["bulk-miniloader"] = {
-    {"underground-belt", 2},
-    {"iron-plate", 16},
-    {"engine-unit", 2},
-  },
+  -- base
   -- 105 I, 27 C
   ["miniloader"] = {
-    {"underground-belt", 2},
+    {"underground-belt", 1},
     {"steel-plate", 8},
     {"fast-inserter", 6},
   },
-  -- 174 I
-  ["fast-bulk-miniloader"] = {
-    {"fast-underground-belt", 2},
-    {"steel-plate", 8},
-    {"engine-unit", 4},
-  },
   -- 358 I, 128 C, 89 O
   ["fast-miniloader"] = {
-    {"fast-underground-belt", 2},
-    {"steel-plate", 8},
+    {"miniloader", 1},
+    {"fast-underground-belt", 1},
     {"stack-inserter", 4},
-  },
-  -- 342 I, 12 C, 333 O
-  ["express-bulk-miniloader"] = {
-    {"express-underground-belt", 2},
-    {"steel-plate", 8},
-    {"electric-engine-unit", 4},
   },
   -- 628 I, 384 C, 174 O
   ["express-miniloader"] = {
-    {"express-underground-belt", 2},
-    {"steel-plate", 8},
-    {"stack-inserter", 6},
+    {"fast-miniloader", 1},
+    {"express-underground-belt", 1},
+    {"stack-inserter", 2},
   },
 
-  ["green-bulk-miniloader"] = {
-    {"green-underground-belt", 2},
-    {"steel-plate", 8},
-    {"electric-engine-unit", 4},
-  },
+  -- boblogistics
   ["green-miniloader"] = {
-    {"green-underground-belt", 2},
-    {"steel-plate", 8},
+    {"express-miniloader", 1},
+    {"green-underground-belt", 1},
     {"express-stack-inserter", 4},
   },
-  ["purple-bulk-miniloader"] = {
-    {"green-underground-belt", 2},
-    {"steel-plate", 8},
-    {"electric-engine-unit", 4},
-  },
   ["purple-miniloader"] = {
-    {"purple-underground-belt", 2},
-    {"steel-plate", 8},
-    {"express-stack-inserter", 6},
+    {"green-miniloader", 1},
+    {"purple-underground-belt", 1},
+    {"express-stack-inserter", 2},
+  },
+
+  --UltimateBelts
+  ["ultra-fast-miniloader"] = {
+    {"express-miniloader", 1},
+    {"ultra-fast-underground-belt", 1},
+    {"stack-inserter", 6},
+  },
+  ["extreme-fast-miniloader"] = {
+    {"ultra-fast-miniloader", 1},
+    {"extreme-fast-underground-belt", 1},
+    {"stack-inserter", 6},
+  },
+  ["ultra-express-miniloader"] = {
+    {"extreme-fast-miniloader", 1},
+    {"ultra-express-underground-belt", 1},
+    {"stack-inserter", 6},
+  },
+  ["extreme-express-miniloader"] = {
+    {"ultra-express-miniloader", 1},
+    {"extreme-express-underground-belt", 1},
+    {"stack-inserter", 6},
+  },
+  ["ultimate-miniloader"] = {
+    {"extreme-express-miniloader", 1},
+    {"ultimate-underground-belt", 1},
+    {"stack-inserter", 6},
   },
 }
 
@@ -141,7 +142,12 @@ local function create_loaders(prefix)
   }
   entity.belt_distance = 0
   entity.container_distance = 0
-  entity.belt_length = 0.1
+  entity.belt_length = 0.2
+
+  if entity.speed > 0.16 then
+    -- BETA support for Ultimate Belts
+    entity.container_distance = 1
+  end
 
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
@@ -227,6 +233,11 @@ local function create_technology(prefix, tech_prereqs)
     unit = main_prereq.unit,
     order = main_prereq.order
   }
+
+  if data.raw["underground-belt"][prefix .. "underground-belt"].speed > 0.16 then
+    -- BETA support for Ultimate Belts
+    technology.effects[2] = nil
+  end
 
   data:extend{technology}
 end
@@ -323,4 +334,13 @@ if data.raw.technology["bob-logistics-4"] then
   if data.raw.technology["bob-logistics-5"] then
     create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
   end
+end
+
+-- UltimateBelts support
+if data.raw.technology["ultimate-logistics"] then
+  create_miniloader("ultra-fast-", {"ultra-fast-logistics", "express-miniloader"})
+  create_miniloader("extreme-fast-", {"extreme-fast-logistics", "ultra-fast-miniloader"})
+  create_miniloader("ultra-express-", {"ultra-express-logistics", "extreme-fast-miniloader"})
+  create_miniloader("extreme-express-", {"extreme-express-logistics", "ultra-express-miniloader"})
+  create_miniloader("ultimate-", {"ultimate-logistics", "extreme-express-miniloader"})
 end
