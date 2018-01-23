@@ -230,7 +230,7 @@ local function create_technology(prefix, tech_prereqs)
       }
     },
     prerequisites = tech_prereqs,
-    unit = main_prereq.unit,
+    unit = util.table.deepcopy(main_prereq.unit),
     order = main_prereq.order
   }
 
