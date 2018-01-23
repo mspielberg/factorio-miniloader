@@ -138,4 +138,8 @@ Use with due caution and at your own risk to your factory.
     * Add compatibility with upgrade-planner.
     * Ghosts can now be placed over miniloaders marked for deconstruction.
 * 1.5.6 (2018-01-19):
+    * Change recipes to use lower tiers of miniloaders as ingredients.
     * Add BETA support for Ultimate Belts mod.  See caveats and warnings above.
+* 1.5.7 (2018-01-22):
+    * Make sure stack size override is reset on non-circuit-controlled inserters.
+    * Potentional fix for reported Omnimatter mod incompatibility.
