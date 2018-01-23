@@ -36,11 +36,16 @@ end
 
 function M.sync_behavior(inserter)
   local inserters = util.get_loader_inserters(inserter)
+  for _, target in ipairs(inserters) do
+    target.inserter_stack_size_override = 1
+  end
+
   local template_inserter = inserter_with_control_behavior(inserters)
   if not template_inserter then
     return
   end
   local source_behavior = template_inserter.get_control_behavior()
+
   for _, target in ipairs(inserters) do
     local behavior = target.get_or_create_control_behavior()
     behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
@@ -51,7 +56,6 @@ function M.sync_behavior(inserter)
     behavior.circuit_condition = source_behavior.circuit_condition
     behavior.logistic_condition = source_behavior.logistic_condition
     behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
-    target.inserter_stack_size_override = 1
   end
 end
 
