@@ -129,6 +129,21 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_5_7_fix_stack_size_overrides",
+  low = {1,5,2},
+  high = {1,5,7},
+  task = function()
+    for _, surface in pairs(game.surfaces) do
+      for _, entity in ipairs(surface.find_entities_filtered{type="inserter"}) do
+        if util.is_miniloader_inserter(entity) then
+          entity.inserter_stack_size_override = 1
+        end
+      end
+    end
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
