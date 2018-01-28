@@ -1,15 +1,8 @@
-local ontick = require "lualib.ontick"
+local event = require "lualib.event"
+local onwireplaced = require "lualib.onwireplaced"
 local util = require "lualib.util"
 
 local M = {}
-
--- how often to poll circuit network connections when the player is holding wire over an entity
-local POLL_INTERVAL = 15
-
-local NO_CONNECTIONS = 0
-local ONLY_PARTNERS = 1
-local ONLY_OTHERS = 2
-local PARTNERS_AND_OTHERS = 3
 
 function M.sync_filters(inserter)
   local filters = {}
@@ -18,9 +11,9 @@ function M.sync_filters(inserter)
     filters[i] = inserter.get_filter(i)
   end
   local inserters = util.get_loader_inserters(inserter)
-  for _, inserter in ipairs(inserters) do
+  for _, ins in ipairs(inserters) do
     for j=1,slots do
-      inserter.set_filter(j, filters[j])
+      ins.set_filter(j, filters[j])
     end
   end
 end
@@ -59,23 +52,15 @@ function M.sync_behavior(inserter)
   end
 end
 
--- tracking for wire connection changes
-
--- map from player_index to an array of the miniloader-inserters connected via circuit
--- to the player's selected entity
-local selections = {}
-
 local function connected_non_partners(inserters)
   local out = {[defines.wire_type.red] = {}, [defines.wire_type.green] = {}}
   for _, inserter in ipairs(inserters) do
-    local connections = inserter.circuit_connection_definitions
+    local ccds = inserter.circuit_connection_definitions
     local pos = inserter.position
-    for _, connection in ipairs(connections) do
-      local wire_type = connection.wire
-      local other = connection.target_entity
-      local otherpos = other.position
+    for _, ccd in ipairs(ccds) do
+      local otherpos = ccd.target_entity.position
       if otherpos.x ~= pos.x or otherpos.y ~= pos.y then
-        out[wire_type][#out[wire_type]+1] = connection
+        table.insert(out[ccd.wire], ccd)
       end
     end
   end
@@ -84,8 +69,8 @@ end
 
 local function count_connections_on_wire(entity, wire_type)
   local count = 0
-  for _, connection in ipairs(entity.circuit_connection_definitions) do
-    if connection.wire == wire_type then
+  for _, ccd in ipairs(entity.circuit_connection_definitions) do
+    if ccd.wire == wire_type then
       count = count + 1
     end
   end
@@ -129,7 +114,7 @@ local function partner_connections_need_sync(inserters, connections)
   return false
 end
 
-function M.sync_partner_connections(inserter)
+local function sync_partner_connections(inserter)
   local inserters = util.get_loader_inserters(inserter)
   local connections = connected_non_partners(inserters)
 
@@ -139,167 +124,41 @@ function M.sync_partner_connections(inserter)
 
   M.sync_behavior(inserter)
   local master_inserter = inserters[1]
-  for wire_type, wire_connections in pairs(connections) do
-    if not next(wire_connections) then
-      for _, inserter in ipairs(inserters) do
-        inserter.disconnect_neighbour(wire_type)
+  for wire_type, ccds in pairs(connections) do
+    if not next(ccds) then
+      for _, ins in ipairs(inserters) do
+        ins.disconnect_neighbour(wire_type)
       end
     else
       master_inserter.disconnect_neighbour(wire_type)
+      for _, ccd in ipairs(ccds) do
+        master_inserter.connect_neighbour(ccd)
+      end
       for i=2,#inserters do
-        local inserter = inserters[i]
-        inserter.disconnect_neighbour(wire_type)
-        inserter.connect_neighbour{wire=wire_type, target_entity=master_inserter}
-      end
-      for _, wire_connection in ipairs(wire_connections) do
-        master_inserter.connect_neighbour(wire_connection)
+        local ins = inserters[i]
+        ins.disconnect_neighbour(wire_type)
+        ins.connect_neighbour{wire=wire_type, target_entity=master_inserter}
       end
     end
   end
 end
 
-local function position_set(entities)
-  local out = {}
-  for _, entity in ipairs(entities) do
-    if entity.valid then
-      out[util.entity_key(entity)] = entity
+local function on_wire_change(ev)
+  game.print(serpent.line{
+    name=ev.name,
+    e1={name=ev.entity.name, id=ev.entity.unit_number},
+    e2={name=ev.target_entity.name, id=ev.target_entity.unit_number},
+  })
+  for _, entity in ipairs{ev.entity, ev.target_entity} do
+    if entity.valid and util.is_miniloader_inserter(entity) then
+      sync_partner_connections(entity)
     end
   end
-  return out
 end
 
-local function diff_entity_lists(old, new)
-  local old_positions = position_set(old)
-  local new_positions = position_set(new)
-
-  local removed = {}
-  for old_pos, entity in pairs(old_positions) do
-    if not new_positions[old_pos] then
-      removed[#removed+1] = entity
-    end
-    new_positions[old_pos] = nil
-  end
-
-  local added = {}
-  for _, entity in pairs(new_positions) do
-    added[#added+1] = entity
-  end
-  return removed, added
+function M.register_events()
+  event.register({onwireplaced.on_wire_added, onwireplaced.on_wire_removed}, on_wire_change)
+  onwireplaced.register_events()
 end
-
-local function find_connected_miniloader_inserters(entity)
-  local connected = entity.circuit_connected_entities
-  if not connected then
-    return {}
-  end
-  local out = {}
-  for _, entities in pairs(connected) do
-    for _, e in ipairs(entities) do
-      if util.is_miniloader_inserter(e) then
-        out[#out+1] = e
-      end
-    end
-  end
-  return out
-end
-
-function M.update_connected_miniloader_inserters(entity)
-  for _, inserter in ipairs(find_connected_miniloader_inserters(entity)) do
-    M.sync_partner_connections(inserter)
-  end
-end
-
-local function check_connected_entities(player_index, entity)
-  local old = selections[player_index] or {}
-  local new = find_connected_miniloader_inserters(entity)
-  local removed, added = diff_entity_lists(old, new)
-  for _, inserter in ipairs(removed) do
-    M.sync_partner_connections(inserter)
-  end
-  for _, inserter in ipairs(added) do
-    M.sync_partner_connections(inserter)
-  end
-  selections[player_index] = new
-end
-
-local function monitor_selections(event)
-  if not next(selections) then
-    ontick.unregister(monitor_selections)
-    return
-  end
-  for player_index, old in pairs(selections) do
-    local selected = game.players[player_index].selected
-    if util.is_miniloader_inserter(selected) then
-      M.sync_partner_connections(selected)
-    end
-    check_connected_entities(player_index, selected)
-  end
-end
-
-local monitored_players = {}
-
-local function start_monitoring_selection(player_index)
-  local selected = game.players[player_index].selected
-  if selected then
-    selections[player_index] = find_connected_miniloader_inserters(selected)
-    ontick.register(monitor_selections, POLL_INTERVAL)
-    return
-  end
-  selections[player_index] = nil
-end
-
-local function on_selected_entity_changed(event)
-  if not next(monitored_players) then
-    script.on_event(defines.events.on_selected_entity_changed, nil)
-    return
-  end
-
-  local player_index = event.player_index
-  if not monitored_players[player_index] then
-    return
-  end
-
-  if event.last_entity then
-    check_connected_entities(player_index, event.last_entity)
-  end
-
-  start_monitoring_selection(player_index)
-end
-
-local function on_player_holding_wire(player_index)
-  monitored_players[player_index] = true
-  if selections[player_index] then
-    -- already had selection, probably placed a wire
-    monitor_selections()
-  else
-    start_monitoring_selection(player_index)
-  end
-  script.on_event(defines.events.on_selected_entity_changed, on_selected_entity_changed)
-end
-
-local function on_player_not_holding_wire(player_index)
-  local selected = game.players[player_index].selected
-  if selected then
-    -- one last check since we will no longer be monitoring this player's selection
-    check_connected_entities(player_index, selected)
-  end
-  monitored_players[player_index] = nil
-  selections[player_index] = nil
-end
-
-local function on_player_cursor_stack_changed(event)
-  local player_index = event.player_index
-  local cursor_stack = game.players[player_index].cursor_stack
-  if cursor_stack.valid_for_read then
-    local name = cursor_stack.name
-    if name == "red-wire" or name == "green-wire" then
-      on_player_holding_wire(player_index)
-      return
-    end
-  end
-  on_player_not_holding_wire(player_index)
-end
-
-script.on_event(defines.events.on_player_cursor_stack_changed, on_player_cursor_stack_changed)
 
 return M

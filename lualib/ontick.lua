@@ -3,17 +3,19 @@
     handlers.
 ]]
 
+local event = require "lualib.event"
+
 local M = {}
 
 local on_tick_handlers = {}
-local function on_tick_meta_handler(event)
+local function on_tick_meta_handler(e)
   if not next(on_tick_handlers) then
-    script.on_event(defines.events.on_tick, nil)
+    event.unregister(defines.events.on_tick, on_tick_meta_handler)
     return
   end
   for handler, config in pairs(on_tick_handlers) do
-    if (event.tick - config[2]) % config[1] == 0 then
-      handler(event)
+    if (e.tick - config[2]) % config[1] == 0 then
+      handler(e)
     end
   end
 end
@@ -28,7 +30,7 @@ function M.register(f, interval)
   math.randomseed(game.tick)
   local offset = math.random(interval) - 1
   on_tick_handlers[f] = { interval, offset }
-  script.on_event(defines.events.on_tick, on_tick_meta_handler)
+  event.register(defines.events.on_tick, on_tick_meta_handler)
 end
 
 function M.unregister(f)
