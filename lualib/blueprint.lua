@@ -97,10 +97,10 @@ function M.is_setup_bp(stack)
 end
 
 function M.bounding_box(bp)
-  local left = 0
-  local top = 0
-  local right = 0
-  local bottom = 0
+  local left = -0.1
+  local top = -0.1
+  local right = 0.1
+  local bottom = 0.1
 
   local entities = bp.get_blueprint_entities()
   if entities then
