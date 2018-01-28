@@ -24,6 +24,48 @@ function util.offset(direction, longitudinal, orthogonal)
   end
 end
 
+-- BoundingBox utilities
+
+--[[
+  +----------------------+
+  |                      |
+  |                      |
+  |                      |
+  |       O              |
+  |                      |
+  +----------------------+
+]]
+function util.rotate_box(box, direction)
+  local left = box.left_top.x
+  local top = box.left_top.y
+  local right = box.right_bottom.x
+  local bottom = box.right_bottom.y
+
+  if direction == defines.direction.north then
+    return box
+  elseif direction == defines.direction.east then
+    -- 90 degree rotation
+    return {
+      left_top = {x=-bottom, y=left},
+      right_bottom = {x=-top, y=right},
+    }
+  elseif direction == defines.direction.south then
+    -- 180 degree rotation
+    return {
+      left_top = {x=-right, y=-bottom},
+      right_bottom = {x=-left, y=-top},
+    }
+  elseif direction == defines.direction.west then
+    -- 270 degree rotation
+    return {
+      left_top = {x=top, y=-right},
+      right_bottom = {x=bottom, y=-left},
+    }
+  else
+    error('invalid direction passed to rotate_box')
+  end
+end
+
 function util.move_box(box, offset)
   return {
     left_top = util.moveposition(box.left_top, offset),
@@ -81,10 +123,10 @@ end
 function util.find_miniloaders(params)
   params.type = "loader"
   local entities = params.surface.find_entities_filtered(params)
-  out = {}
+  local out = {}
   for i=1,#entities do
     local ent = entities[i]
-    if util.is_miniloader(ent) and ent ~= entity then
+    if util.is_miniloader(ent) then
       out[#out+1] = ent
     end
   end

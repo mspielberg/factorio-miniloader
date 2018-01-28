@@ -2,11 +2,6 @@ local util = require("lualib.util")
 
 local M = {}
 
-local function debug_log(msg)
-  local info = debug.getinfo(2, "nSl")
-  log(info.short_src .. ":" .. info.currentline .. " " .. serpent.block(msg, {name="_"}))
-end
-
 local function inserters_in_position(bp_entities, starting_index)
   local out = {}
   local x = bp_entities[starting_index].position.x
@@ -48,7 +43,7 @@ local function find_slaves(miniloader_inserters, to_remove)
   end
 
   -- iterate back over and record slaves
-  for i, inserter in ipairs(miniloader_inserters) do
+  for _, inserter in ipairs(miniloader_inserters) do
     if inserter ~= most_connected_inserter then
       to_remove[inserter.entity_number] = true
     end
@@ -99,6 +94,35 @@ function M.is_setup_bp(stack)
     stack.valid_for_read and
     stack.is_blueprint and
     stack.is_blueprint_setup()
+end
+
+function M.bounding_box(bp)
+  local left = 0
+  local top = 0
+  local right = 0
+  local bottom = 0
+
+  local entities = bp.get_blueprint_entities()
+  if entities then
+    for _, e in pairs(entities) do
+      local pos = e.position
+      local proto = game.entity_prototypes[e.name]
+      local direction = e.direction or defines.direction.north
+      local bb = util.move_box(
+        util.rotate_box(proto.collision_box, direction),
+        util.offset(defines.direction.east, pos.x, pos.y)
+      )
+      if bb.left_top.x < left then left = bb.left_top.x end
+      if bb.left_top.y < top then top = bb.left_top.y end
+      if bb.right_bottom.x > right then right = bb.right_bottom.x end
+      if bb.right_bottom.y > bottom then bottom = bb.right_bottom.y end
+    end
+  end
+
+  return {
+    left_top = {x=left, y=top},
+    right_bottom = {x=right, y=bottom},
+  }
 end
 
 function M.filter_miniloaders(bp)
