@@ -143,3 +143,5 @@ Use with due caution and at your own risk to your factory.
 * 1.5.7 (2018-01-22):
     * Make sure stack size override is reset on non-circuit-controlled inserters.
     * Potentional fix for reported Omnimatter mod incompatibility.
+* 1.5.8 (2018-02-06):
+    * Using Upgrade Planner on miniloaders now preserves complex items (configured blueprints, armor with inventory, etc.)

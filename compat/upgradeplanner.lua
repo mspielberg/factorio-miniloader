@@ -2,8 +2,7 @@ local util = require "lualib.util"
 
 local M = {}
 
-local saved_inserter_stacks = {}
-local saved_loader_contents = {{}, {}}
+local temp_storage_chest
 
 function M.on_pre_player_mined_item(event)
   local entity = event.entity
@@ -11,14 +10,18 @@ function M.on_pre_player_mined_item(event)
     return
   end
 
+  temp_storage_chest = entity.surface.create_entity{
+    name = "steel-chest",
+    position = util.moveposition(entity.position, util.offset(defines.direction.north, 2, 0)),
+    force = entity.force,
+  }
+  local temp_storage = temp_storage_chest.get_inventory(defines.inventory.chest)
+
   -- upgrade-planner is about to try to fast replace an inserter, so let's prepare the way
   local inserters = util.get_loader_inserters(entity)
-  for i=1,#inserters do
-    local inserter = inserters[i]
-    if inserter.held_stack.valid_for_read then
-      saved_inserter_stacks[i] = inserter.held_stack
-      inserter.held_stack.clear()
-    end
+  for i, inserter in ipairs(util.get_loader_inserters(entity)) do
+    local temp_storage = temp_storage[i+20]
+    inserter.held_stack.swap_stack(temp_storage)
     if inserter.unit_number ~= entity.unit_number then
       inserter.destroy()
     end
@@ -30,10 +33,9 @@ function M.on_pre_player_mined_item(event)
   }[1]
   for i=1,2 do
     local tl = loader.get_transport_line(i)
-    for j=1,#tl do
-      saved_loader_contents[i][j] = tl[j]
+    for j=#tl,1,-1 do
+      tl[j].swap_stack(temp_storage[(i-1)*10 + j])
     end
-    tl.clear()
   end
   loader.destroy()
 end
@@ -44,6 +46,8 @@ function M.on_built_entity(event)
     return
   end
 
+  local temp_storage = temp_storage_chest.get_inventory(defines.inventory.chest)
+
   -- restore contents, if possible
   local inserters = util.get_loader_inserters(entity)
   local loader = util.find_miniloaders{
@@ -51,33 +55,35 @@ function M.on_built_entity(event)
     position = entity.position,
   }[1]
 
-  for i=1,#inserters do
-    local inserter=inserters[i]
-    inserter.held_stack.set_stack(saved_inserter_stacks[i])
-    saved_inserter_stacks[i] = nil
+  for i, inserter in ipairs(inserters) do
+    inserter.held_stack.swap_stack(temp_storage[20+i])
   end
 
   -- check for any leftovers and give them to player, or spill if no room
   local player = game.players[event.player_index]
-  for _, stack in pairs(saved_inserter_stacks) do
-    if stack.valid_for_read then
-      local inserted = player.insert(stack)
-      if inserted < stack.count then
-        player.remove_item{name = stack.name, count = inserted }
-        player.surface.spill_item_stack(player.position, stack)
+  for i=21,#temp_storage do
+    local storage_stack = temp_storage[i]
+    if storage_stack.valid_for_read then
+      local inserted = player.insert(storage_stack)
+      if inserted < storage_stack.count then
+        player.remove_item{name = storage_stack.name, count = inserted}
+        player.surface.spill_item_stack(player.position, storage_stack)
       end
-      stack.clear()
     end
   end
-  saved_inserter_stacks = {}
 
   for i=1,2 do
     local tl = loader.get_transport_line(i)
-    for j=1,#saved_loader_contents[i] do
-      tl.insert_at_back(saved_loader_contents[i][j])
+    for j=1,10 do
+      local stored_stack = temp_storage[(i-1)*10 + j]
+      if stored_stack.valid_for_read then
+        tl.insert_at_back{name="raw-wood", count=1}
+        tl[j].swap_stack(stored_stack)
+      end
     end
   end
-  saved_loader_contents = {{}, {}}
+  temp_storage_chest.destroy()
+  temp_storage_chest = nil
 end
 
 return M
