@@ -108,7 +108,6 @@ local function check_for_circuit_changes(entity, old, new)
   if not old or not new then
     return
   end
-  --game.print(serpent.line{old=old,new=new})
 
   local removed, added = diff_sets(old, new)
   for _, ccd in ipairs(removed) do
@@ -256,7 +255,6 @@ local function on_put_item(ev)
     util.rotate_box(bp_area, ev.direction),
     ev.position
   )
-  game.print(serpent.dump{event=ev, surface_area=surface_area})
   local preexisting_entities = player.surface.find_entities(surface_area)
   -- check again at the end of this tick, after blueprint has been placed
   setup_after_blueprint_placed(preexisting_entities)
