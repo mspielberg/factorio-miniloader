@@ -144,11 +144,6 @@ local function sync_partner_connections(inserter)
 end
 
 local function on_wire_change(ev)
-  game.print(serpent.line{
-    name=ev.name,
-    e1={name=ev.entity.name, id=ev.entity.unit_number},
-    e2={name=ev.target_entity.name, id=ev.target_entity.unit_number},
-  })
   for _, entity in ipairs{ev.entity, ev.target_entity} do
     if entity.valid and util.is_miniloader_inserter(entity) then
       sync_partner_connections(entity)

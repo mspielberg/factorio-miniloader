@@ -145,3 +145,6 @@ Use with due caution and at your own risk to your factory.
     * Potentional fix for reported Omnimatter mod incompatibility.
 * 1.5.8 (2018-02-06):
     * Using Upgrade Planner on miniloaders now preserves complex items (configured blueprints, armor with inventory, etc.)
+    * Fix building over an existing miniloader with a blueprint where that miniloader is connected to the circuit network.
+* 1.5.9 (1028-02-06):
+    * Remove stray debugging code.
