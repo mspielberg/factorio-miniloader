@@ -268,7 +268,7 @@ local function create_inserters(prefix)
     icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
     icon_size = 32,
     minable = { mining_time = 1, result = loader_name },
-    collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
+    collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     allow_custom_vectors = true,
     energy_per_movement = 4000,
