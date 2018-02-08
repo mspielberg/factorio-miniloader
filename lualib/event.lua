@@ -7,21 +7,15 @@ local handlers_for = {}
 
 function M.dispatch(event)
   local handlers = handlers_for[event.name]
-  if not handlers[1] then
+  if not next(handlers) then
     script.on_event(event.name, nil)
+    return
   end
-  for i=1,#handlers do
-    handlers[i](event)
-  end
-end
 
-local function contains(list, elem)
-  for i=1,#list do
-    if list[i] == elem then
-      return true
-    end
+  -- make copy since handlers may deregister themselves or other handlers
+  for handler in pairs(handlers) do
+    handler(event)
   end
-  return false
 end
 
 function M.register(events, handler)
@@ -36,13 +30,11 @@ function M.register(events, handler)
       handlers_for[event_id] = handlers
     end
 
-    if not handlers[1] then
+    if not next(handlers) then
       script.on_event(event_id, M.dispatch)
     end
 
-    if not contains(handlers, handler) then
-      handlers[#handlers+1] = handler
-    end
+    handlers[handler] = true
   end
 end
 
@@ -53,11 +45,7 @@ function M.unregister(events, handler)
 
   for _, event_id in ipairs(events) do
     local handlers = handlers_for[event_id]
-    for i=1,#handlers do
-      if handlers[i] == handler then
-        table.remove(handlers, i)
-      end
-    end
+    handlers[handler] = nil
   end
 end
 
