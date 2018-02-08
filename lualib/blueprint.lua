@@ -106,16 +106,10 @@ function M.bounding_box(bp)
   if entities then
     for _, e in pairs(entities) do
       local pos = e.position
-      local proto = game.entity_prototypes[e.name]
-      local direction = e.direction or defines.direction.north
-      local bb = util.move_box(
-        util.rotate_box(proto.collision_box, direction),
-        util.offset(defines.direction.east, pos.x, pos.y)
-      )
-      if bb.left_top.x < left then left = bb.left_top.x end
-      if bb.left_top.y < top then top = bb.left_top.y end
-      if bb.right_bottom.x > right then right = bb.right_bottom.x end
-      if bb.right_bottom.y > bottom then bottom = bb.right_bottom.y end
+      if pos.x < left then left = pos.x - 0.5 end
+      if pos.y < top then top = pos.y - 0.5 end
+      if pos.x > right then right = pos.x + 0.5 end
+      if pos.y > bottom then bottom = pos.y + 0.5 end
     end
   end
 
