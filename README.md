@@ -146,5 +146,9 @@ Use with due caution and at your own risk to your factory.
 * 1.5.8 (2018-02-06):
     * Using Upgrade Planner on miniloaders now preserves complex items (configured blueprints, armor with inventory, etc.)
     * Fix building over an existing miniloader with a blueprint where that miniloader is connected to the circuit network.
-* 1.5.9 (1028-02-06):
+* 1.5.9 (2018-02-06):
     * Remove stray debugging code.
+* 1.5.10 (2018-02-08):
+    * Shrink miniloader collision box.
+    * Fix crash related to placing rail blueprints.
+    * Fix crash related to rapidly drag-building blueprints.
