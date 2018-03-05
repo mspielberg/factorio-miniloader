@@ -151,9 +151,14 @@ local function on_wire_change(ev)
   end
 end
 
-function M.register_events()
+function M.on_init()
   event.register({onwireplaced.on_wire_added, onwireplaced.on_wire_removed}, on_wire_change)
-  onwireplaced.register_events()
+  onwireplaced.on_init()
+end
+
+function M.on_load()
+  event.register({onwireplaced.on_wire_added, onwireplaced.on_wire_removed}, on_wire_change)
+  onwireplaced.on_load()
 end
 
 return M

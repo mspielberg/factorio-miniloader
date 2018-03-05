@@ -1,18 +1,17 @@
 local M = {}
 
 --[[
-  handlers[event_id] = { handler1, handler2, ... }
+  handlers[event_id] = { [handler1] = true, [handler2] = true, ... }
 ]]
 local handlers_for = {}
 
-function M.dispatch(event)
+local function dispatch(event)
   local handlers = handlers_for[event.name]
   if not next(handlers) then
     script.on_event(event.name, nil)
     return
   end
 
-  -- make copy since handlers may deregister themselves or other handlers
   for handler in pairs(handlers) do
     handler(event)
   end
@@ -31,7 +30,7 @@ function M.register(events, handler)
     end
 
     if not next(handlers) then
-      script.on_event(event_id, M.dispatch)
+      script.on_event(event_id, dispatch)
     end
 
     handlers[handler] = true

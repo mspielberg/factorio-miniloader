@@ -152,3 +152,5 @@ Use with due caution and at your own risk to your factory.
     * Shrink miniloader collision box.
     * Fix crash related to placing rail blueprints.
     * Fix crash related to rapidly drag-building blueprints.
+* 1.5.11 (2018-02-20):
+    * Fix event sync problem on joining a multiplayer server.
