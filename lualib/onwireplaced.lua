@@ -132,11 +132,6 @@ local function check_selection_for_all(ev)
     return
   end
 
-  if not next(selected_ccd_set_for) then
-    event.unregister(defines.events.on_tick, check_selection_for_all)
-    return
-  end
-
   -- check only players who we believe to have a selected entity
   for player_index in pairs(selected_ccd_set_for) do
     check_selection_for_player(player_index)
@@ -151,14 +146,12 @@ local function start_monitoring_selected_entity(player_index)
     return
   end
   selected_ccd_set_for[player_index] = nil
+  if not next(selected_ccd_set_for) then
+    event.unregister(defines.events.on_tick, check_selection_for_all)
+  end
 end
 
 local function on_selected_entity_changed(ev)
-  if not next(monitored_players) then
-    event.unregister(defines.events.on_selected_entity_changed, on_selected_entity_changed)
-    return
-  end
-
   local player_index = ev.player_index
   if not monitored_players[player_index] then
     return
@@ -175,14 +168,19 @@ end
 local function stop_monitoring_player_selection(player_index)
   -- one last check since we will no longer be monitoring this player's selection
   check_selection_for_player(player_index)
+
   monitored_players[player_index] = nil
+  if not next(monitored_players) then
+    event.unregister(defines.events.on_selected_entity_changed, on_selected_entity_changed)
+  end
+
   selected_ccd_set_for[player_index] = nil
+  if not next(selected_ccd_set_for) then
+    event.unregister(defines.events.on_tick, check_selection_for_all)
+  end
 end
 
 local function start_monitoring_player_selection(player_index)
-  if monitored_players[player_index] then
-    stop_monitoring_player_selection(player_index)
-  end
   monitored_players[player_index] = true
   start_monitoring_selected_entity(player_index)
   event.register(defines.events.on_selected_entity_changed, on_selected_entity_changed)
