@@ -12,9 +12,13 @@ local function monitor_open_guis(_)
   if not next(monitored_inserters) then
     ontick.unregister(monitor_open_guis)
   end
-  for _, entity in pairs(monitored_inserters) do
-    circuit.sync_filters(entity)
-    circuit.sync_behavior(entity)
+  for k, entity in pairs(monitored_inserters) do
+    if entity.valid then
+      circuit.sync_filters(entity)
+      circuit.sync_behavior(entity)
+    else
+      monitored_inserters.k = nil
+    end
   end
 end
 
