@@ -12,7 +12,7 @@ local compat_upgradeplanner = require("compat.upgradeplanner")
 local use_snapping = settings.global["miniloader-snapping"].value
 
 --[[
-  belt_to_ground_type = "input"
+  loader_type = "input"
   +------------------+
   |                  |
   |        P         |
@@ -25,7 +25,7 @@ local use_snapping = settings.global["miniloader-snapping"].value
   +------------------+
      D            D
 
-  belt_to_ground_type = "output"
+  loader_type = "output"
   +------------------+
   |                  |
   |  D            D  |
