@@ -22,7 +22,7 @@ local function snap_loader_to_target(loader, entity)
 
   local direction
   local type
-  if lx == ex and util.is_ns(ldir) then
+  if util.is_ns(ldir) and lx >= ex-0.6 and lx <= ex+0.6 then
     -- loader and entity are aligned vertically
     if ly > ey then -- entity to north
       if edir == 4 then
@@ -41,7 +41,7 @@ local function snap_loader_to_target(loader, entity)
         type = "output"
       end
     end
-  elseif ly == ey and util.is_ew(ldir) then
+  elseif util.is_ew(ldir) and ly >= ey-0.6 and ly <= ey+0.6 then
     -- loader and entity are aligned horizontally
     if lx > ex then -- entity to west
       if edir == 2 then
@@ -115,6 +115,7 @@ local function find_loader_by_entity(entity)
     local lpos = loader.position
     if lpos.x ~= position.x or lpos.y ~= position.y then
       out[#out+1] = loader
+      game.print("found loader at "..serpent.line(loader.position))
     end
   end
   return out
