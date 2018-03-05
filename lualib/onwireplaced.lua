@@ -27,7 +27,7 @@ M.on_wire_removed = script.generate_event_name()
 -- how often to poll circuit network connections when the player is holding wire over an entity
 local POLL_INTERVAL = 15
 
-local monitored_players = {}
+local monitored_players
 
 --[[
   CCD === CircuitConnectionDefinition
@@ -42,7 +42,7 @@ local monitored_players = {}
     ...
   }
 ]]
-local selected_ccd_set_for = {}
+local selected_ccd_set_for
 
 local function ccd_key(ccd)
   --do return ccd.wire.."-"..ccd.source_circuit_id.."-"..ccd.target_circuit_id.."-"..ccd.target_entity.unit_number end
@@ -260,7 +260,27 @@ local function on_put_item(ev)
   setup_after_blueprint_placed(preexisting_entities)
 end
 
-function M.register_events()
+function M.on_init()
+  global.monitored_players = {}
+  global.selected_ccd_set_for = {}
+  M.on_load()
+end
+
+function M.on_load()
+  if global.monitored_players then
+    monitored_players = global.monitored_players
+    if next(monitored_players) then
+      event.register(defines.events.on_selected_entity_changed, on_selected_entity_changed)
+    end
+  end
+
+  if global.selected_ccd_set_for then
+    selected_ccd_set_for = global.selected_ccd_set_for
+    if next(selected_ccd_set_for) then
+      event.register(defines.events.on_tick, check_selection_for_all)
+    end
+  end
+
   event.register(defines.events.on_player_cursor_stack_changed, on_player_cursor_stack_changed)
   event.register({defines.events.on_built_entity, defines.events.on_robot_built_entity}, on_built_entity)
   event.register(

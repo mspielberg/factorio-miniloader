@@ -45,10 +45,12 @@ local use_snapping = settings.global["miniloader-snapping"].value
 -- Event Handlers
 
 local function on_init()
+  circuit.on_init()
   compat_pickerextended.on_load()
 end
 
 local function on_load()
+  circuit.on_load()
   compat_pickerextended.on_load()
 end
 
@@ -271,7 +273,3 @@ event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
     use_snapping = settings.global["miniloader-snapping"].value
   end
 end)
-
--- Ensure event handlers for circuits are registered (and run) after event handlers that
--- create the slave inserters.
-circuit.register_events()

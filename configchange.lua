@@ -144,6 +144,17 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_5_11_move_onwireplaced_state_to_global",
+  low = {1,0,0},
+  high = {1,5,11},
+  task = function()
+    global.monitored_players = {}
+    global.selected_ccd_set_for = {}
+    circuit.on_load()
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
