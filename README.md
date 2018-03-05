@@ -63,7 +63,7 @@ least one filter.
 __Ultimate Belts support is in BETA state.__
 
 There appear to be Factorio core engine limitations when inserters pull from
-belts faster than 5x yellow speed.
+belts faster than 4x yellow speed.
 
 Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities
 to give full throughput when interacting with chests and other containers.
@@ -154,3 +154,7 @@ Use with due caution and at your own risk to your factory.
     * Fix crash related to rapidly drag-building blueprints.
 * 1.5.11 (2018-02-20):
     * Fix event sync problem on joining a multiplayer server.
+* 1.5.12 (2018-03-05):
+    * Fix additional event sync corner cases on joining a multiplayer server.
+    * Fix crash when mining a miniloader with an opened GUI.
+    * Fix filter miniloader recipes to use previous tiers of filter miniloaders instead of unfiltered miniloaders.
