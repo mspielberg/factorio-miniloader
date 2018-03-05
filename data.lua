@@ -61,6 +61,18 @@ local ingredients = {
   },
 }
 
+local previous_miniloader = {
+  ["fast-"] = "",
+  ["express-"] = "fast-",
+  ["green-"] = "express-",
+  ["purple-"] = "green-",
+  ["ultra-fast-"] = "express-",
+  ["extreme-fast-"] = "ultra-fast-",
+  ["ultra-express-"] = "extreme-fast-",
+  ["extreme-express-"] = "ultra-express-",
+  ["ultimate-"] = "extreme-express-",
+}
+
 local filter_inserters = {
   ["fast-inserter"] = "filter-inserter",
   ["stack-inserter"] = "stack-filter-inserter",
@@ -199,6 +211,9 @@ local function create_recipes(prefix)
 
   local filter_recipe = util.table.deepcopy(recipe)
   filter_recipe.name = filter_name
+  if previous_miniloader[prefix] then
+    filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
+  end
   filter_recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
   filter_recipe.result = filter_name
 
