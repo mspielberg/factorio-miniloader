@@ -115,7 +115,6 @@ local function find_loader_by_entity(entity)
     local lpos = loader.position
     if lpos.x ~= position.x or lpos.y ~= position.y then
       out[#out+1] = loader
-      game.print("found loader at "..serpent.line(loader.position))
     end
   end
   return out
