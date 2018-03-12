@@ -161,3 +161,5 @@ Use with due caution and at your own risk to your factory.
 * 1.5.13 (2018-03-06):
     * Remove stray debug logging to console.
     * Optimize graphics to reduce download size.
+* 1.5.14 (2018-03-12):
+    * Fix crash when mining miniloader in Factorio 0.16.29.

@@ -183,7 +183,7 @@ local function on_miniloader_inserter_mined(ev)
   local inserters = util.get_loader_inserters(entity)
   for i=2,#inserters do
     -- return items to player / robot if mined
-    if ev.buffer and inserters[i] ~= entity then
+    if ev.buffer and inserters[i] ~= entity and inserters[i].held_stack.valid_for_read then
       ev.buffer.insert(inserters[i].held_stack)
     end
     inserters[i].destroy()
