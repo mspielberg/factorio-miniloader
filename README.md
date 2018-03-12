@@ -158,3 +158,6 @@ Use with due caution and at your own risk to your factory.
     * Fix additional event sync corner cases on joining a multiplayer server.
     * Fix crash when mining a miniloader with an opened GUI.
     * Fix filter miniloader recipes to use previous tiers of filter miniloaders instead of unfiltered miniloaders.
+* 1.5.13 (2018-03-06):
+    * Remove stray debug logging to console.
+    * Optimize graphics to reduce download size.
