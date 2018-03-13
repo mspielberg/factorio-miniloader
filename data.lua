@@ -61,6 +61,14 @@ local ingredients = {
   },
 }
 
+if data.raw["inserter"]["red-inserter"] then
+  ingredients["miniloader"][3] = {"inserter", 8}
+  ingredients["fast-miniloader"][3] = {"red-inserter", 8}
+  ingredients["express-miniloader"][3] = {"blue-inserter", 6}
+  ingredients["green-miniloader"][3] = {"green-inserter", 6}
+  ingredients["purple-miniloader"][3] = {"express-inserter", 6}
+end
+
 local previous_miniloader = {
   ["fast-"] = "",
   ["express-"] = "fast-",
@@ -77,6 +85,13 @@ local filter_inserters = {
   ["fast-inserter"] = "filter-inserter",
   ["stack-inserter"] = "stack-filter-inserter",
   ["express-stack-inserter"] = "express-stack-filter-inserter",
+
+  -- boblogistics overhaul
+  ["inserter"] = "yellow-filter-inserter",
+  ["red-inserter"] = "red-filter-inserter",
+  ["blue-inserter"] = "blue-filter-inserter",
+  ["green-inserter"] = "green-filter-inserter",
+  ["express-inserter"] = "express-filter-inserter",
 }
 
 local empty_sheet = {
@@ -339,13 +354,13 @@ local function create_miniloader(prefix, tech_prereqs)
   create_technology(prefix, tech_prereqs)
 end
 
-create_miniloader("", {"logistics-2", "engine"})
-create_miniloader("fast-", {"miniloader", "stack-inserter"})
+create_miniloader("", {"logistics-2"})
+create_miniloader("fast-", {"miniloader"})
 create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
-  create_miniloader("green-", {"bob-logistics-4", "express-miniloader", "stack-inserter-2"})
+  create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
   if data.raw.technology["bob-logistics-5"] then
     create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
   end
