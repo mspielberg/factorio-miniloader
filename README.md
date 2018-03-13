@@ -163,3 +163,6 @@ Use with due caution and at your own risk to your factory.
     * Optimize graphics to reduce download size.
 * 1.5.14 (2018-03-12):
     * Fix crash when mining miniloader in Factorio 0.16.29.
+* 1.5.15 (2018-03-12):
+    * Fix another crash when mining miniloaders in Factorio 0.16.29.
+    * Add support for boblogistics inserter overhaul.
