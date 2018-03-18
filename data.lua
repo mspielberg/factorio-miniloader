@@ -61,10 +61,10 @@ local ingredients = {
   },
 }
 
-if data.raw["inserter"]["red-inserter"] then
+if data.raw["inserter"]["green-inserter"] then
   ingredients["miniloader"][3] = {"inserter", 8}
-  ingredients["fast-miniloader"][3] = {"red-inserter", 8}
-  ingredients["express-miniloader"][3] = {"blue-inserter", 6}
+  ingredients["fast-miniloader"][3] = {"long-handed-inserter", 8}
+  ingredients["express-miniloader"][3] = {"fast-inserter", 6}
   ingredients["green-miniloader"][3] = {"green-inserter", 6}
   ingredients["purple-miniloader"][3] = {"express-inserter", 6}
 end
@@ -88,8 +88,7 @@ local filter_inserters = {
 
   -- boblogistics overhaul
   ["inserter"] = "yellow-filter-inserter",
-  ["red-inserter"] = "red-filter-inserter",
-  ["blue-inserter"] = "blue-filter-inserter",
+  ["long-handed-inserter"] = "red-filter-inserter",
   ["green-inserter"] = "green-filter-inserter",
   ["express-inserter"] = "express-filter-inserter",
 }
