@@ -166,3 +166,5 @@ Use with due caution and at your own risk to your factory.
 * 1.5.15 (2018-03-12):
     * Fix another crash when mining miniloaders in Factorio 0.16.29.
     * Add support for boblogistics inserter overhaul.
+* 1.5.16 (2018-03-18):
+    * Change ingredients when using boblogistics inserter overhaul.
