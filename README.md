@@ -168,3 +168,6 @@ Use with due caution and at your own risk to your factory.
     * Add support for boblogistics inserter overhaul.
 * 1.5.16 (2018-03-18):
     * Change ingredients when using boblogistics inserter overhaul.
+* 1.5.17 (2018-03-31):
+    * Significant overhaul to boblogistics support, now that Bob's top-tier belts are called Ultimate transport belts, introducing a conflict with the Ultimate Belts mod.
+    * Increased speed of miniloader belt-to-container throughput, enabling them to keep up with fast transport belts.
