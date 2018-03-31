@@ -22,63 +22,67 @@ local ingredients = {
   },
 
   -- boblogistics
-  ["green-miniloader"] = {
+  ["turbo-miniloader"] = {
     {"express-miniloader", 1},
-    {"green-underground-belt", 1},
+    {"turbo-underground-belt", 1},
     {"express-stack-inserter", 4},
   },
-  ["purple-miniloader"] = {
-    {"green-miniloader", 1},
-    {"purple-underground-belt", 1},
+  ["ultimate-miniloader"] = {
+    {"turbo-miniloader", 1},
+    {"ultimate-underground-belt", 1},
     {"express-stack-inserter", 2},
   },
 
-  --UltimateBelts
-  ["ultra-fast-miniloader"] = {
+  -- UltimateBelts
+  ["ub-ultra-fast-miniloader"] = {
     {"express-miniloader", 1},
     {"ultra-fast-underground-belt", 1},
     {"stack-inserter", 6},
   },
-  ["extreme-fast-miniloader"] = {
-    {"ultra-fast-miniloader", 1},
+  ["ub-extreme-fast-miniloader"] = {
+    {"ub-ultra-fast-miniloader", 1},
     {"extreme-fast-underground-belt", 1},
     {"stack-inserter", 6},
   },
-  ["ultra-express-miniloader"] = {
-    {"extreme-fast-miniloader", 1},
+  ["ub-ultra-express-miniloader"] = {
+    {"ub-extreme-fast-miniloader", 1},
     {"ultra-express-underground-belt", 1},
     {"stack-inserter", 6},
   },
-  ["extreme-express-miniloader"] = {
-    {"ultra-express-miniloader", 1},
+  ["ub-extreme-express-miniloader"] = {
+    {"ub-ultra-express-miniloader", 1},
     {"extreme-express-underground-belt", 1},
     {"stack-inserter", 6},
   },
-  ["ultimate-miniloader"] = {
-    {"extreme-express-miniloader", 1},
+  ["ub-ultimate-miniloader"] = {
+    {"ub-extreme-express-miniloader", 1},
     {"ultimate-underground-belt", 1},
     {"stack-inserter", 6},
   },
 }
 
-if data.raw["inserter"]["green-inserter"] then
+if data.raw["inserter"]["turbo-inserter"] then
   ingredients["miniloader"][3] = {"inserter", 8}
   ingredients["fast-miniloader"][3] = {"long-handed-inserter", 8}
   ingredients["express-miniloader"][3] = {"fast-inserter", 6}
-  ingredients["green-miniloader"][3] = {"green-inserter", 6}
-  ingredients["purple-miniloader"][3] = {"express-inserter", 6}
+  ingredients["turbo-miniloader"][3] = {"turbo-inserter", 6}
+  ingredients["ultimate-miniloader"][3] = {"express-inserter", 6}
 end
 
 local previous_miniloader = {
   ["fast-"] = "",
   ["express-"] = "fast-",
-  ["green-"] = "express-",
-  ["purple-"] = "green-",
-  ["ultra-fast-"] = "express-",
-  ["extreme-fast-"] = "ultra-fast-",
-  ["ultra-express-"] = "extreme-fast-",
-  ["extreme-express-"] = "ultra-express-",
-  ["ultimate-"] = "extreme-express-",
+
+  -- boblogistics
+  ["turbo-"] = "express-",
+  ["ultimate-"] = "turbo-",
+
+  -- UltimateBelts
+  ["ub-ultra-fast-"] = "express-",
+  ["ub-extreme-fast-"] = "ub-ultra-fast-",
+  ["ub-ultra-express-"] = "ub-extreme-fast-",
+  ["ub-extreme-express-"] = "ub-ultra-express-",
+  ["ub-ultimate-"] = "ub-extreme-express-",
 }
 
 local filter_inserters = {
@@ -89,7 +93,7 @@ local filter_inserters = {
   -- boblogistics overhaul
   ["inserter"] = "yellow-filter-inserter",
   ["long-handed-inserter"] = "red-filter-inserter",
-  ["green-inserter"] = "green-filter-inserter",
+  ["turbo-inserter"] = "turbo-filter-inserter",
   ["express-inserter"] = "express-filter-inserter",
 }
 
@@ -104,6 +108,7 @@ local empty_sheet = {
 -- underground belt solely for the purpose of migrations from pre-1.4.0 versions
 local function create_legacy_underground(prefix)
   local name = prefix .. "miniloader-legacy-underground"
+  prefix = string.gsub(prefix, "^ub%-", "")
 
   local entity = {}
   entity.type = "underground-belt"
@@ -135,6 +140,7 @@ local function create_loaders(prefix)
   local loader_name = prefix .. "miniloader"
   local filter_loader_name = prefix .. "filter-miniloader"
   local name = loader_name .. "-loader"
+  prefix = string.gsub(prefix, "^ub%-", "")
 
   local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
   entity.type = "loader"
@@ -189,6 +195,7 @@ end
 local function create_items(prefix)
   local name = prefix .. "miniloader"
   local filter_name = prefix .. "filter-miniloader"
+  prefix = string.gsub(prefix, "^ub%-", "")
 
   local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
   item.name = name
@@ -201,7 +208,7 @@ local function create_items(prefix)
   filter_item.name = filter_name
   filter_item.localised_name = {"entity-name." .. filter_name}
   filter_item.icon = "__miniloader__/graphics/item/" .. filter_name ..".png"
-  filter_item.order, _ = string.gsub(item.order, "^e%[miniloader%]", "f[filter-miniloader]", 1)
+  filter_item.order, _ = string.gsub(item.order, "$", "-filter", 1)
   filter_item.place_result = filter_name .. "-inserter"
 
   data:extend{
@@ -240,6 +247,7 @@ end
 local function create_technology(prefix, tech_prereqs)
   local name = prefix .. "miniloader"
   local filter_name = prefix .. "filter-miniloader"
+  prefix = string.gsub(prefix, "^ub%-", "")
 
   local main_prereq = data.raw["technology"][tech_prereqs[1]]
   local technology = {
@@ -282,12 +290,13 @@ local connector_definitions = circuit_connector_definitions.create(
 )
 
 local function create_inserters(prefix)
-  local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
   local filter_loader_name = prefix .. "filter-miniloader"
   local filter_name = filter_loader_name .. "-inserter"
-  local speed = base_entity.speed * 0.2 / 0.03125
+  prefix = string.gsub(prefix, "^ub%-", "")
+  local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
+  local speed = base_entity.speed * 0.4 / 0.03125
 
   local loader_inserter = {
     type = "inserter",
@@ -300,8 +309,8 @@ local function create_inserters(prefix)
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     allow_custom_vectors = true,
-    energy_per_movement = 4000,
-    energy_per_rotation = 4000,
+    energy_per_movement = 2000,
+    energy_per_rotation = 2000,
     energy_source = {
       type = "electric",
       usage_priority = "secondary-input",
@@ -359,17 +368,17 @@ create_miniloader("express-", {"logistics-3", "fast-miniloader"})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
-  create_miniloader("green-", {"bob-logistics-4", "express-miniloader"})
+  create_miniloader("turbo-", {"bob-logistics-4", "express-miniloader"})
   if data.raw.technology["bob-logistics-5"] then
-    create_miniloader("purple-", {"bob-logistics-5", "green-miniloader"})
+    create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"})
   end
 end
 
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
-  create_miniloader("ultra-fast-", {"ultra-fast-logistics", "express-miniloader"})
-  create_miniloader("extreme-fast-", {"extreme-fast-logistics", "ultra-fast-miniloader"})
-  create_miniloader("ultra-express-", {"ultra-express-logistics", "extreme-fast-miniloader"})
-  create_miniloader("extreme-express-", {"extreme-express-logistics", "ultra-express-miniloader"})
-  create_miniloader("ultimate-", {"ultimate-logistics", "extreme-express-miniloader"})
+  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"})
+  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"})
+  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"})
+  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"})
+  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"})
 end
