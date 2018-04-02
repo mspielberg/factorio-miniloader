@@ -171,3 +171,7 @@ Use with due caution and at your own risk to your factory.
 * 1.5.17 (2018-03-31):
     * Significant overhaul to boblogistics support, now that Bob's top-tier belts are called Ultimate transport belts, introducing a conflict with the Ultimate Belts mod.
     * Increased speed of miniloader belt-to-container throughput, enabling them to keep up with fast transport belts.
+* 1.5.18 (2018-04-01):
+    * Increased miniloader inserter speed again slightly to better handle inline belt-to-belt use.
+    * Fix load error with Ultimate Belts.
+    * Fix a possible error when joining a multiplayer server.
