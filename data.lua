@@ -296,7 +296,7 @@ local function create_inserters(prefix)
   local filter_name = filter_loader_name .. "-inserter"
   prefix = string.gsub(prefix, "^ub%-", "")
   local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
-  local speed = base_entity.speed * 0.4 / 0.03125
+  local speed = base_entity.speed * 0.5 / 0.03125
 
   local loader_inserter = {
     type = "inserter",
