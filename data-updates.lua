@@ -19,9 +19,9 @@ update("")
 update("fast-")
 update("express-")
 
-if data.raw["underground-belt"]["turbo-underground-belt"] then
+if data.raw["item"]["turbo-miniloader"] then
   update("turbo-")
 end
-if data.raw["underground-belt"]["ultimate-underground-belt"] then
+if data.raw["item"]["ultimate-miniloader"] then
   update("ultimate-")
 end
