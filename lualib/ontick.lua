@@ -9,10 +9,6 @@ local M = {}
 
 local on_tick_handlers = {}
 local function on_tick_meta_handler(e)
-  if not next(on_tick_handlers) then
-    event.unregister(defines.events.on_tick, on_tick_meta_handler)
-    return
-  end
   for handler, config in pairs(on_tick_handlers) do
     if (e.tick - config[2]) % config[1] == 0 then
       handler(e)
@@ -35,6 +31,9 @@ end
 
 function M.unregister(f)
   on_tick_handlers[f] = nil
+  if not next(on_tick_handlers) then
+    event.unregister(defines.events.on_tick, on_tick_meta_handler)
+  end
 end
 
 return M
