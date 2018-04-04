@@ -175,3 +175,5 @@ Use with due caution and at your own risk to your factory.
     * Increased miniloader inserter speed again slightly to better handle inline belt-to-belt use.
     * Fix load error with Ultimate Belts.
     * Fix a possible error when joining a multiplayer server.
+* 1.5.19 (2018-04-04):
+    * Fix compatibility with Ultimate Belts 0.16.4.
