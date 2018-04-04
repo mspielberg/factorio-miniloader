@@ -56,7 +56,7 @@ local ingredients = {
   },
   ["ub-ultimate-miniloader"] = {
     {"ub-extreme-express-miniloader", 1},
-    {"ultimate-underground-belt", 1},
+    {"original-ultimate-underground-belt", 1},
     {"stack-inserter", 6},
   },
 }
@@ -106,9 +106,8 @@ local empty_sheet = {
 }
 
 -- underground belt solely for the purpose of migrations from pre-1.4.0 versions
-local function create_legacy_underground(prefix)
+local function create_legacy_underground(prefix, base_underground_name)
   local name = prefix .. "miniloader-legacy-underground"
-  prefix = string.gsub(prefix, "^ub%-", "")
 
   local entity = {}
   entity.type = "underground-belt"
@@ -125,7 +124,7 @@ local function create_legacy_underground(prefix)
   entity.starting_side = empty_sheet
   entity.starting_bottom = empty_sheet
   entity.ending_patch = empty_sheet
-  entity.speed = data.raw["underground-belt"][prefix .. "underground-belt"].speed
+  entity.speed = data.raw["underground-belt"][base_underground_name].speed
   entity.max_distance = 0
   entity.underground_sprite = empty_sheet
   entity.underground_remove_belts_sprite = empty_sheet
@@ -136,13 +135,12 @@ local function create_legacy_underground(prefix)
   data:extend{entity}
 end
 
-local function create_loaders(prefix)
+local function create_loaders(prefix, base_underground_name)
   local loader_name = prefix .. "miniloader"
   local filter_loader_name = prefix .. "filter-miniloader"
   local name = loader_name .. "-loader"
-  prefix = string.gsub(prefix, "^ub%-", "")
 
-  local entity = util.table.deepcopy(data.raw["underground-belt"][prefix .. "underground-belt"])
+  local entity = util.table.deepcopy(data.raw["underground-belt"][base_underground_name])
   entity.type = "loader"
   entity.name = name
   entity.flags = {"player-creation"}
@@ -192,93 +190,6 @@ local function create_loaders(prefix)
   }
 end
 
-local function create_items(prefix)
-  local name = prefix .. "miniloader"
-  local filter_name = prefix .. "filter-miniloader"
-  prefix = string.gsub(prefix, "^ub%-", "")
-
-  local item = util.table.deepcopy(data.raw.item[prefix .. "underground-belt"])
-  item.name = name
-  item.localised_name = {"entity-name." .. name}
-  item.icon = "__miniloader__/graphics/item/" .. name ..".png"
-  item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
-  item.place_result = name .. "-inserter"
-
-  local filter_item = util.table.deepcopy(item)
-  filter_item.name = filter_name
-  filter_item.localised_name = {"entity-name." .. filter_name}
-  filter_item.icon = "__miniloader__/graphics/item/" .. filter_name ..".png"
-  filter_item.order, _ = string.gsub(item.order, "$", "-filter", 1)
-  filter_item.place_result = filter_name .. "-inserter"
-
-  data:extend{
-    item,
-    filter_item,
-  }
-end
-
-local function create_recipes(prefix)
-  local name = prefix .. "miniloader"
-  local filter_name = prefix .. "filter-miniloader"
-
-  local recipe = {
-    type = "recipe",
-    name = name,
-    enabled = false,
-    energy_required = 1,
-    ingredients = ingredients[name],
-    result = name,
-  }
-
-  local filter_recipe = util.table.deepcopy(recipe)
-  filter_recipe.name = filter_name
-  if previous_miniloader[prefix] then
-    filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
-  end
-  filter_recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
-  filter_recipe.result = filter_name
-
-  data:extend{
-    recipe,
-    filter_recipe,
-  }
-end
-
-local function create_technology(prefix, tech_prereqs)
-  local name = prefix .. "miniloader"
-  local filter_name = prefix .. "filter-miniloader"
-  prefix = string.gsub(prefix, "^ub%-", "")
-
-  local main_prereq = data.raw["technology"][tech_prereqs[1]]
-  local technology = {
-    type = "technology",
-    name = name,
-    icon = "__miniloader__/graphics/technology/" .. name .. ".png",
-    icon_size = 128,
-    effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = name,
-      },
-      {
-        type = "unlock-recipe",
-        recipe = filter_name,
-      }
-    },
-    prerequisites = tech_prereqs,
-    unit = util.table.deepcopy(main_prereq.unit),
-    order = main_prereq.order
-  }
-
-  if data.raw["underground-belt"][prefix .. "underground-belt"].speed > 0.16 then
-    -- BETA support for Ultimate Belts
-    technology.effects[2] = nil
-  end
-
-  data:extend{technology}
-end
-
 local connector_definitions = circuit_connector_definitions.create(
   universal_connector_template,
   {
@@ -289,13 +200,12 @@ local connector_definitions = circuit_connector_definitions.create(
   }
 )
 
-local function create_inserters(prefix)
+local function create_inserters(prefix, base_underground_name)
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
   local filter_loader_name = prefix .. "filter-miniloader"
   local filter_name = filter_loader_name .. "-inserter"
-  prefix = string.gsub(prefix, "^ub%-", "")
-  local base_entity = data.raw["underground-belt"][prefix .. "underground-belt"]
+  local base_entity = data.raw["underground-belt"][base_underground_name]
   local speed = base_entity.speed * 0.5 / 0.03125
 
   local loader_inserter = {
@@ -353,13 +263,99 @@ local function create_inserters(prefix)
   }
 end
 
-local function create_miniloader(prefix, tech_prereqs)
-  create_legacy_underground(prefix)
-  create_loaders(prefix)
-  create_inserters(prefix)
-  create_items(prefix)
+local function create_items(prefix, base_underground_name)
+  local name = prefix .. "miniloader"
+  local filter_name = prefix .. "filter-miniloader"
+
+  local item = util.table.deepcopy(data.raw.item[base_underground_name])
+  item.name = name
+  item.localised_name = {"entity-name." .. name}
+  item.icon = "__miniloader__/graphics/item/" .. name ..".png"
+  item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
+  item.place_result = name .. "-inserter"
+
+  local filter_item = util.table.deepcopy(item)
+  filter_item.name = filter_name
+  filter_item.localised_name = {"entity-name." .. filter_name}
+  filter_item.icon = "__miniloader__/graphics/item/" .. filter_name ..".png"
+  filter_item.order, _ = string.gsub(item.order, "$", "-filter", 1)
+  filter_item.place_result = filter_name .. "-inserter"
+
+  data:extend{
+    item,
+    filter_item,
+  }
+end
+
+local function create_recipes(prefix)
+  local name = prefix .. "miniloader"
+  local filter_name = prefix .. "filter-miniloader"
+
+  local recipe = {
+    type = "recipe",
+    name = name,
+    enabled = false,
+    energy_required = 1,
+    ingredients = ingredients[name],
+    result = name,
+  }
+
+  local filter_recipe = util.table.deepcopy(recipe)
+  filter_recipe.name = filter_name
+  if previous_miniloader[prefix] then
+    filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
+  end
+  filter_recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
+  filter_recipe.result = filter_name
+
+  data:extend{
+    recipe,
+    filter_recipe,
+  }
+end
+
+local function create_technology(prefix, tech_prereqs, base_underground_name)
+  local name = prefix .. "miniloader"
+  local filter_name = prefix .. "filter-miniloader"
+
+  local main_prereq = data.raw["technology"][tech_prereqs[1]]
+  local technology = {
+    type = "technology",
+    name = name,
+    icon = "__miniloader__/graphics/technology/" .. name .. ".png",
+    icon_size = 128,
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = name,
+      },
+      {
+        type = "unlock-recipe",
+        recipe = filter_name,
+      }
+    },
+    prerequisites = tech_prereqs,
+    unit = util.table.deepcopy(main_prereq.unit),
+    order = main_prereq.order
+  }
+
+  if data.raw["underground-belt"][base_underground_name].speed > 0.16 then
+    -- BETA support for Ultimate Belts
+    technology.effects[2] = nil
+  end
+
+  data:extend{technology}
+end
+
+local function create_miniloader(prefix, tech_prereqs, base_underground_name)
+  base_underground_name = base_underground_name or (prefix .. "underground-belt")
+  create_legacy_underground(prefix, base_underground_name)
+  create_loaders(prefix, base_underground_name)
+  create_inserters(prefix, base_underground_name)
+  create_items(prefix, base_underground_name)
   create_recipes(prefix)
-  create_technology(prefix, tech_prereqs)
+  create_technology(prefix, tech_prereqs, base_underground_name)
 end
 
 create_miniloader("", {"logistics-2"})
@@ -376,9 +372,9 @@ end
 
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
-  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"})
-  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"})
-  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"})
-  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"})
-  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"})
+  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"}, "ultra-fast-underground-belt")
+  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"}, "extreme-fast-underground-belt")
+  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"}, "ultra-express-underground-belt")
+  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"}, "extreme-express-underground-belt")
+  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"}, "original-ultimate-underground-belt")
 end
