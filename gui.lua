@@ -6,36 +6,40 @@ local util = require "lualib.util"
 -- how often to poll ControlBehavior settings when a miniloader-inserter GUI is open
 local POLL_INTERVAL = 15
 
-local monitored_inserters = {}
+local monitored_entities = {}
+
+local function should_monitor_entity(entity)
+  return util.is_miniloader(entity) or util.is_miniloader_inserter(entity)
+end
 
 local function monitor_open_guis(_)
-  if not next(monitored_inserters) then
+  if not next(monitored_entities) then
     ontick.unregister(monitor_open_guis)
   end
-  for k, entity in pairs(monitored_inserters) do
+  for k, entity in pairs(monitored_entities) do
     if entity.valid then
       circuit.sync_filters(entity)
       circuit.sync_behavior(entity)
     else
-      monitored_inserters.k = nil
+      monitored_entities[k] = nil
     end
   end
 end
 
 local function on_gui_opened(ev)
   local entity = ev.entity
-  if entity and util.is_miniloader_inserter(entity) then
-    monitored_inserters[entity.unit_number] = entity
+  if entity and should_monitor_entity(entity) then
+    monitored_entities[entity.unit_number] = entity
     ontick.register(monitor_open_guis, POLL_INTERVAL)
   end
 end
 
 local function on_gui_closed(ev)
   local entity = ev.entity
-  if entity and util.is_miniloader_inserter(entity) then
+  if entity and should_monitor_entity(entity) then
     circuit.sync_behavior(entity)
     circuit.sync_filters(entity)
-    monitored_inserters[entity.unit_number] = nil
+    monitored_entities[entity.unit_number] = nil
   end
 end
 

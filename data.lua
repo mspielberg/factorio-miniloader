@@ -177,12 +177,15 @@ local function create_loaders(prefix, base_underground_name)
   if entity.speed > 0.16 then
     -- BETA support for Ultimate Belts
     entity.container_distance = 1
+    entity.selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
+    entity.selection_priority = 100
   end
 
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
   filter_entity.structure.direction_in.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
   filter_entity.structure.direction_out.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+  filter_entity.filter_count = 5
 
   data:extend{
     entity,
@@ -339,11 +342,6 @@ local function create_technology(prefix, tech_prereqs, base_underground_name)
     unit = util.table.deepcopy(main_prereq.unit),
     order = main_prereq.order
   }
-
-  if data.raw["underground-belt"][base_underground_name].speed > 0.16 then
-    -- BETA support for Ultimate Belts
-    technology.effects[2] = nil
-  end
 
   data:extend{technology}
 end

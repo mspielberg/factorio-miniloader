@@ -134,6 +134,8 @@ local function on_rotated(ev)
     }[1]
     miniloader.rotate{ by_player = game.players[ev.player_index] }
     util.update_inserters(miniloader)
+  elseif util.is_miniloader(entity) then
+    util.update_inserters(entity)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
   end
@@ -208,7 +210,8 @@ end
 local function on_entity_settings_pasted(ev)
   local src = ev.source
   local dst = ev.destination
-  if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst) then
+  if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst)
+  or util.is_miniloader(src) and util.is_miniloader(dst) then
     circuit.sync_behavior(dst)
     circuit.sync_filters(dst)
     local src_loader = src.surface.find_entities_filtered{type="loader",position=src.position}[1]

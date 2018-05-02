@@ -60,18 +60,15 @@ least one filter.
 
 __Ultimate Belts support is in BETA state.__
 
-There appear to be Factorio core engine limitations when inserters pull from
-belts faster than 4x yellow speed.
+Factorio core engine limitations restrict inserters pulling from belts to
+60items/second, or 4.5x yellow belt speed. Further, loader entities are
+restricted to 120 items/second.
 
-Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities
-to give full throughput when interacting with chests and other containers.
-
-They will _not_ give full throughput when loading cargo wagons.
-
-Filter miniloaders for these speeds are disabled, and circuit control is broken.
-Do not upgrade miniloaders to these speeds if you are using circuit control.
-
-Use with due caution and at your own risk to your factory.
+Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities in
+addition to inserters, giving a max throughput of ~180 items/secondwhen
+interacting with chests and other containers. They will _not_ give full
+throughput when loading cargo wagons, and circuit control is disabled since
+vanilla loaders cannot be circuit controlled.
 
 ## Acknowledgements
 
