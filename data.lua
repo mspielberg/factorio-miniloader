@@ -143,6 +143,7 @@ local function create_loaders(prefix, base_underground_name)
   local entity = util.table.deepcopy(data.raw["underground-belt"][base_underground_name])
   entity.type = "loader"
   entity.name = name
+  entity.icons = nil
   entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
   entity.minable = { mining_time = 1, count = 0, result = "raw-wood" }
@@ -274,6 +275,7 @@ local function create_items(prefix, base_underground_name)
   item.name = name
   item.localised_name = {"entity-name." .. name}
   item.icon = "__miniloader__/graphics/item/" .. name ..".png"
+  item.icons = nil
   item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
   item.place_result = name .. "-inserter"
 
