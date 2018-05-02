@@ -199,6 +199,12 @@ local function on_mined(ev)
   end
 end
 
+local function on_robot_pre_mined(ev)
+  if ev.instant_deconstruction then
+    on_mined(ev)
+  end
+end
+
 local function on_entity_settings_pasted(ev)
   local src = ev.source
   local dst = ev.destination
@@ -259,6 +265,7 @@ event.register(defines.events.on_player_rotated_entity, on_rotated)
 
 event.register(defines.events.on_pre_player_mined_item, on_pre_player_mined_item)
 event.register(defines.events.on_player_mined_entity, on_mined)
+event.register(defines.events.on_robot_pre_mined, on_robot_pre_mined)
 event.register(defines.events.on_robot_mined_entity, on_mined)
 event.register(defines.events.on_entity_died, on_mined)
 

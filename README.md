@@ -54,9 +54,7 @@ least one filter.
   power used by the inserters, not the miniloaders themselves.
 * Miniloaders cannot be fast-replaced due to the invisible entities blocking
   placement of the new entity.
-* Miniloader has some incompatibilities with Mooncat's Creative Mode mod:
-    * Instant Deconstruction leaves behind hidden inserters (fix is WIP).
-* Miniloaders don't necessarily appear correctly in blueprints.
+* Miniloader arrows don't always appear correctly in blueprints.
 
 ## Ultimate Belts Caveats and Warnings
 
