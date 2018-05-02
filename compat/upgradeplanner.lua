@@ -19,9 +19,9 @@ function M.on_pre_player_mined_item(event)
 
   -- upgrade-planner is about to try to fast replace an inserter, so let's prepare the way
   local inserters = util.get_loader_inserters(entity)
-  for i, inserter in ipairs(util.get_loader_inserters(entity)) do
-    local temp_storage = temp_storage[i+20]
-    inserter.held_stack.swap_stack(temp_storage)
+  for i, inserter in ipairs(inserters) do
+    local storage_stack = temp_storage[i+20]
+    inserter.held_stack.swap_stack(storage_stack)
     if inserter.unit_number ~= entity.unit_number then
       inserter.destroy()
     end
@@ -59,9 +59,20 @@ function M.on_built_entity(event)
     inserter.held_stack.swap_stack(temp_storage[20+i])
   end
 
+  for i=1,2 do
+    local tl = loader.get_transport_line(i)
+    for j=1,10 do
+      local storage_stack = temp_storage[(i-1)*10 + j]
+      if storage_stack.valid_for_read and tl.insert_at_back{name="raw-wood", count=1} then
+        tl[j].swap_stack(storage_stack)
+        storage_stack.clear()
+      end
+    end
+  end
+
   -- check for any leftovers and give them to player, or spill if no room
   local player = game.players[event.player_index]
-  for i=21,#temp_storage do
+  for i=1,#temp_storage do
     local storage_stack = temp_storage[i]
     if storage_stack.valid_for_read then
       local inserted = player.insert(storage_stack)
@@ -72,16 +83,6 @@ function M.on_built_entity(event)
     end
   end
 
-  for i=1,2 do
-    local tl = loader.get_transport_line(i)
-    for j=1,10 do
-      local stored_stack = temp_storage[(i-1)*10 + j]
-      if stored_stack.valid_for_read then
-        tl.insert_at_back{name="raw-wood", count=1}
-        tl[j].swap_stack(stored_stack)
-      end
-    end
-  end
   temp_storage_chest.destroy()
   temp_storage_chest = nil
 end
