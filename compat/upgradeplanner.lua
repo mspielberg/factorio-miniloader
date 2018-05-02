@@ -45,6 +45,7 @@ function M.on_built_entity(event)
   if not util.is_miniloader_inserter(entity) then
     return
   end
+  local is_ultimate_belts_loader = entity.name:find("^ub%-") ~= nil
 
   local temp_storage = temp_storage_chest.get_inventory(defines.inventory.chest)
 
@@ -57,6 +58,10 @@ function M.on_built_entity(event)
 
   for i, inserter in ipairs(inserters) do
     inserter.held_stack.swap_stack(temp_storage[20+i])
+    if is_ultimate_belts_loader then
+      inserter.disconnect_neighbour(defines.wire_type.red)
+      inserter.disconnect_neighbour(defines.wire_type.green)
+    end
   end
 
   for i=1,2 do
