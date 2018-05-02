@@ -216,6 +216,7 @@ local function on_entity_mined(ev)
   local entity = ev.entity
   if entity.valid then
     for _, ccd in ipairs(entity.circuit_connection_definitions or {}) do
+      entity.disconnect_neighbour(ccd)
       raise_on_wire_removed(entity, ccd)
     end
   end
