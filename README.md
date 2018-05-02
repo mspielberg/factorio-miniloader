@@ -172,3 +172,9 @@ vanilla loaders cannot be circuit controlled.
     * Fix a possible error when joining a multiplayer server.
 * 1.5.19 (2018-04-04):
     * Fix compatibility with Ultimate Belts 0.16.4.
+* 1.5.20 (2018-05-02):
+    * Add filter miniloader support for Ultimate Belts.
+    * Fix upgrade planner crash where loader belts have insufficient room for items.
+    * Work around for bug in Creative Mode's instant deconstruction cheat.
+    * Fix icon appearance when other mods add multi-layer icons to underground belts.
+    * Fix case where mining the last entity connected to a miniloader via circuit left the miniloader inoperative.
