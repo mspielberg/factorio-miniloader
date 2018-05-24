@@ -61,11 +61,11 @@ least one filter.
 __Ultimate Belts support is in BETA state.__
 
 Factorio core engine limitations restrict inserters pulling from belts to
-60items/second, or 4.5x yellow belt speed. Further, loader entities are
+60 items/second, or 4.5x yellow belt speed. Further, loader entities are
 restricted to 120 items/second.
 
 Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities in
-addition to inserters, giving a max throughput of ~180 items/secondwhen
+addition to inserters, giving a max throughput of ~180 items/second when
 interacting with chests and other containers. They will _not_ give full
 throughput when loading cargo wagons, and circuit control is disabled since
 vanilla loaders cannot be circuit controlled.
@@ -178,3 +178,6 @@ vanilla loaders cannot be circuit controlled.
     * Work around for bug in Creative Mode's instant deconstruction cheat.
     * Fix icon appearance when other mods add multi-layer icons to underground belts.
     * Fix case where mining the last entity connected to a miniloader via circuit left the miniloader inoperative.
+* 1.5.21 (2018-05-24):
+    * Fix Ultimate Belts miniloaders not yielding an item when mined.
+    * Fix bug with Upgrade Planner integration that could sometimes cause upgraded miniloaders to not be returned to the player's inventory.

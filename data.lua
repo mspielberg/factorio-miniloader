@@ -222,6 +222,7 @@ local function create_inserters(prefix, base_underground_name)
     minable = { mining_time = 1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+    selection_priority = 50,
     allow_custom_vectors = true,
     energy_per_movement = 2000,
     energy_per_rotation = 2000,
