@@ -181,3 +181,5 @@ vanilla loaders cannot be circuit controlled.
 * 1.5.21 (2018-05-24):
     * Fix Ultimate Belts miniloaders not yielding an item when mined.
     * Fix bug with Upgrade Planner integration that could sometimes cause upgraded miniloaders to not be returned to the player's inventory.
+* 1.5.22 (2018-06-12):
+    * Fix bug where placing a miniloader by hand over a configured blueprint ghost only configured one of the miniloader inserters.
