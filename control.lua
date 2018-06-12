@@ -90,6 +90,8 @@ local function on_built_miniloader(entity, orientation)
   end
 
   util.update_inserters(loader)
+  circuit.sync_behavior(entity)
+  circuit.sync_filters(entity)
 
   return loader
 end
@@ -98,7 +100,6 @@ local function on_robot_built(ev)
   local entity = ev.created_entity
   if util.is_miniloader_inserter(entity) then
     on_built_miniloader(entity, util.orientation_from_inserters(entity))
-    circuit.sync_filters(entity)
   end
 end
 
