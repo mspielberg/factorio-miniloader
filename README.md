@@ -183,3 +183,6 @@ vanilla loaders cannot be circuit controlled.
     * Fix bug with Upgrade Planner integration that could sometimes cause upgraded miniloaders to not be returned to the player's inventory.
 * 1.5.22 (2018-06-12):
     * Fix bug where placing a miniloader by hand over a configured blueprint ghost only configured one of the miniloader inserters.
+* 1.5.23 (2018-07-26):
+    * Fix crash when getting a bad on_put_item event from buggy other mods.
+    * Fix wire connections not appearing on ghosts autoplaced when an entity dies.
