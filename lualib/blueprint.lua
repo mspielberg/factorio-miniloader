@@ -90,7 +90,8 @@ local function remove_entities(bp_entities, to_remove_set)
 end
 
 function M.is_setup_bp(stack)
-  return stack.valid and
+  return stack and
+    stack.valid and
     stack.valid_for_read and
     stack.is_blueprint and
     stack.is_blueprint_setup()

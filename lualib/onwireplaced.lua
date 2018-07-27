@@ -245,6 +245,10 @@ end
 
 local function on_put_item(ev)
   local player = game.players[ev.player_index]
+  if not player.cursor_stack then
+    log("on_put_item event sent from "..ev.mod_name.." while player cursor_stack is empty")
+    return
+  end
   if not blueprint.is_setup_bp(player.cursor_stack) then
     return
   end
