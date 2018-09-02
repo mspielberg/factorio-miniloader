@@ -2,7 +2,7 @@ local snapping = {}
 
 local util = require("lualib.util")
 
-local snapTypes = {
+local beltTypes = {
   ["loader"] = true,
   ["splitter"] = true,
   ["underground-belt"] = true,
@@ -77,7 +77,7 @@ end
 local function idiot_snap(loader, entity)
   local x = loader.position.x
   local y = loader.position.y
-  local bounds = util.move_box(entity.prototype.selection_box, entity.position)
+  local bounds = util.move_box(util.rotate_box(entity.prototype.selection_box, entity.direction), entity.position)
   local direction = loader.direction
   if y > bounds.right_bottom.y then
     direction = 4
@@ -133,6 +133,11 @@ local function find_loader_by_underground_belt(ug_belt)
   return nil
 end
 
+local function is_snapping_target(entity)
+  local prototype = entity.prototype
+  return prototype.has_flag("player-creation") and not prototype.has_flag("placeable-off-grid")
+end
+
 -- returns entities in front and behind a given loader
 local function find_entity_by_loader(loader)
   local positions = {
@@ -147,7 +152,7 @@ local function find_entity_by_loader(loader)
       force=loader.force,
     }
     for _, ent in ipairs(neighbors) do
-      if ent.type ~= "player" then
+      if is_snapping_target(ent) then
         out[#out+1] = ent
       end
     end
@@ -158,7 +163,7 @@ end
 -- called when entity was rotated or non loader was built
 function snapping.check_for_loaders(event)
   local entity = event.created_entity or event.entity
-  if not snapTypes[entity.type] then
+  if not beltTypes[entity.type] then
     return
   end
 
@@ -183,12 +188,12 @@ end
 function snapping.snap_loader(loader, event)
   local entities = find_entity_by_loader(loader)
   for _, ent in ipairs(entities) do
-    if snapTypes[ent.type] and snap_loader_to_target(loader, ent) then
+    if beltTypes[ent.type] and snap_loader_to_target(loader, ent) then
       return
     end
   end
   for _, ent in ipairs(entities) do
-    if not snapTypes[ent.type] and idiot_snap(loader, ent) then
+    if not beltTypes[ent.type] and idiot_snap(loader, ent) then
       return
     end
   end
