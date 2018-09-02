@@ -209,8 +209,8 @@ local function create_loaders(prefix, base_underground_name, tint)
 
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
-  -- filter_entity.structure.direction_in.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
-  -- filter_entity.structure.direction_out.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+  filter_entity.structure.direction_in.sheets[1].filename = "__miniloader__/graphics/entity/filter-template.png"
+  filter_entity.structure.direction_out.sheets[1].filename = "__miniloader__/graphics/entity/filter-template.png"
   filter_entity.filter_count = 5
 
   data:extend{
@@ -308,22 +308,32 @@ local function create_inserters(prefix, base_underground_name, tint)
   }
 end
 
-local function create_items(prefix, base_underground_name)
+local function create_items(prefix, base_underground_name, tint)
   local name = prefix .. "miniloader"
   local filter_name = prefix .. "filter-miniloader"
 
   local item = util.table.deepcopy(data.raw.item[base_underground_name])
   item.name = name
   item.localised_name = {"entity-name." .. name}
-  item.icon = "__miniloader__/graphics/item/" .. name ..".png"
-  item.icons = nil
+  item.icon = nil
+  item.icons = {
+    {
+      icon = "__miniloader__/graphics/item/template.png",
+      icon_size = 32,
+    },
+    {
+      icon = "__miniloader__/graphics/item/mask.png",
+      icon_size = 32,
+      tint = tint,
+    },
+  }
   item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
   item.place_result = name .. "-inserter"
 
   local filter_item = util.table.deepcopy(item)
   filter_item.name = filter_name
   filter_item.localised_name = {"entity-name." .. filter_name}
-  filter_item.icon = "__miniloader__/graphics/item/" .. filter_name ..".png"
+  filter_item.icons[1].icon = "__miniloader__/graphics/item/filter-template.png"
   filter_item.order, _ = string.gsub(item.order, "$", "-filter", 1)
   filter_item.place_result = filter_name .. "-inserter"
 
@@ -399,23 +409,23 @@ local function create_miniloader(prefix, tech_prereqs, tint, base_underground_na
   create_technology(prefix, tech_prereqs, base_underground_name, tint)
 end
 
-create_miniloader("", {"logistics-2"}, {r=0.8, g=0.6, b=0.05, a=1})
-create_miniloader("fast-", {"miniloader"}, {r=0.75, g=0.07, b=0.07, a=1})
-create_miniloader("express-", {"logistics-3", "fast-miniloader"}, {r=0.25, g=0.65, b=0.82, a=1})
+create_miniloader("",         {"logistics-2"},                    {r=0.8,  g=0.6,  b=0.05})
+create_miniloader("fast-",    {"miniloader"},                     {r=0.75, g=0.07, b=0.07})
+create_miniloader("express-", {"logistics-3", "fast-miniloader"}, {r=0.25, g=0.65, b=0.82})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
-  create_miniloader("turbo-", {"bob-logistics-4", "express-miniloader"})
+  create_miniloader("turbo-", {"bob-logistics-4", "express-miniloader"}, {r=0.38, b=0.09, g=0.57})
   if data.raw.technology["bob-logistics-5"] then
-    create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"})
+    create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"}, {r=0.08, b=0.625, g=0.2})
   end
 end
 
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
-  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"}, nil, "ultra-fast-underground-belt")
-  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"}, nil, "extreme-fast-underground-belt")
-  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"}, nil, "ultra-express-underground-belt")
-  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"}, nil, "extreme-express-underground-belt")
-  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"}, nil, "original-ultimate-underground-belt")
+  create_miniloader("ub-ultra-fast-",      {"ultra-fast-logistics",      "express-miniloader"},            {r=0,    g=0.7, b=0.29},  "ultra-fast-underground-belt")
+  create_miniloader("ub-extreme-fast-",    {"extreme-fast-logistics",    "ub-ultra-fast-miniloader"},      {r=0.7,  g=0,    b=0.06}, "extreme-fast-underground-belt")
+  create_miniloader("ub-ultra-express-",   {"ultra-express-logistics",   "ub-extreme-fast-miniloader"},    {r=0.29, g=0,    b=0.7},  "ultra-express-underground-belt")
+  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"},   {r=0,    g=0.06, b=0.7},  "extreme-express-underground-belt")
+  create_miniloader("ub-ultimate-",        {"ultimate-logistics",        "ub-extreme-express-miniloader"}, {r=0,    g=0.42, b=0.7},  "original-ultimate-underground-belt")
 end
