@@ -135,7 +135,7 @@ local function create_legacy_underground(prefix, base_underground_name)
   data:extend{entity}
 end
 
-local function create_loaders(prefix, base_underground_name)
+local function create_loaders(prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local filter_loader_name = prefix .. "filter-miniloader"
   local name = loader_name .. "-loader"
@@ -149,31 +149,56 @@ local function create_loaders(prefix, base_underground_name)
   entity.minable = { mining_time = 1, count = 0, result = "raw-wood" }
   entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
   entity.selection_box = {{0, 0}, {0, 0}}
-  entity.belt_horizontal = empty_sheet
-  entity.belt_vertical = empty_sheet
   entity.filter_count = 0
   entity.structure = {
     direction_in = {
-      sheet = {
-        filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
-        priority = "extra-high",
-        width = 128,
-        height = 128,
+      sheets = {
+        {
+          filename = "__miniloader__/graphics/entity/template.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          y = 85,
+          scale = 0.5
+        },
+        {
+          filename = "__miniloader__/graphics/entity/mask.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          y = 85,
+          scale = 0.5,
+          tint = tint,
+        },
       }
     },
     direction_out = {
-      sheet = {
-        filename = "__miniloader__/graphics/entity/" .. loader_name .. "-cutout.png",
-        priority = "extra-high",
-        width = 128,
-        height = 128,
-        y = 128,
+      sheets = {
+        {
+          filename = "__miniloader__/graphics/entity/template.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          scale = 0.5,
+        },
+        {
+          filename = "__miniloader__/graphics/entity/mask.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          scale = 0.5,
+          tint = tint,
+        },
       }
     },
   }
   entity.belt_distance = 0
   entity.container_distance = 0
-  entity.belt_length = 0.2
+  entity.belt_length = 0.5
 
   if entity.speed > 0.16 then
     -- BETA support for Ultimate Belts
@@ -184,8 +209,8 @@ local function create_loaders(prefix, base_underground_name)
 
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
-  filter_entity.structure.direction_in.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
-  filter_entity.structure.direction_out.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+  -- filter_entity.structure.direction_in.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
+  -- filter_entity.structure.direction_out.sheet.filename = "__miniloader__/graphics/entity/" .. filter_loader_name .. "-cutout.png"
   filter_entity.filter_count = 5
 
   data:extend{
@@ -204,7 +229,7 @@ local connector_definitions = circuit_connector_definitions.create(
   }
 )
 
-local function create_inserters(prefix, base_underground_name)
+local function create_inserters(prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
   local filter_loader_name = prefix .. "filter-miniloader"
@@ -237,11 +262,26 @@ local function create_inserters(prefix, base_underground_name)
     insert_position = {0, 0.8},
     draw_held_item = false,
     platform_picture = {
-      sheet = {
-        filename = "__miniloader__/graphics/entity/" .. loader_name .. ".png",
-        priority = "extra-high",
-        width = 128,
-        height = 128,
+      sheets = {
+        {
+          filename = "__miniloader__/graphics/entity/template.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          y = 85,
+          scale = 0.5
+        },
+        {
+          filename = "__miniloader__/graphics/entity/mask.png",
+          priority = "extra-high",
+          shift = {0.15625, 0.0703125},
+          width = 106,
+          height = 85,
+          y = 85,
+          scale = 0.5,
+          tint = tint,
+        },
       }
     },
     hand_base_picture = empty_sheet,
@@ -349,19 +389,19 @@ local function create_technology(prefix, tech_prereqs, base_underground_name)
   data:extend{technology}
 end
 
-local function create_miniloader(prefix, tech_prereqs, base_underground_name)
+local function create_miniloader(prefix, tech_prereqs, tint, base_underground_name)
   base_underground_name = base_underground_name or (prefix .. "underground-belt")
   create_legacy_underground(prefix, base_underground_name)
-  create_loaders(prefix, base_underground_name)
-  create_inserters(prefix, base_underground_name)
-  create_items(prefix, base_underground_name)
+  create_loaders(prefix, base_underground_name, tint)
+  create_inserters(prefix, base_underground_name, tint)
+  create_items(prefix, base_underground_name, tint)
   create_recipes(prefix)
-  create_technology(prefix, tech_prereqs, base_underground_name)
+  create_technology(prefix, tech_prereqs, base_underground_name, tint)
 end
 
-create_miniloader("", {"logistics-2"})
-create_miniloader("fast-", {"miniloader"})
-create_miniloader("express-", {"logistics-3", "fast-miniloader"})
+create_miniloader("", {"logistics-2"}, {r=0.8, g=0.6, b=0.05, a=1})
+create_miniloader("fast-", {"miniloader"}, {r=0.75, g=0.07, b=0.07, a=1})
+create_miniloader("express-", {"logistics-3", "fast-miniloader"}, {r=0.25, g=0.65, b=0.82, a=1})
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
@@ -373,9 +413,9 @@ end
 
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
-  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"}, "ultra-fast-underground-belt")
-  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"}, "extreme-fast-underground-belt")
-  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"}, "ultra-express-underground-belt")
-  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"}, "extreme-express-underground-belt")
-  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"}, "original-ultimate-underground-belt")
+  create_miniloader("ub-ultra-fast-", {"ultra-fast-logistics", "express-miniloader"}, nil, "ultra-fast-underground-belt")
+  create_miniloader("ub-extreme-fast-", {"extreme-fast-logistics", "ub-ultra-fast-miniloader"}, nil, "extreme-fast-underground-belt")
+  create_miniloader("ub-ultra-express-", {"ultra-express-logistics", "ub-extreme-fast-miniloader"}, nil, "ultra-express-underground-belt")
+  create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"}, nil, "extreme-express-underground-belt")
+  create_miniloader("ub-ultimate-", {"ultimate-logistics", "ub-extreme-express-miniloader"}, nil, "original-ultimate-underground-belt")
 end
