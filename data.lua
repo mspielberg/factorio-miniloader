@@ -370,7 +370,7 @@ local function create_recipes(prefix)
   }
 end
 
-local function create_technology(prefix, tech_prereqs, base_underground_name)
+local function create_technology(prefix, tech_prereqs, base_underground_name, tint)
   local name = prefix .. "miniloader"
   local filter_name = prefix .. "filter-miniloader"
 
@@ -378,10 +378,18 @@ local function create_technology(prefix, tech_prereqs, base_underground_name)
   local technology = {
     type = "technology",
     name = name,
-    icon = "__miniloader__/graphics/technology/" .. name .. ".png",
-    icon_size = 128,
-    effects =
-    {
+    icons = {
+      {
+        icon = "__miniloader__/graphics/technology/template.png",
+        icon_size = 128,
+      },
+      {
+        icon = "__miniloader__/graphics/technology/mask.png",
+        icon_size = 128,
+        tint = tint,
+      },
+    },
+    effects = {
       {
         type = "unlock-recipe",
         recipe = name,
