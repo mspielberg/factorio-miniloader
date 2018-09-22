@@ -157,21 +157,38 @@ local function create_loaders(prefix, base_underground_name, tint)
           filename = "__miniloader__/graphics/entity/template.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          y = 85,
-          scale = 0.5
+          width = 53,
+          height = 43,
+          y = 43,
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-template.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            y = 85,
+            scale = 0.5
+          }
         },
         {
           filename = "__miniloader__/graphics/entity/mask.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          y = 85,
-          scale = 0.5,
+          width = 53,
+          height = 43,
+          y = 43,
           tint = tint,
-        },
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-mask.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            y = 85,
+            scale = 0.5,
+            tint = tint,
+          },
+        }
       }
     },
     direction_out = {
@@ -180,19 +197,34 @@ local function create_loaders(prefix, base_underground_name, tint)
           filename = "__miniloader__/graphics/entity/template.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          scale = 0.5,
+          width = 53,
+          height = 43,
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-template.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            scale = 0.5
+          }
         },
         {
           filename = "__miniloader__/graphics/entity/mask.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          scale = 0.5,
+          width = 53,
+          height = 43,
           tint = tint,
-        },
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-mask.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            scale = 0.5,
+            tint = tint,
+          },
+        }
       }
     },
   }
@@ -242,8 +274,17 @@ local function create_inserters(prefix, base_underground_name, tint)
     name = name,
     -- this name and icon appear in the power usage UI
     localised_name = {"entity-name." .. loader_name},
-    icon = "__miniloader__/graphics/item/" .. loader_name .. ".png",
-    icon_size = 32,
+    icons = {
+      {
+        icon = "__miniloader__/graphics/item/template.png",
+        icon_size = 32,
+      },
+      {
+        icon = "__miniloader__/graphics/item/mask.png",
+        icon_size = 32,
+        tint = tint,
+      },
+    },
     minable = { mining_time = 1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
@@ -267,21 +308,36 @@ local function create_inserters(prefix, base_underground_name, tint)
           filename = "__miniloader__/graphics/entity/template.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          y = 85,
-          scale = 0.5
+          width = 53,
+          height = 43,
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-template.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            y = 85,
+            scale = 0.5
+          }
         },
         {
           filename = "__miniloader__/graphics/entity/mask.png",
           priority = "extra-high",
           shift = {0.15625, 0.0703125},
-          width = 106,
-          height = 85,
-          y = 85,
-          scale = 0.5,
+          width = 53,
+          height = 43,
           tint = tint,
-        },
+          hr_version = {
+            filename = "__miniloader__/graphics/entity/hr-mask.png",
+            priority = "extra-high",
+            shift = {0.15625, 0.0703125},
+            width = 106,
+            height = 85,
+            y = 85,
+            scale = 0.5,
+            tint = tint,
+          },
+        }
       }
     },
     hand_base_picture = empty_sheet,
@@ -295,10 +351,12 @@ local function create_inserters(prefix, base_underground_name, tint)
   for _,k in ipairs{"flags", "max_health", "resistances", "vehicle_impact_sound"} do
     loader_inserter[k] = base_entity[k]
   end
+  table.insert(loader_inserter.flags, "hide-alt-info")
 
   local filter_loader_inserter = util.table.deepcopy(loader_inserter)
   filter_loader_inserter.name = filter_name
   filter_loader_inserter.localised_name = {"entity-name." .. filter_loader_name}
+  filter_loader_inserter.icons[1].icon = "__miniloader__/graphics/item/filter-template.png"
   filter_loader_inserter.minable.result = filter_loader_name
   filter_loader_inserter.filter_count = 5
 
