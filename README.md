@@ -7,7 +7,7 @@ belt worth of items into and out of containers, including train cargo wagons.
 
 They use no Lua when running, keeping your factory's UPS healthy.
 
-![Miniloader UPS usage](ups_cost.png)
+![Miniloader UPS usage](resources/ups_cost.png)
 
 You can use them to feed your high-speed assemblers,
 
