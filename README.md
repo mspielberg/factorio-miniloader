@@ -3,23 +3,19 @@
 This mod introduces miniloaders, 1x1 entities that efficiently transfer a full
 belt worth of items into and out of containers, including train cargo wagons.
 
-![Miniloaders in action with cargo wagons](https://github.com/mspielberg/factorio-miniloader/raw/master/cargo_unload.gif)
+![Miniloaders in action with cargo wagons](resources/wagon.png)
 
 They use no Lua when running, keeping your factory's UPS healthy.
 
-![Miniloader UPS usage](https://github.com/mspielberg/factorio-miniloader/raw/master/ups_cost.png)
+![Miniloader UPS usage](ups_cost.png)
 
 You can use them to feed your high-speed assemblers,
 
-![Miniloader assembler feed](https://github.com/mspielberg/factorio-miniloader/raw/master/assemblerdemo.png)
+![Miniloader assembler feed](resources/assemblerdemo.png)
 
-put them in your bus as compact priority splitters,
+or put them in your bus as single-belt lane rebalancers.
 
-![Miniloader priority splitter](https://github.com/mspielberg/factorio-miniloader/raw/master/priority_split.gif)
-
-or single-belt lane rebalancers.
-
-![Miniloaders lane balancer](https://github.com/mspielberg/factorio-miniloader/raw/master/lane_rebalance.png)
+![Miniloaders lane balancer](resources/rebalance.png)
 
 Green and purple belts from Bob's Logistics are fully supported.
 
@@ -72,10 +68,10 @@ vanilla loaders cannot be circuit controlled.
 
 ## Acknowledgements
 
-* Arch666Angel &mdash; for the original 2x1 loader graphics, cut down to 1x1 here
-  with permission.
+* Arch666Angel &mdash; for the original 2x1 loader graphics, cut down to 1x1
+  with permission in versions through 1.5.x.
 * Articulating &mdash; for the original Loader Snapping.
-* Optera &mdash; for Loader Redux's revised and improved loader snapping code, adopted
+* Optera &mdash; for Loader Redux's revised and improved loader snapping code, adapted
   here for Miniloaders with permission.
 
 ## Version History
@@ -186,3 +182,7 @@ vanilla loaders cannot be circuit controlled.
 * 1.5.23 (2018-07-26):
     * Fix crash when getting a bad on_put_item event from buggy other mods.
     * Fix wire connections not appearing on ghosts autoplaced when an entity dies.
+* 1.6.0 (2018-09-21):
+    * New vanilla-inspired graphics that don't overlap with adjacent buildings.
+    * Fix some cases where miniloaders rarely snap to the wrong entity.
+    * Remove references to priority-split usecase now that Factorio core supports splitter priority.
