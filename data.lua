@@ -359,6 +359,8 @@ local function create_inserters(prefix, base_underground_name, tint)
   filter_loader_inserter.name = filter_name
   filter_loader_inserter.localised_name = {"entity-name." .. filter_loader_name}
   filter_loader_inserter.icons[1].icon = "__miniloader__/graphics/item/filter-template.png"
+  filter_loader_inserter.platform_picture.sheets[1].filename = "__miniloader__/graphics/entity/filter-template.png"
+  filter_loader_inserter.platform_picture.sheets[1].hr_version.filename = "__miniloader__/graphics/entity/hr-filter-template.png"
   filter_loader_inserter.minable.result = filter_loader_name
   filter_loader_inserter.filter_count = 5
 
