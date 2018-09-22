@@ -242,7 +242,9 @@ local function create_loaders(prefix, base_underground_name, tint)
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
   filter_entity.structure.direction_in.sheets[1].filename = "__miniloader__/graphics/entity/filter-template.png"
+  filter_entity.structure.direction_in.sheets[1].hr_version.filename = "__miniloader__/graphics/entity/hr-filter-template.png"
   filter_entity.structure.direction_out.sheets[1].filename = "__miniloader__/graphics/entity/filter-template.png"
+  filter_entity.structure.direction_out.sheets[1].hr_version.filename = "__miniloader__/graphics/entity/hr-filter-template.png"
   filter_entity.filter_count = 5
 
   data:extend{
