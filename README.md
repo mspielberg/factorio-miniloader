@@ -186,3 +186,5 @@ vanilla loaders cannot be circuit controlled.
     * New vanilla-inspired graphics that don't overlap with adjacent buildings.
     * Fix some cases where miniloaders rarely snap to the wrong entity.
     * Remove references to priority-split usecase now that Factorio core supports splitter priority.
+* 1.6.1 (2018-09-25):
+    * Fix reversed colors in recent versions of boblogistics.
