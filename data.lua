@@ -485,9 +485,9 @@ create_miniloader("express-", {"logistics-3", "fast-miniloader"}, {r=0.25, g=0.6
 
 -- Bob's support
 if data.raw.technology["bob-logistics-4"] then
-  create_miniloader("turbo-", {"bob-logistics-4", "express-miniloader"}, {r=0.38, b=0.09, g=0.57})
+  create_miniloader("turbo-", {"bob-logistics-4", "express-miniloader"}, {r=0.68, g=0.25, b=0.84})
   if data.raw.technology["bob-logistics-5"] then
-    create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"}, {r=0.08, b=0.625, g=0.2})
+    create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"}, {r=0.24, g=0.78, b=0.05})
   end
 end
 
