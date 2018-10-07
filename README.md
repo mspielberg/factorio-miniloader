@@ -188,3 +188,8 @@ vanilla loaders cannot be circuit controlled.
     * Remove references to priority-split usecase now that Factorio core supports splitter priority.
 * 1.6.1 (2018-09-25):
     * Fix reversed colors in recent versions of boblogistics.
+* 1.6.2 (2018-10-07):
+    * Fix unintended removal when deconstructing tiles under miniloaders.
+    * Restore filter icons in info mode.
+    * Fix a case where robots could lose a mined miniloader.
+    * Expose circuit connector graphics.
