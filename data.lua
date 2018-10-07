@@ -256,10 +256,10 @@ end
 local connector_definitions = circuit_connector_definitions.create(
   universal_connector_template,
   {
-    { variation = 26, main_offset = util.by_pixel(3, 4), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
-    { variation = 18, main_offset = util.by_pixel(-10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
-    { variation = 21, main_offset = util.by_pixel(-12, -15), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
-    { variation = 22, main_offset = util.by_pixel(10, -5), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+    { variation = 24, main_offset = util.by_pixel(-17, 0), shadow_offset = util.by_pixel(10, -0.5), show_shadow = false },
+    { variation = 24, main_offset = util.by_pixel(-14, 0), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
+    { variation = 24, main_offset = util.by_pixel(-17, 0), shadow_offset = util.by_pixel(-2.5, 6), show_shadow = false },
+    { variation = 31, main_offset = util.by_pixel(14, 0), shadow_offset = util.by_pixel(5, -5), show_shadow = false },
   }
 )
 
