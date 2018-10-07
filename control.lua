@@ -24,7 +24,7 @@ local use_snapping = settings.global["miniloader-snapping"].value
   |                  |
   +------------------+
      D            D
-
+--
   loader_type = "output"
   +------------------+
   |                  |
@@ -37,7 +37,7 @@ local use_snapping = settings.global["miniloader-snapping"].value
   |                  |
   +------------------+
            P
-
+--
   D: drop positions
   P: pickup position
 ]]
@@ -235,6 +235,7 @@ end
 
 local function on_marked_for_deconstruction(ev)
   local entity = ev.entity
+  if not (util.is_miniloader(entity) or util.is_miniloader_inserter(entity)) then return end
   for _, ent in ipairs(entity.surface.find_entities_filtered{position=entity.position}) do
     if util.is_miniloader(ent) or util.is_miniloader_inserter(ent) then
       if not ent.to_be_deconstructed(ent.force) then
