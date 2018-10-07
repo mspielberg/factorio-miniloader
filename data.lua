@@ -353,7 +353,6 @@ local function create_inserters(prefix, base_underground_name, tint)
   for _,k in ipairs{"flags", "max_health", "resistances", "vehicle_impact_sound"} do
     loader_inserter[k] = base_entity[k]
   end
-  table.insert(loader_inserter.flags, "hide-alt-info")
 
   local filter_loader_inserter = util.table.deepcopy(loader_inserter)
   filter_loader_inserter.name = filter_name
