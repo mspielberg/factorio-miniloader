@@ -33,6 +33,18 @@ local ingredients = {
     {"express-stack-inserter", 2},
   },
 
+  -- FactorioExtended-Plus-Transport
+  ["rapid-mk1-miniloader"] = {
+    {"express-miniloader", 1},
+    {"rapid-transport-belt-to-ground-mk1", 1},
+    {"stack-inserter-mk2", 4},
+  },
+  ["rapid-mk2-miniloader"] = {
+    {"rapid-mk1-miniloader", 1},
+    {"rapid-transport-belt-to-ground-mk2", 1},
+    {"stack-inserter-mk2", 2},
+  },
+
   -- UltimateBelts
   ["ub-ultra-fast-miniloader"] = {
     {"express-miniloader", 1},
@@ -77,6 +89,10 @@ local previous_miniloader = {
   ["turbo-"] = "express-",
   ["ultimate-"] = "turbo-",
 
+  -- FactorioExtended-Plus-Transport
+  ["rapid-mk1-"] = "express-",
+  ["rapid-mk2-"] = "rapid-mk1-",
+
   -- UltimateBelts
   ["ub-ultra-fast-"] = "express-",
   ["ub-extreme-fast-"] = "ub-ultra-fast-",
@@ -95,6 +111,9 @@ local filter_inserters = {
   ["long-handed-inserter"] = "red-filter-inserter",
   ["turbo-inserter"] = "turbo-filter-inserter",
   ["express-inserter"] = "express-filter-inserter",
+
+  -- FactorioExtended-Plus-Transport
+  ["stack-inserter-mk2"] = "stack-filter-inserter-mk2",
 }
 
 local empty_sheet = {
@@ -389,6 +408,7 @@ local function create_items(prefix, base_underground_name, tint)
     },
   }
   item.order, _ = string.gsub(item.order, "^b%[underground%-belt%]", "e[miniloader]", 1)
+  item.order, _ = string.gsub(item.order, "^c%[rapid%-transport%-belt%-to%-ground.*%]", "e[miniloader]", 1)
   item.place_result = name .. "-inserter"
 
   local filter_item = util.table.deepcopy(item)
@@ -431,7 +451,7 @@ local function create_recipes(prefix)
   }
 end
 
-local function create_technology(prefix, tech_prereqs, base_underground_name, tint)
+local function create_technology(prefix, tech_prereqs, tint)
   local name = prefix .. "miniloader"
   local filter_name = prefix .. "filter-miniloader"
 
@@ -475,7 +495,7 @@ local function create_miniloader(prefix, tech_prereqs, tint, base_underground_na
   create_inserters(prefix, base_underground_name, tint)
   create_items(prefix, base_underground_name, tint)
   create_recipes(prefix)
-  create_technology(prefix, tech_prereqs, base_underground_name, tint)
+  create_technology(prefix, tech_prereqs, tint)
 end
 
 create_miniloader("",         {"logistics-2"},                    {r=0.8,  g=0.6,  b=0.05})
@@ -488,6 +508,12 @@ if data.raw.technology["bob-logistics-4"] then
   if data.raw.technology["bob-logistics-5"] then
     create_miniloader("ultimate-", {"bob-logistics-5", "turbo-miniloader"}, {r=0.24, g=0.78, b=0.05})
   end
+end
+
+-- FactorioExtended-Plus-Transport support
+if data.raw.item["rapid-transport-belt-mk2"] then
+  create_miniloader("rapid-mk1-", {"logistics-4", "express-miniloader"},   {r=0.07, g=0.97, b=0.04}, "rapid-transport-belt-to-ground-mk1")
+  create_miniloader("rapid-mk2-", {"logistics-5", "rapid-mk1-miniloader"}, {r=0.62, g=0.03, b=0.97}, "rapid-transport-belt-to-ground-mk2")
 end
 
 -- UltimateBelts support
