@@ -6,5 +6,5 @@
 	"author": "Therax",
 	"homepage": "https://forums.factorio.com/viewtopic.php?f=93&t=54343",
 	"description": "Compact and UPS-friendly 1x1 loaders.  Works with train cargo wagons, circuits, filters, and Bob's faster belts.",
-	"dependencies": ["? boblogistics >= 0.16.16", "? UltimateBelts >= 0.16.4"]
+	"dependencies": ["? boblogistics >= 0.16.16", "? FactorioExtended-Plus-Transport >= 0.1.5", "? UltimateBelts >= 0.16.4"]
 }
