@@ -395,7 +395,7 @@ local function create_items(prefix, base_underground_name, tint)
   filter_item.name = filter_name
   filter_item.localised_name = {"entity-name." .. filter_name}
   filter_item.icons[1].icon = "__miniloader__/graphics/item/filter-template.png"
-  filter_item.order, _ = string.gsub(item.order, "$", "-filter", 1)
+  filter_item.order, _ = string.gsub(item.order, "e%[", "f[filter-", 1)
   filter_item.place_result = filter_name .. "-inserter"
 
   data:extend{
