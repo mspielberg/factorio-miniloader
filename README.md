@@ -193,3 +193,5 @@ vanilla loaders cannot be circuit controlled.
     * Restore filter icons in info mode.
     * Fix a case where robots could lose a mined miniloader.
     * Expose circuit connector graphics.
+* 1.6.3 (2018-10-08):
+    * Add support for FactorioExtended-Plus-Transport.
