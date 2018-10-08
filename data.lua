@@ -492,9 +492,9 @@ end
 
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
-  create_miniloader("ub-ultra-fast-",      {"ultra-fast-logistics",      "express-miniloader"},            {r=0,    g=0.7, b=0.29},  "ultra-fast-underground-belt")
+  create_miniloader("ub-ultra-fast-",      {"ultra-fast-logistics",      "express-miniloader"},            {r=0.15, g=0.59, b=0.07}, "ultra-fast-underground-belt")
   create_miniloader("ub-extreme-fast-",    {"extreme-fast-logistics",    "ub-ultra-fast-miniloader"},      {r=0.7,  g=0,    b=0.06}, "extreme-fast-underground-belt")
   create_miniloader("ub-ultra-express-",   {"ultra-express-logistics",   "ub-extreme-fast-miniloader"},    {r=0.29, g=0,    b=0.7},  "ultra-express-underground-belt")
   create_miniloader("ub-extreme-express-", {"extreme-express-logistics", "ub-ultra-express-miniloader"},   {r=0,    g=0.06, b=0.7},  "extreme-express-underground-belt")
-  create_miniloader("ub-ultimate-",        {"ultimate-logistics",        "ub-extreme-express-miniloader"}, {r=0,    g=0.42, b=0.7},  "original-ultimate-underground-belt")
+  create_miniloader("ub-ultimate-",        {"ultimate-logistics",        "ub-extreme-express-miniloader"}, {r=0.08, g=0.72, b=0.61}, "original-ultimate-underground-belt")
 end
