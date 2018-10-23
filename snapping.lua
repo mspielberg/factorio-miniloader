@@ -73,20 +73,27 @@ local function snap_loader_to_target(loader, entity)
   return true
 end
 
+-- returns distance between p1 and p2 projected along half-axis identified by dir
+local function axis_distance(p1, p2, dir)
+  if dir == 0 then
+    return p1.y - p2.y
+  elseif dir == 2 then
+    return p2.x - p1.x
+  elseif dir == 4 then
+    return p2.y - p1.y
+  elseif dir == 6 then
+    return p1.x - p2.x
+  end
+end
+
 -- Idiot snapping, face away from non belt entity
 local function idiot_snap(loader, entity)
-  local x = loader.position.x
-  local y = loader.position.y
-  local bounds = util.move_box(util.rotate_box(entity.prototype.selection_box, entity.direction), entity.position)
+  local lp = loader.position
+  local ep = entity.position
   local direction = loader.direction
-  if y > bounds.right_bottom.y then
-    direction = 4
-  elseif y < bounds.left_top.y then
-    direction = 0
-  elseif x > bounds.right_bottom.x then
-    direction = 2
-  elseif x < bounds.left_top.x then
-    direction = 6
+  local distance = axis_distance(ep, lp, direction)
+  if axis_distance(ep, lp, util.opposite_direction(direction)) > distance then
+    direction = util.opposite_direction(direction)
   end
   if loader.direction ~= direction or loader.loader_type ~= "output" then
     --loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {r=1}}
