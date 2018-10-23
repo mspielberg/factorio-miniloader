@@ -195,3 +195,5 @@ vanilla loaders cannot be circuit controlled.
     * Expose circuit connector graphics.
 * 1.6.3 (2018-10-08):
     * Add support for FactorioExtended-Plus-Transport.
+* 1.6.4 (2018-10-22):
+    * Fix crash when placing a miniloader next to certain curved rails with snapping enabled.
