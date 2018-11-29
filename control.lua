@@ -103,6 +103,8 @@ local function on_robot_built(ev)
   end
 end
 
+local miniloader_mined
+
 local function on_player_built(ev)
   local entity = ev.created_entity
   if ev.mod_name then
@@ -114,9 +116,18 @@ local function on_player_built(ev)
     return
   end
 
+  local orientation
+  if miniloader_mined and
+     miniloader_mined.tick == ev.tick and
+     miniloader_mined.player_index == ev.player_index then
+    orientation = miniloader_mined.orientation
+  else
+    orientation = util.orientation_from_inserters(entity)
+  end
+
   if util.is_miniloader_inserter(entity) then
-    local loader = on_built_miniloader(entity)
-    if use_snapping then
+    local loader = on_built_miniloader(entity, orientation)
+    if use_snapping and not orientation then
       -- adjusts direction & belt_to_ground_type
       snapping.snap_loader(loader, ev)
     end
@@ -204,6 +215,19 @@ local function on_mined(ev)
   end
 end
 
+local function on_player_mined_entity(ev)
+  local entity = ev.entity
+  if util.is_miniloader_inserter(entity) then
+    -- might be a fast replace, so store current orientation
+    miniloader_mined = {
+      tick = ev.tick,
+      player_index = ev.player_index,
+      orientation = util.orientation_from_inserters(entity)
+    }
+  end
+  on_mined(ev)
+end
+
 local function on_robot_pre_mined(ev)
   if ev.instant_deconstruction then
     on_mined(ev)
@@ -272,7 +296,7 @@ event.register(defines.events.on_robot_built_entity, on_robot_built)
 event.register(defines.events.on_player_rotated_entity, on_rotated)
 
 event.register(defines.events.on_pre_player_mined_item, on_pre_player_mined_item)
-event.register(defines.events.on_player_mined_entity, on_mined)
+event.register(defines.events.on_player_mined_entity, on_player_mined_entity)
 event.register(defines.events.on_robot_pre_mined, on_robot_pre_mined)
 event.register(defines.events.on_robot_mined_entity, on_mined)
 event.register(defines.events.on_entity_died, on_mined)
