@@ -167,6 +167,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.localised_name = {"entity-name." .. loader_name}
   entity.minable = { mining_time = 1, count = 0, result = "raw-wood" }
   entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
+  entity.collision_mask = {}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.filter_count = 0
   entity.structure = {
