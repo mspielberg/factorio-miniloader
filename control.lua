@@ -116,16 +116,17 @@ local function on_player_built(ev)
     return
   end
 
-  local orientation
-  if miniloader_mined and
-     miniloader_mined.tick == ev.tick and
-     miniloader_mined.player_index == ev.player_index then
-    orientation = miniloader_mined.orientation
-  else
-    orientation = util.orientation_from_inserters(entity)
-  end
 
   if util.is_miniloader_inserter(entity) then
+    local orientation
+    if miniloader_mined and
+       miniloader_mined.tick == ev.tick and
+       miniloader_mined.player_index == ev.player_index then
+      orientation = miniloader_mined.orientation
+    else
+      orientation = util.orientation_from_inserters(entity)
+    end
+
     local loader = on_built_miniloader(entity, orientation)
     if use_snapping and not orientation then
       -- adjusts direction & belt_to_ground_type
