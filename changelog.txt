@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.6.6
+Date: 28.11.2018:
+  Minor Features:
+    - Enable fast replacing Miniloaders.
+    - Preserve input/output type when building over ghosts.
+---------------------------------------------------------------------------------------------------
 Version: 1.6.5
 Date: 31.10.2018:
   Documentation:
