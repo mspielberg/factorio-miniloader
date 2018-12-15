@@ -123,8 +123,6 @@ local function on_player_built(ev)
        miniloader_mined.tick == ev.tick and
        miniloader_mined.player_index == ev.player_index then
       orientation = miniloader_mined.orientation
-    else
-      orientation = util.orientation_from_inserters(entity)
     end
 
     local loader = on_built_miniloader(entity, orientation)
@@ -216,6 +214,23 @@ local function on_mined(ev)
   end
 end
 
+local function on_put_item(ev)
+  local player_index = ev.player_index
+  local player = game.players[player_index]
+  local entities = player.surface.find_entities_filtered{position = ev.position}
+  for _, entity in ipairs(entities) do
+    if entity.name == "entity-ghost" and util.is_miniloader_inserter_name(entity.ghost_name) then
+      -- building over a ghost
+      miniloader_mined = {
+        tick = ev.tick,
+        player_index = player_index,
+        orientation = util.orientation_from_inserters(entity),
+      }
+      return
+    end
+  end
+end
+
 local function on_player_mined_entity(ev)
   local entity = ev.entity
   if util.is_miniloader_inserter(entity) then
@@ -223,7 +238,7 @@ local function on_player_mined_entity(ev)
     miniloader_mined = {
       tick = ev.tick,
       player_index = ev.player_index,
-      orientation = util.orientation_from_inserters(entity)
+      orientation = util.orientation_from_inserters(entity),
     }
   end
   on_mined(ev)
@@ -303,6 +318,7 @@ event.register(defines.events.on_robot_mined_entity, on_mined)
 event.register(defines.events.on_entity_died, on_mined)
 
 event.register(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
+event.register(defines.events.on_put_item, on_put_item)
 
 event.register(defines.events.on_player_setup_blueprint, on_setup_blueprint)
 event.register(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)

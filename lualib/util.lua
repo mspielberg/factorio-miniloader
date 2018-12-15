@@ -138,7 +138,11 @@ function util.is_miniloader(entity)
 end
 
 function util.is_miniloader_inserter(entity)
-  return string.find(entity.name, "miniloader%-inserter$") ~= nil
+  return util.is_miniloader_inserter_name(entity.name)
+end
+
+function util.is_miniloader_inserter_name(name)
+  return name:find("miniloader%-inserter$") ~= nil
 end
 
 function util.pickup_position(entity)
@@ -207,10 +211,10 @@ function util.num_inserters(entity)
 end
 
 function util.orientation_from_inserters(entity)
-  local inserter = entity.surface.find_entities_filtered{
-    type = "inserter",
-    position = entity.position,
-  }[1]
+  local find_entities_filtered = entity.surface.find_entities_filtered
+  local inserter =
+    find_entities_filtered{type = "inserter", position = entity.position}[1] or
+    find_entities_filtered{ghost_type = "inserter", position = entity.position}[1]
   if inserter.drop_position.x > inserter.position.x + 0.5 then
     return {direction=defines.direction.east, type="input"}
   elseif inserter.drop_position.x < inserter.position.x - 0.5 then
