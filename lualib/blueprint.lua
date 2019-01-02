@@ -51,21 +51,24 @@ local function find_slaves(miniloader_inserters, to_remove)
 end
 
 local function remove_connections(bp_entity, to_remove_set)
-  if not bp_entity.connections then
+  local connections = bp_entity.connections
+  if not connections then
     return
   end
-  for _, circuit in pairs(bp_entity.connections) do
-    for wire_name, wire_connections in pairs(circuit) do
-      local new_wire_connections = {}
-      for _, connection in ipairs(wire_connections) do
-        if not to_remove_set[connection.entity_id] then
-          new_wire_connections[#new_wire_connections+1] = connection
+  for circuit_id, circuit_connections in pairs(connections) do
+    if not circuit_id:find("^Cu") then -- ignore copper cables on power switch
+      for wire_name, wire_connections in pairs(circuit_connections) do
+        local new_wire_connections = {}
+        for _, connection in ipairs(wire_connections) do
+          if not to_remove_set[connection.entity_id] then
+            new_wire_connections[#new_wire_connections+1] = connection
+          end
         end
-      end
-      if next(new_wire_connections) then
-        circuit[wire_name] = new_wire_connections
-      else
-        circuit[wire_name] = nil
+        if next(new_wire_connections) then
+          circuit_connections[wire_name] = new_wire_connections
+        else
+          circuit_connections[wire_name] = nil
+        end
       end
     end
   end
