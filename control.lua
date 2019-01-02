@@ -42,6 +42,19 @@ local use_snapping = settings.global["miniloader-snapping"].value
   P: pickup position
 ]]
 
+local function register_bobs_blacklist()
+  for _, interface_name in ipairs{"bobinserters", "boblogistics"} do
+    local interface = remote.interfaces[interface_name]
+    if interface and interface["blacklist_inserter"] then
+      for entity_name in pairs(game.entity_prototypes) do
+        if util.is_miniloader_inserter_name(entity_name) then
+          remote.call(interface_name, "blacklist_inserter", entity_name)
+        end
+      end
+    end
+  end
+end
+
 -- Event Handlers
 
 local function on_init()
@@ -60,6 +73,7 @@ local function on_configuration_changed(configuration_changed_data)
   if mod_change and mod_change.old_version and mod_change.old_version ~= mod_change.new_version then
     configchange.on_mod_version_changed(mod_change.old_version)
   end
+  register_bobs_blacklist()
 end
 
 local function on_built_miniloader(entity, orientation)
