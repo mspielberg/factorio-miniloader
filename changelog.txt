@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.6.8
+Date: 02.01.2019:
+  Compatibility:
+    - Miniloader inserters are no longer adjustable with Bob's Adjustable Inserters.
+  Bugfixes:
+    - Fix snapping issues introduced in v1.6.6.
+    - Copper cables attached to power switches are no longer removed from blueprints. (https://mods.factorio.com/mod/miniloader/discussion/5c2ac4eb24fc29000db27e19)
+---------------------------------------------------------------------------------------------------
 Version: 1.6.7
 Date: 28.11.2018:
   Bugfixes:
