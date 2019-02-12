@@ -70,4 +70,13 @@ if data.raw.technology["ultimate-logistics"] then
   }
 end
 
+-- xander-mod support
+if data.raw.item["expedited-transport-belt"] then
+  templates["expedited-"] = {
+    prerequisite_techs = {"logistics-3", "fast-miniloader"},
+    tint = {r=0.40, g=0.70, b=0.40},
+  }
+  templates["express-"].prerequisite_techs = {"logistics-4", "expedited-miniloader"}
+end
+
 return templates

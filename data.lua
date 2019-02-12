@@ -1,12 +1,8 @@
-local templates = require "prototypes.templates"
-require "util"
-
-local create_maxiloaders = settings.startup["miniloader-enable-maxiloaders"].value
-
 local entities = require "prototypes.entities"
 local items = require "prototypes.items"
 local recipes = require "prototypes.recipes"
 local technologies = require "prototypes.technologies"
+local templates = require "prototypes.templates"
 
 local function create_miniloader(prefix, tech_prereqs, tint, base_underground_name)
   base_underground_name = base_underground_name or (prefix .. "underground-belt")
