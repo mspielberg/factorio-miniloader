@@ -123,11 +123,11 @@ local ingredient_sets = {
 
 if data.raw["inserter"]["turbo-inserter"] then
   -- boblogistics inserter overhaul support
-  ingredient_sets["miniloader"][3] = {"inserter", 8}
-  ingredient_sets["fast-miniloader"][3] = {"long-handed-inserter", 8}
-  ingredient_sets["express-miniloader"][3] = {"fast-inserter", 6}
-  ingredient_sets["turbo-miniloader"][3] = {"turbo-inserter", 6}
-  ingredient_sets["ultimate-miniloader"][3] = {"express-inserter", 6}
+  ingredient_sets["miniloader"][2][3] = {"inserter", 8}
+  ingredient_sets["fast-miniloader"][2][3] = {"long-handed-inserter", 8}
+  ingredient_sets["express-miniloader"][2][3] = {"fast-inserter", 6}
+  ingredient_sets["turbo-miniloader"][1][3] = {"turbo-inserter", 6}
+  ingredient_sets["ultimate-miniloader"][1][3] = {"express-inserter", 6}
 end
 
 local previous_miniloader = {
