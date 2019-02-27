@@ -1,4 +1,4 @@
-local blueprint = require("../lualib/blueprint")
+local blueprint = require "lualib.blueprint"
 local circuit = require "circuit"
 local util = require "lualib.util"
 
