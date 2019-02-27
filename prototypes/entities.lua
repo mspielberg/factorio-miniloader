@@ -1,8 +1,8 @@
 local empty_sheet = {
   filename = "__core__/graphics/empty.png",
   priority = "very-low",
-  width = 0,
-  height = 0,
+  width = 1,
+  height = 1,
   frame_count = 1,
 }
 
@@ -17,7 +17,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.icons = nil
   entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
-  entity.minable = { mining_time = 1, count = 0, result = "raw-wood" }
+  entity.minable = nil
   entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
   entity.collision_mask = {}
   entity.selection_box = {{0, 0}, {0, 0}}
@@ -103,6 +103,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.belt_distance = 0
   entity.container_distance = 0
   entity.belt_length = 0.5
+  entity.next_upgrade = nil
 
   if entity.speed > 0.16 then
     -- BETA support for Ultimate Belts
@@ -135,11 +136,13 @@ local connector_definitions = circuit_connector_definitions.create(
   }
 )
 
-local function create_inserters(prefix, base_underground_name, tint)
+local function create_inserters(prefix, next_prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
+  local next_upgrade = next_prefix and next_prefix .. "miniloader-inserter"
   local filter_loader_name = prefix .. "filter-miniloader"
   local filter_name = filter_loader_name .. "-inserter"
+  local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
   local speed = base_entity.speed * 0.5 / 0.03125
 
@@ -164,8 +167,8 @@ local function create_inserters(prefix, base_underground_name, tint)
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     selection_priority = 50,
     allow_custom_vectors = true,
-    energy_per_movement = 2000,
-    energy_per_rotation = 2000,
+    energy_per_movement = "2kJ",
+    energy_per_rotation = "2kJ",
     energy_source = {
       type = "electric",
       usage_priority = "secondary-input",
@@ -220,6 +223,7 @@ local function create_inserters(prefix, base_underground_name, tint)
     circuit_wire_connection_points = connector_definitions.points,
     circuit_connector_sprites = connector_definitions.sprites,
     circuit_wire_max_distance = default_circuit_wire_max_distance,
+    next_upgrade = next_upgrade,
   }
 
   for _,k in ipairs{"flags", "max_health", "resistances", "vehicle_impact_sound"} do
@@ -234,6 +238,7 @@ local function create_inserters(prefix, base_underground_name, tint)
   filter_loader_inserter.platform_picture.sheets[1].hr_version.filename = "__miniloader__/graphics/entity/hr-filter-template.png"
   filter_loader_inserter.minable.result = filter_loader_name
   filter_loader_inserter.filter_count = 5
+  filter_loader_inserter.next_upgrade = filter_next_upgrade
 
   data:extend{
     loader_inserter,

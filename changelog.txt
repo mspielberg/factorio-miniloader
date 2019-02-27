@@ -1,16 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.0
+Date: 26.02.2019
+  Features:
+    - Update to Factorio 0.17.
+---------------------------------------------------------------------------------------------------
 Version: 1.6.10
-Date: 02.01.2019:
+Date: 25.02.2019
   Bugfixes:
     - Fix recipes for Bob's Logistics with inserter overhaul.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.9
-Date: 02.01.2019:
+Date: 12.02.2019
   Compatibility:
     - Add compatibility with Xander Mod.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.8
-Date: 02.01.2019:
+Date: 02.01.2019
   Compatibility:
     - Miniloader inserters are no longer adjustable with Bob's Adjustable Inserters.
   Bugfixes:
@@ -18,35 +23,35 @@ Date: 02.01.2019:
     - Copper cables attached to power switches are no longer removed from blueprints. (https://mods.factorio.com/mod/miniloader/discussion/5c2ac4eb24fc29000db27e19)
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.7
-Date: 28.11.2018:
+Date: 28.11.2018
   Bugfixes:
     - Fix crash from trying to preserve orientation.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.6
-Date: 28.11.2018:
+Date: 28.11.2018
   Minor Features:
     - Enable fast replacing Miniloaders.
     - Preserve input/output type when building over ghosts.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.5
-Date: 31.10.2018:
+Date: 31.10.2018
   Documentation:
     - Separate changelog.
   Bugfixes:
     - Fix crash when deconstructing in The Blueprint Lab. (https://mods.factorio.com/mod/miniloader/discussion/5bd9bb9061c07e000d020dfc)
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.4
-Date: 22.10.2018:
+Date: 22.10.2018
   Bugfixes:
     - Fix crash when placing a miniloader next to certain curved rails with snapping enabled.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.3
-Date: 08.10.2018:
+Date: 08.10.2018
   Compatibility:
     - Add support for FactorioExtended-Plus-Transport.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.2
-Date: 07.10.2018:
+Date: 07.10.2018
   Graphics:
     - Expose circuit connector graphics.
   Bugfixes:
@@ -55,12 +60,12 @@ Date: 07.10.2018:
     - Fix a case where robots could lose a mined miniloader.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.1
-Date: 25.09.2018:
+Date: 25.09.2018
   Bugfixes:
     - Fix reversed colors in recent versions of boblogistics.
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.0
-Date: 21.09.2018:
+Date: 21.09.2018
   Documentation:
     - Remove references to priority-split usecase now that Factorio core supports splitter priority.
   Graphics:
@@ -69,24 +74,24 @@ Date: 21.09.2018:
     - Fix some cases where miniloaders rarely snap to the wrong entity.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.23
-Date: 26.07.2018:
+Date: 26.07.2018
   Bugfixes:
     - Fix crash when getting a bad on_put_item event from buggy other mods.
     - Fix wire connections not appearing on ghosts autoplaced when an entity dies.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.22
-Date: 12.06.2018:
+Date: 12.06.2018
   Bugfixes:
     - Fix bug where placing a miniloader by hand over a configured blueprint ghost only configured one of the miniloader inserters.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.21
-Date: 24.05.2018:
+Date: 24.05.2018
   Bugfixes:
     - Fix Ultimate Belts miniloaders not yielding an item when mined.
     - Fix bug with Upgrade Planner integration that could sometimes cause upgraded miniloaders to not be returned to the player's inventory.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.20
-Date: 02.05.2018:
+Date: 02.05.2018
   Compatibility:
     - Add filter miniloader support for Ultimate Belts.
   Bugfixes:
@@ -96,12 +101,12 @@ Date: 02.05.2018:
     - Fix case where mining the last entity connected to a miniloader via circuit left the miniloader inoperative.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.19
-Date: 04.04.2018:
+Date: 04.04.2018
   Compatibility:
     - Fix compatibility with Ultimate Belts 0.16.4.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.18
-Date: 01.04.2018:
+Date: 01.04.2018
   Balancing:
     - Increased miniloader inserter speed again slightly to better handle inline belt-to-belt use.
   Bugfixes:
@@ -109,50 +114,50 @@ Date: 01.04.2018:
     - Fix a possible error when joining a multiplayer server.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.17
-Date: 31.03.2018:
+Date: 31.03.2018
   Balancing:
     - Increased speed of miniloader belt-to-container throughput, enabling them to keep up with fast transport belts.
   Compatibility:
     - Significant overhaul to boblogistics support, now that Bob's top-tier belts are called Ultimate transport belts, introducing a conflict with the Ultimate Belts mod.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.16
-Date: 18.03.2018:
+Date: 18.03.2018
   Balancing:
     - Change ingredients when using boblogistics inserter overhaul.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.15
-Date: 12.03.2018:
+Date: 12.03.2018
   Minor Features:
     - Add support for boblogistics inserter overhaul.
   Bugfixes:
     - Fix another crash when mining miniloaders in Factorio 0.16.29.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14
-Date: 12.03.2018:
+Date: 12.03.2018
   Bugfixes:
     - Fix crash when mining miniloader in Factorio 0.16.29.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.13
-Date: 06.03.2018:
+Date: 06.03.2018
   Optimization:
     - Optimize graphics to reduce download size.
   Bugfixes:
     - Remove stray debug logging to console.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.12
-Date: 05.03.2018:
+Date: 05.03.2018
   Bugfixes:
     - Fix additional event sync corner cases on joining a multiplayer server.
     - Fix crash when mining a miniloader with an opened GUI.
     - Fix filter miniloader recipes to use previous tiers of filter miniloaders instead of unfiltered miniloaders.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.11
-Date: 20.02.2018:
+Date: 20.02.2018
   Bugfixes:
     - Fix event sync problem on joining a multiplayer server.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.10
-Date: 08.02.2018:
+Date: 08.02.2018
   Balancing:
     - Shrink miniloader collision box.
   Bugfixes:
@@ -160,53 +165,53 @@ Date: 08.02.2018:
     - Fix crash related to rapidly drag-building blueprints.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.9
-Date: 06.02.2018:
+Date: 06.02.2018
   Bugfixes:
     - Remove stray debugging code.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.8
-Date: 06.02.2018:
+Date: 06.02.2018
   Compatibility:
     - Using Upgrade Planner on miniloaders now preserves complex items (configured blueprints, armor with inventory, etc.)
   Bugfixes:
     - Fix building over an existing miniloader with a blueprint where that miniloader is connected to the circuit network.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.7
-Date: 22.01.2018:
+Date: 22.01.2018
   Compatibility:
     - Potentional fix for reported Omnimatter mod incompatibility.
   Bugfixes:
     - Make sure stack size override is reset on non-circuit-controlled inserters.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.6
-Date: 19.01.2018:
+Date: 19.01.2018
   Balancing:
     - Change recipes to use lower tiers of miniloaders as ingredients.
   Features:
     - Add BETA support for Ultimate Belts mod.  See caveats and warnings above.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.5
-Date: 18.01.2018:
+Date: 18.01.2018
   Compatibility:
     - Add compatibility with upgrade-planner.
   Bugfixes:
     - Ghosts can now be placed over miniloaders marked for deconstruction.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.4
-Date: 17.01.2018:
+Date: 17.01.2018
   Bugfixes:
     - Fix crash when alt-selecting with blueprint.
     - Fix crash during blueprinting.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.3
-Date: 15.01.2018:
+Date: 15.01.2018
   Compatibility:
     - Reenable PickerExtended dolly. Thanks to Nexela for the fix suggestion.
   Bugfixes:
     - Fix setting a blueprint that includes no entities, only tiles.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
-Date: 14.01.2018:
+Date: 14.01.2018
   Compatibility:
     - Disable PickerExtended's dolly feature, since it can only move parts of miniloaders, breaking them.
   Bugfixes:
@@ -214,36 +219,36 @@ Date: 14.01.2018:
     - Fix building miniloaders with Nanorobots.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.1
-Date: 14.01.2018:
+Date: 14.01.2018
   Bugfixes:
     - Enable filter inserter recipes when migrating from pre-1.5.0.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
-Date: 12.01.2018:
+Date: 12.01.2018
   Changes:
     - Separate filter miniloaders into their own entities.  Existing miniloaders will lose their filtering capabilities. Sorry for the inconvenience!
   Bugfixes:
     - Fix crash when connecting miniloaders directly to arithmetic or decider combinators.
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.3
-Date: 09.01.2018:
+Date: 09.01.2018
   Bugfixes:
     - Apply migration to saves with v1.4.1.
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.2
-Date: 09.01.2018:
+Date: 09.01.2018
   Bugfixes:
     - Fix broken migration of yellow miniloaders.
     - Fix broken localization of items in hand.
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
-Date: 09.01.2018:
+Date: 09.01.2018
   Bugfixes:
     - Fix crash when placing underground belt with a miniloader on the opposite side.
     - Fix migration issue from 1.2.0-1.3.0 causing belt items to spill on the ground.
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.0
-Date: 07.01.2018:
+Date: 07.01.2018
   Major Features:
     - Add support for controlling miniloaders through the circuit network. 
     - Add optional filtering support for miniloaders.
@@ -251,50 +256,50 @@ Date: 07.01.2018:
     - Redesign using 0.16 customized loader entities instead of underground belt to provide belt connectivity.
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.0
-Date: 18.12.2017:
+Date: 18.12.2017
   Balancing:
     - Rebalance ingredient costs.
     - Make yellow miniloader accessible before oil.
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: 14.12.2017:
+Date: 14.12.2017
   Changes:
     - Update to Factorio 0.16.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.5
-Date: 14.12.2017:
+Date: 14.12.2017
   Changes:
     - Remove the problematic separate force for miniloader inserters, and set a stack size override instead.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
-Date: 11.12.2017:
+Date: 11.12.2017
   Changes:
     - Make snapping less aggressive.  Miniloaders should only turn 180 degrees, not 90 degrees, to better match behavior from Loader Redux.
   Bugfixes:
     - Remove orphan inserters left behind by yellow miniloaders if removed while 1.1.0-1.1.2 was installed.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.3
-Date: 06.12.2017:
+Date: 06.12.2017
   Bugfixes:
     - Fix basic yellow miniloaders.  Oops.
     - Fix a case where items could be spilled onto adjacent tiles when snapping a miniloader to a belt.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.2
-Date: 06.12.2017:
+Date: 06.12.2017
   Bugfixes:
     - Fix critical crash bug when rotating miniloaders.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
-Date: 05.12.2017:
+Date: 05.12.2017
   Bugfixes:
     - Fix some snapping issues (laying belts to the side of a miniloader, trying to snap to a player, sometimes snapping to the wrong direction when next to a large entities like assemblers).
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
-Date: 03.12.2017:
+Date: 03.12.2017
   Major Features:
     - Add graphics and loader snapping.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 01.12.2017:
+Date: 01.12.2017
   Major Features:
     - Initial release.
