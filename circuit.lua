@@ -7,6 +7,7 @@ local M = {}
 function M.sync_filters(inserter)
   local filters = {}
   local slots = inserter.filter_slot_count
+  local filter_mode = inserter.inserter_filter_mode
   for i=1,slots do
     filters[i] = inserter.get_filter(i)
   end
@@ -14,6 +15,9 @@ function M.sync_filters(inserter)
   for _, ins in ipairs(inserters) do
     for j=1,slots do
       ins.set_filter(j, filters[j])
+    end
+    if filter_mode then
+      ins.inserter_filter_mode = filter_mode
     end
   end
 end

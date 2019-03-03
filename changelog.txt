@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.2
+Date: 03.03.2019
+  Bugfixes:
+    - Fix blacklist on filter miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/5c7a629def2ffa000dd4947d)
+---------------------------------------------------------------------------------------------------
 Version: 1.7.1
 Date: 26.02.2019
   Bugfixes:
