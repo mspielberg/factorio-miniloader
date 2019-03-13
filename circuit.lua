@@ -4,20 +4,25 @@ local util = require "lualib.util"
 
 local M = {}
 
-function M.sync_filters(inserter)
+function M.sync_filters(entity)
   local filters = {}
-  local slots = inserter.filter_slot_count
-  local filter_mode = inserter.inserter_filter_mode
+  local slots = entity.filter_slot_count
+  local inserter_filter_mode
+
   for i=1,slots do
-    filters[i] = inserter.get_filter(i)
+    filters[i] = entity.get_filter(i)
   end
-  local inserters = util.get_loader_inserters(inserter)
+  if entity.type == "inserter" then
+    inserter_filter_mode = entity.inserter_filter_mode
+  end
+
+  local inserters = util.get_loader_inserters(entity)
   for _, ins in ipairs(inserters) do
     for j=1,slots do
       ins.set_filter(j, filters[j])
     end
-    if filter_mode then
-      ins.inserter_filter_mode = filter_mode
+    if inserter_filter_mode then
+      ins.inserter_filter_mode = inserter_filter_mode
     end
   end
 end
