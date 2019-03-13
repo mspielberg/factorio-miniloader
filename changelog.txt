@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.3
+Date: 13.03.2019
+  Bugfixes:
+    - Fix being unable to mine UB miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/5c87a9086df489000b719597)
+    - Fix crash when configuring UB miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/5c87a9086df489000b719597)
+---------------------------------------------------------------------------------------------------
 Version: 1.7.2
 Date: 03.03.2019
   Bugfixes:
