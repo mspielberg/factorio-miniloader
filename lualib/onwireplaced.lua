@@ -243,14 +243,13 @@ local function setup_after_blueprint_placed(preexisting_entities)
 end
 
 local function on_put_item(ev)
+  if ev.mod_name == 'Bluebuild' then return end
   local player = game.players[ev.player_index]
   if not player.cursor_stack then
     log("on_put_item event sent from "..ev.mod_name.." while player cursor_stack is empty")
     return
   end
-  if not blueprint.is_setup_bp(player.cursor_stack) then
-    return
-  end
+  if not blueprint.is_setup_bp(player.cursor_stack) then return end
   local bp = player.cursor_stack
   local bp_area = blueprint.bounding_box(bp)
   local surface_area = util.move_box(
