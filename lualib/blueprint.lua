@@ -135,8 +135,10 @@ function M.filter_miniloaders(bp)
       find_slaves(overlapping, to_remove)
     end
   end
-  remove_entities(bp_entities, to_remove)
-  bp.set_blueprint_entities(bp_entities)
+  if next(to_remove) then
+    remove_entities(bp_entities, to_remove)
+    bp.set_blueprint_entities(bp_entities)
+  end
 end
 
 return M
