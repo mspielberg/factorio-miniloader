@@ -144,7 +144,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   local filter_name = filter_loader_name .. "-inserter"
   local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
-  local speed = base_entity.speed * 0.5 / 0.03125
+  local speed = base_entity.speed * 0.65 / 0.03125
 
   local loader_inserter = {
     type = "inserter",
@@ -173,7 +173,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       type = "electric",
       usage_priority = "secondary-input",
     },
-    extension_speed = speed,
+    extension_speed = 1,
     rotation_speed = speed,
     fast_replaceable_group = "miniloader-inserter",
     pickup_position = {0, -0.2},
