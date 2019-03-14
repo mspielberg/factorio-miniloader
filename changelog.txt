@@ -1,5 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.3
+Date: 14.03.2019
+  Minor Changes:
+    - Increase miniloader speed to ensure they can keep up with the faster blue belts.
+  Bugfixes:
+    - Preserve cargo wagon filters in blueprints with no miniloaders. (https://forums.factorio.com/viewtopic.php?f=190&t=54343&start=280#p412248)
+---------------------------------------------------------------------------------------------------
+Version: 1.7.3
 Date: 13.03.2019
   Bugfixes:
     - Fix being unable to mine UB miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/5c87a9086df489000b719597)
