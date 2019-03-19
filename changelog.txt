@@ -1,5 +1,10 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.7.3
+Version: 1.7.5
+Date: 19.03.2019
+  Changes:
+    - Miniloaders now scale to faster speeds by increased stack size bonus, instead of movement speed.
+---------------------------------------------------------------------------------------------------
+Version: 1.7.4
 Date: 14.03.2019
   Minor Changes:
     - Increase miniloader speed to ensure they can keep up with the faster blue belts.
