@@ -17,7 +17,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.icons = nil
   entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
-  entity.minable = { mining_time = 1, count = 0, result = "wood" }
+  entity.minable = { mining_time = 0.1, count = 0, result = "wood" }
   entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
   entity.collision_mask = {}
   entity.selection_box = {{0, 0}, {0, 0}}
@@ -163,7 +163,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       },
     },
     stack = true,
-    minable = { mining_time = 1, result = loader_name },
+    minable = { mining_time = 0.1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     selection_priority = 50,
