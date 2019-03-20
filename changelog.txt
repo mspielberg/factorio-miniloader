@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.6
+Date: 20.03.2019
+  Changes:
+    - Increased miniloader inserter movement speed, so they should hopefully now reliably keep up with express belts.
+    - Decreased time to mine Miniloaders to be comparable to mining a belt segment.
+  Translation:
+    - Add French translation from Krysh Nar.
+---------------------------------------------------------------------------------------------------
 Version: 1.7.5
 Date: 19.03.2019
   Changes:
