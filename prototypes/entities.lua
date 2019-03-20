@@ -175,7 +175,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       usage_priority = "secondary-input",
     },
     extension_speed = 1,
-    rotation_speed = 0.35,
+    rotation_speed = 0.5,
     fast_replaceable_group = "miniloader-inserter",
     pickup_position = {0, -0.2},
     insert_position = {0, 0.8},
