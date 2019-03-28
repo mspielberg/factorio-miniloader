@@ -49,8 +49,8 @@ local function on_dolly_moved(event)
 end
 
 function M.on_load()
-  if remote.interfaces["picker"] and remote.interfaces["picker"]["dolly_moved_entity_id"] then
-    local on_dolly_moved_event = remote.call("picker", "dolly_moved_entity_id")
+  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+    local on_dolly_moved_event = remote.call("PickerDollies", "dolly_moved_entity_id")
     script.on_event(on_dolly_moved_event, on_dolly_moved)
   end
 end
