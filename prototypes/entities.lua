@@ -168,11 +168,10 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     selection_priority = 50,
     allow_custom_vectors = true,
-    energy_per_movement = (2 * speed_multiplier) .. "kJ",
-    energy_per_rotation = (2 * speed_multiplier) .. "kJ",
+    energy_per_movement = ".0000001J",
+    energy_per_rotation = ".0000001J",
     energy_source = {
-      type = "electric",
-      usage_priority = "secondary-input",
+      type = "void",
     },
     extension_speed = 1,
     rotation_speed = 0.5,
@@ -226,6 +225,15 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     circuit_wire_max_distance = default_circuit_wire_max_distance,
     next_upgrade = next_upgrade,
   }
+
+  if settings.startup["miniloader-energy-usage"].value then
+    loader_inserter.energy_per_movement = (2 * speed_multiplier) .. "kJ"
+    loader_inserter.energy_per_rotation = (2 * speed_multiplier) .. "kJ"
+    loader_inserter.energy_source = {
+      type = "electric",
+      usage_priority = "secondary-input",
+    }
+  end
 
   for _,k in ipairs{"flags", "max_health", "resistances", "vehicle_impact_sound"} do
     loader_inserter[k] = base_entity[k]
