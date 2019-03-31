@@ -16,17 +16,15 @@ local templates = {
 }
 
 -- Bob's support
-if data.raw.technology["bob-logistics-4"] then
+if data.raw.item["turbo-transport-belt"] then
   templates["express-"].next_prefix = "turbo-"
   templates["turbo-"] = {
-    prerequisite_techs = {"bob-logistics-4", "express-miniloader"},
+    next_prefix = "ultimate-",
+    prerequisite_techs = {"logistics-4", "express-miniloader"},
     tint = {r=0.68, g=0.25, b=0.84},
   }
-end
-if data.raw.technology["bob-logistics-5"] then
-  templates["turbo-"].next_prefix = "ultimate-"
   templates["ultimate-"] = {
-    prerequisite_techs = {"bob-logistics-5", "turbo-miniloader"},
+    prerequisite_techs = {"logistics-5", "turbo-miniloader"},
     tint = {r=0.24, g=0.78, b=0.05},
   }
 end
