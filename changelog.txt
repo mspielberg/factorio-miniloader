@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.7
+Date: 31.03.2019
+  Compatibility:
+    - Fix PickerDollies compatibility.
+    - Fix Bob's Logistics support for Factorio 0.17.23+.
+  Minor Features:
+    - Miniloaders can now be set to not require a connection to an electic network.
+  Translation:
+    - Add Traditional Chinese translation from k98a.
+---------------------------------------------------------------------------------------------------
 Version: 1.7.6
 Date: 20.03.2019
   Changes:
