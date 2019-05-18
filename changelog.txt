@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.8
+Date: 17.05.2019
+  Compatibility:
+    - Add compatibility with Construction Drones. (https://mods.factorio.com/mod/miniloader/discussion/5cdc798914ee39000cdd4506)
+---------------------------------------------------------------------------------------------------
 Version: 1.7.7
 Date: 31.03.2019
   Compatibility:
