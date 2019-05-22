@@ -92,8 +92,7 @@ local function on_built_miniloader(entity, orientation)
     type = orientation.type,
   }
 
-  local stack_size = util.stack_size_for_inserter(entity.name)
-  entity.inserter_stack_size_override = stack_size
+  entity.inserter_stack_size_override = 1
   for _ = 2, util.num_inserters(loader) do
     local inserter = surface.create_entity{
       name = entity.name,
@@ -101,7 +100,7 @@ local function on_built_miniloader(entity, orientation)
       direction = entity.direction,
       force = entity.force,
     }
-    inserter.inserter_stack_size_override = stack_size
+    inserter.inserter_stack_size_override = 1
   end
 
   util.update_inserters(loader)
