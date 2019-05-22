@@ -234,21 +234,4 @@ function util.orientation_from_inserters(entity)
   end
 end
 
-local stack_size_cache = {}
-function util.stack_size_for_inserter(name)
-  local stack_size = stack_size_cache[name]
-  if not stack_size then
-    local prefix = name:match("(.*)%-miniloader%-inserter")
-    if prefix then
-      local loader_proto = game.entity_prototypes[prefix .. "-miniloader-loader"]
-      if loader_proto then
-        stack_size = loader_proto.belt_speed / 0.03125
-      end
-    end
-    stack_size_cache[name] = stack_size
-  end
-
-  return stack_size or 1
-end
-
 return util

@@ -38,9 +38,8 @@ end
 
 function M.sync_behavior(inserter)
   local inserters = util.get_loader_inserters(inserter)
-  local stack_size = util.stack_size_for_inserter(inserters[1].name)
   for _, target in ipairs(inserters) do
-    target.inserter_stack_size_override = stack_size
+    target.inserter_stack_size_override = 1
   end
 
   local template_inserter = inserter_with_control_behavior(inserters)

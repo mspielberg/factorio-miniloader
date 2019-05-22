@@ -141,14 +141,14 @@ add_migration{
 }
 
 add_migration{
-  name = "v1_7_5_reset_stack_size",
+  name = "v1_7_9_fix_stack_size_overrides",
   low = {1,0,0},
-  high = {1,7,5},
+  high = {1,7,9},
   task = function()
     for _, surface in pairs(game.surfaces) do
       for _, entity in ipairs(surface.find_entities_filtered{type="inserter"}) do
         if util.is_miniloader_inserter(entity) then
-          entity.inserter_stack_size_override = util.stack_size_for_inserter(entity.name)
+          entity.inserter_stack_size_override = 1
         end
       end
     end

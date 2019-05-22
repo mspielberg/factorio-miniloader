@@ -144,7 +144,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   local filter_name = filter_loader_name .. "-inserter"
   local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
-  local speed_multiplier = base_entity.speed / 0.03125
+  local speed = base_entity.speed * 0.65 / 0.03125
 
   local loader_inserter = {
     type = "inserter",
@@ -162,7 +162,6 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
         tint = tint,
       },
     },
-    stack = true,
     minable = { mining_time = 0.1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
@@ -174,7 +173,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       type = "void",
     },
     extension_speed = 1,
-    rotation_speed = 0.5,
+    rotation_speed = speed,
     fast_replaceable_group = "miniloader-inserter",
     pickup_position = {0, -0.2},
     insert_position = {0, 0.8},
@@ -227,8 +226,8 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   }
 
   if settings.startup["miniloader-energy-usage"].value then
-    loader_inserter.energy_per_movement = (2 * speed_multiplier) .. "kJ"
-    loader_inserter.energy_per_rotation = (2 * speed_multiplier) .. "kJ"
+    loader_inserter.energy_per_movement = "2kJ"
+    loader_inserter.energy_per_rotation = "2kJ"
     loader_inserter.energy_source = {
       type = "electric",
       usage_priority = "secondary-input",
