@@ -105,7 +105,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.belt_length = 0.5
   entity.next_upgrade = nil
 
-  if entity.speed > 0.16 then
+  if entity.speed * 480 > 60 then
     -- BETA support for Ultimate Belts
     entity.container_distance = 1
     entity.selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
@@ -136,6 +136,19 @@ local connector_definitions = circuit_connector_definitions.create(
   }
 )
 
+local function inserter_speed(belt_speed)
+  local items_per_second = belt_speed * 480
+  if items_per_second <= 15 then
+    return 0.12
+  elseif items_per_second <= 30 then
+    return 0.35
+  elseif items_per_second <= 45 then
+    return 0.4
+  else -- inserters are capped at 60/second due to engine limitations
+    return 0.5
+  end
+end
+
 local function create_inserters(prefix, next_prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
@@ -144,7 +157,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   local filter_name = filter_loader_name .. "-inserter"
   local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
-  local speed = base_entity.speed * 0.65 / 0.03125
+  local speed = inserter_speed(base_entity.speed)
 
   local loader_inserter = {
     type = "inserter",
