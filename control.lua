@@ -117,6 +117,13 @@ local function on_robot_built(ev)
   end
 end
 
+local function on_script_built(ev)
+  local entity = ev.entity
+  if entity and util.is_miniloader_inserter(entity) then
+    on_built_miniloader(entity, util.orientation_from_inserters(entity))
+  end
+end
+
 local function on_script_revive(ev)
   local entity = ev.entity
   if entity and util.is_miniloader_inserter(entity) then
@@ -337,6 +344,7 @@ event.register(defines.events.on_player_mined_entity, on_player_mined_entity)
 event.register(defines.events.on_robot_pre_mined, on_robot_pre_mined)
 event.register(defines.events.on_robot_mined_entity, on_mined)
 event.register(defines.events.on_entity_died, on_mined)
+event.register(defines.events.script_raised_built, on_script_built)
 event.register(defines.events.script_raised_revive, on_script_revive)
 event.register(defines.events.script_raised_destroy, on_mined)
 

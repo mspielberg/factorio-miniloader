@@ -204,10 +204,12 @@ function util.update_inserters(entity)
   end
 end
 
+-- 40 items/second / 60 ticks/second / 8 items/tile = 0.0833 tiles/tick
+local BELT_SPEED_FOR_40_PER_SECOND = 40/60/8
 function util.num_inserters(entity)
   local speed = entity.prototype.belt_speed
-  if speed < 0.1 then return 2
-  else return 6 end
+  if speed <= BELT_SPEED_FOR_40_PER_SECOND then return 2
+  else return 4 end
 end
 
 function util.orientation_from_inserters(entity)
