@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.9
-Date: 17.05.2019
+Date: 30.05.2019
   Changes:
     - Switched from increased stack size bonus to having additional inserters instead, to fix problems with sushi belts. (https://forums.factorio.com/viewtopic.php?f=190&t=54343&start=320#p421866)
 ---------------------------------------------------------------------------------------------------
