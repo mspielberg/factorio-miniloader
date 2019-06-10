@@ -155,6 +155,15 @@ add_migration{
   end,
 }
 
+local function forall_miniloaders(f)
+  for _, surface in pairs(game.surfaces) do
+    local miniloaders = util.find_miniloaders{surface = surface}
+    for _, entity in pairs(miniloaders) do
+      f(surface, entity)
+    end
+  end
+end
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
@@ -163,6 +172,39 @@ function configchange.on_mod_version_changed(old)
       migration.task()
     end
   end
+end
+
+-- changes in other mods may affect belt speeds, and hence the required number of inserters
+local BELT_SPEED_FOR_40_PER_SECOND = 40/60/8
+function configchange.fix_inserter_counts()
+  forall_miniloaders(function(surface, miniloader)
+    local inserters = util.get_loader_inserters(miniloader)
+    local belt_speed = miniloader.prototype.belt_speed
+    local desired_count = 2
+    if belt_speed > BELT_SPEED_FOR_40_PER_SECOND then
+      desired_count = 4
+    end
+
+    -- remove excess inserters
+    for i=desired_count+1,#inserters do
+      inserters[i].destroy()
+    end
+    if #inserters >= desired_count then return end
+
+    -- create missing inserters
+    for i=#inserters+1,desired_count do
+      local inserter = surface.create_entity{
+        name = inserters[1].name,
+        position = inserters[1].position,
+        direction = inserters[1].direction,
+        force = inserters[1].force,
+      }
+      inserter.inserter_stack_size_override = 1
+    end
+    util.update_inserters(miniloader)
+    circuit.sync_behavior(inserters[1])
+    circuit.sync_filters(inserters[1])
+  end)
 end
 
 return configchange
