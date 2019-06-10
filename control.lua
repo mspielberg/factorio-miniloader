@@ -242,9 +242,36 @@ local function on_mined(ev)
   end
 end
 
+local function on_placed_blueprint(ev, player, bp)
+  game.print("on_placed_blueprint")
+  local surface = player.surface
+  local bp_area = blueprint.bounding_box(bp)
+  local surface_area = util.move_box(
+    util.rotate_box(bp_area, ev.direction),
+    ev.position
+  )
+  event.on_next_tick(function()
+    if not surface.valid then return end
+    local inserter_entities = surface.find_entities_filtered{
+      area = surface_area,
+      type = "inserter",
+    }
+    for _, e in pairs(inserter_entities) do
+      if util.is_miniloader_inserter(e) then
+        circuit.sync_behavior(e)
+        circuit.sync_filters(e)
+      end
+    end
+  end)
+end
+
 local function on_put_item(ev)
   local player_index = ev.player_index
   local player = game.players[player_index]
+  local cursor_stack = player.cursor_stack
+  if cursor_stack and blueprint.is_setup_bp(cursor_stack) then
+    return on_placed_blueprint(ev, player, cursor_stack)
+  end
   local entities = player.surface.find_entities_filtered{position = ev.position}
   for _, entity in ipairs(entities) do
     if entity.name == "entity-ghost" and util.is_miniloader_inserter_name(entity.ghost_name) then

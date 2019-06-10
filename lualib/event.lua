@@ -54,4 +54,13 @@ function M.unregister(events, handler)
   end
 end
 
+function M.on_next_tick(handler)
+  local wrapper
+  wrapper = function(e)
+    handler(e)
+    M.unregister(defines.events.on_tick, wrapper)
+  end
+  M.register(defines.events.on_tick, wrapper)
+end
+
 return M
