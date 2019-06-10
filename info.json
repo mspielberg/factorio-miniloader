@@ -11,6 +11,7 @@
 		"? FactorioExtended-Plus-Transport >= 0.1.5",
 		"? UltimateBelts >= 0.16.4",
 		"? xander-mod >= 2.0.0",
+		"? xander-mod-th >= 2.0.0",
 		"(?) SchallBeltConfiguration >= 0.17.0"
 	]
 }
