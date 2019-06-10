@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.10
+Date: 10.06.2019
+  Bugfixes:
+    - Fixed problem with insufficient throughput when loading an old save. (https://github.com/mspielberg/factorio-miniloader/issues/26)
+    - Fixed issue with lane inserter configuration becoming mismatched when building a blueprint over existing miniloaders. (https://github.com/mspielberg/factorio-miniloader/issues/24)
+  Compatibility:
+    - Add alternative recipes for Xander Mod (Therax).
+---------------------------------------------------------------------------------------------------
 Version: 1.7.9
 Date: 30.05.2019
   Changes:
