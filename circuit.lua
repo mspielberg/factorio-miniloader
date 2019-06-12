@@ -123,7 +123,7 @@ local function partner_connections_need_sync(inserters, connections)
   return false
 end
 
-local function sync_partner_connections(inserter)
+function M.sync_partner_connections(inserter)
   local inserters = util.get_loader_inserters(inserter)
   local connections = connected_non_partners(inserters)
 
@@ -155,7 +155,7 @@ end
 local function on_wire_change(ev)
   for _, entity in ipairs{ev.entity, ev.target_entity} do
     if entity.valid and util.is_miniloader_inserter(entity) then
-      sync_partner_connections(entity)
+      M.sync_partner_connections(entity)
     end
   end
 end

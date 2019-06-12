@@ -204,6 +204,7 @@ function configchange.fix_inserter_counts()
     util.update_inserters(miniloader)
     circuit.sync_behavior(inserters[1])
     circuit.sync_filters(inserters[1])
+    circuit.sync_partner_connections(inserters[1])
   end)
 end
 
