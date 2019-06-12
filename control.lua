@@ -243,7 +243,6 @@ local function on_mined(ev)
 end
 
 local function on_placed_blueprint(ev, player, bp)
-  game.print("on_placed_blueprint")
   local surface = player.surface
   local bp_area = blueprint.bounding_box(bp)
   local surface_area = util.move_box(
