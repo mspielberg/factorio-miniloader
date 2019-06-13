@@ -89,4 +89,12 @@ if data.raw.item["expedited-transport-belt"] then
   templates["express-"].prerequisite_techs = {"logistics-4", "expedited-miniloader"}
 end
 
+-- space-exploration support
+if data.raw.item["se-space-transport-belt"] then
+  templates["space-"] = {
+    prerequisite_techs = {"se-space-platform-scaffold"},
+    base_underground_name = "se-space-underground-belt",
+  }
+end
+
 return templates

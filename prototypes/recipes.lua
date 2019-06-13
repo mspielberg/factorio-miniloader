@@ -119,6 +119,14 @@ local ingredient_sets = {
       {"mechanism-2", 1},
     },
   },
+
+  -- space-exploration
+  ["space-miniloader"] = {
+    {
+      {"se-space-underground-belt", 1},
+      {"stack-inserter", 4},
+    },
+  },
 }
 
 if data.raw["inserter"]["turbo-inserter"] then
@@ -206,8 +214,15 @@ local function create_recipes(prefix)
   if previous_miniloader[prefix] then
     filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
   end
-  if filter_inserters[recipe.ingredients[3][1]] then
-    filter_recipe.ingredients[3][1] = filter_inserters[recipe.ingredients[3][1]]
+  local inserter_index, inserter_name
+  for i, ingredient in pairs(recipe.ingredients) do
+    if ingredient[1]:find("inserter") then
+      inserter_index = i
+      inserter_name = ingredient[1]
+    end
+  end
+  if inserter_name and filter_inserters[inserter_name] then
+    filter_recipe.ingredients[inserter_index][1] = filter_inserters[inserter_name]
   end
   filter_recipe.result = filter_name
 

@@ -9,6 +9,7 @@
 	"dependencies": [
 		"? boblogistics >= 0.17.1",
 		"? FactorioExtended-Plus-Transport >= 0.1.5",
+		"? space-exploration >= 0.1.95",
 		"? UltimateBelts >= 0.16.4",
 		"? xander-mod >= 2.0.0",
 		"? xander-mod-th >= 2.0.0",
