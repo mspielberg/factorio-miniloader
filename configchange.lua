@@ -155,6 +155,44 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_7_12_remove_orphaned",
+  low = {1,0,0},
+  high = {1,7,12},
+  task = function()
+    local removed_loaders = 0
+    local removed_inserters = 0
+    for _, s in pairs(game.surfaces) do
+      for _, loader in pairs(s.find_entities_filtered{type = "loader"}) do
+        if util.is_miniloader(loader) then
+          local inserters = util.get_loader_inserters(loader)
+          if not next(inserters) then
+            log("Removing orphaned miniloader at "..
+              loader.position.x..","..loader.position.y..
+              " on surface "..loader.surface.name)
+            loader.destroy()
+            removed_loaders = removed_loaders + 1
+          end
+        end
+      end
+      for _, inserter in pairs(s.find_entities_filtered{type = "inserter"}) do
+        if util.is_miniloader_inserter(inserter) then
+          local loader = s.find_entities_filtered{type = "loader", position = inserter.position}
+          if not next(loader) then
+            log("Removing orphaned miniloader-inserter at "..
+              inserter.position.x..","..inserter.position.y..
+              " on surface "..inserter.surface.name)
+            inserter.destroy()
+            removed_inserters = removed_loader + 1
+          end
+        end
+      end
+    end
+    log("Removed "..removed_loaders.." orphaned miniloaders without inserters.")
+    log("Removed "..removed_inserters.." orphaned miniloader inserters without a loader.")
+  end,
+}
+
 local function forall_miniloaders(f)
   for _, surface in pairs(game.surfaces) do
     local miniloaders = util.find_miniloaders{surface = surface}
@@ -179,6 +217,11 @@ local BELT_SPEED_FOR_40_PER_SECOND = 40/60/8
 function configchange.fix_inserter_counts()
   forall_miniloaders(function(surface, miniloader)
     local inserters = util.get_loader_inserters(miniloader)
+    if not next(inserters) then
+      log("Miniloader at "..miniloader.position.x..", "..miniloader.position.y..
+        " on surface "..surface.name.." has no inserters.")
+      return
+    end
     local belt_speed = miniloader.prototype.belt_speed
     local desired_count = 2
     if belt_speed > BELT_SPEED_FOR_40_PER_SECOND then
