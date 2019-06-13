@@ -177,6 +177,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     },
     minable = { mining_time = 0.1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
+    collision_mask = base_entity.collision_mask,
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     selection_priority = 50,
     allow_custom_vectors = true,
