@@ -17,7 +17,14 @@ or put them in your bus as single-belt lane rebalancers.
 
 ![Miniloaders lane balancer](resources/rebalance.png)
 
-Green and purple belts from Bob's Logistics are fully supported.
+Faster modded belts from Bob's Logistics, FactorioExtended Plus, and Space
+Exploration are fully supported, with partial support for Ultimate Belts.
+
+## Videos and Spotlights
+
+Xterminator has [spotlighted Miniloader](https://youtu.be/6aGD3fh2P5A).
+Seeeno has created a
+[video tutorial in German](https://www.youtube.com/watch?v=f16zRTtZSQA) for Miniloader.
 
 ## Balancing
 
