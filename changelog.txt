@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.8.0
+Date: 17.06.2019
+  Changes:
+    - Requires Factorio 0.17.50 for the improved inserter performance.
+    - Caveats for belts faster than 60/s are removed. All miniloaders can now be filtered and circuit controlled, and all miniloaders should transfer to/from cargo wagons at full speed. There are still Factorio limitations with belts faster than 120/s whether used with or without miniloaders, and this mod cannot address those.
+---------------------------------------------------------------------------------------------------
 Version: 1.7.12
 Date: 11.06.2019
   Bugfixes:

@@ -17,8 +17,12 @@ or put them in your bus as single-belt lane rebalancers.
 
 ![Miniloaders lane balancer](resources/rebalance.png)
 
-Faster modded belts from Bob's Logistics, FactorioExtended Plus, and Space
-Exploration are fully supported, with partial support for Ultimate Belts.
+Belts from the following mods are fully supported:
+* Bob's Logistics
+* FactorioExtended Plus
+* Space Exploration
+* Ultimate Belts
+* Xander Mod
 
 ## Videos and Spotlights
 
@@ -55,23 +59,7 @@ least one filter.
 
 * The power usage UI counts each miniloader multiple times, since it shows the
   power used by the inserters, not the miniloaders themselves.
-* Miniloaders cannot be fast-replaced due to the invisible entities blocking
-  placement of the new entity.
 * Miniloader arrows don't always appear correctly in blueprints.
-
-## Ultimate Belts Caveats and Warnings
-
-__Ultimate Belts support is in BETA state.__
-
-Factorio core engine limitations restrict inserters pulling from belts to
-60 items/second, or 4.5x yellow belt speed. Further, loader entities are
-restricted to 120 items/second.
-
-Miniloaders at "Ultra fast" and faster speeds use vanilla loader entities in
-addition to inserters, giving a max throughput of ~180 items/second when
-interacting with chests and other containers. They will _not_ give full
-throughput when loading cargo wagons, and circuit control is disabled since
-vanilla loaders cannot be circuit controlled.
 
 ## Acknowledgements
 
