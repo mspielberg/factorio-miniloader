@@ -145,6 +145,12 @@ function util.is_miniloader_inserter_name(name)
   return name:find("miniloader%-inserter$") ~= nil
 end
 
+-- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
+local BELT_SPEED_FOR_60_PER_SECOND = 60/60/8
+function util.num_inserters(entity)
+  return math.ceil(entity.prototype.belt_speed / BELT_SPEED_FOR_60_PER_SECOND) * 2
+end
+
 function util.pickup_position(entity)
   if entity.loader_type == "output" then
     return util.moveposition(entity.position, util.offset(entity.direction, -0.8, 0))
@@ -152,17 +158,32 @@ function util.pickup_position(entity)
   return util.moveposition(entity.position, util.offset(entity.direction, -0.2, 0))
 end
 
+local moveposition = util.moveposition
+local offset = util.offset
+-- drop positions for input  (belt->chest) = { 0.7, +-0.25}, { 0.9, +-0.25}, {1.1, +-0.25}, {1.3, +-0.25}
+-- drop positions for output (chest->belt) = {-0.2, +-0.25}, {-0.0, +-0.25}, {0.1, +-0.25}, {0.3, +-0.25}
 function util.drop_positions(entity)
+  local base_offset = 0.7
   if entity.loader_type == "output" then
-    local dir = entity.direction
-    local p1 = util.moveposition(entity.position, util.offset(dir, 0.2, -0.25))
-    local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
-    return {p1, p2}
+    base_offset = base_offset - 1
   end
+  local out = {}
   local dir = entity.direction
-  local p1 = util.moveposition(entity.position, util.offset(dir, 0.8, -0.25))
-  local p2 = util.moveposition(p1, util.offset(dir, 0, 0.5))
-  return {p1, p2}
+  local p1 = moveposition(entity.position, offset(dir, base_offset, -0.25))
+  local p2 = moveposition(p1, offset(dir, 0, 0.5))
+  out[1] = p1
+  out[2] = p2
+  for i=1,3 do
+    local j = i * 2 + 1
+    out[j  ] = moveposition(p1, offset(dir, 0.20*i, 0))
+    out[j+1] = moveposition(p2, offset(dir, 0.20*i, 0))
+  end
+  for i=0,3 do
+    local j = i * 2 + 9
+    out[j  ] = moveposition(p1, offset(dir, 0.20*i, 0))
+    out[j+1] = moveposition(p2, offset(dir, 0.20*i, 0))
+  end
+  return out
 end
 
 function util.get_loader_inserters(entity)
@@ -189,27 +210,12 @@ function util.update_inserters(entity)
     direction = util.opposite_direction(direction)
   end
 
-  local n = #inserters
-  for i=1,n / 2 do
+  for i=1,#inserters do
     inserters[i].direction = direction
     inserters[i].pickup_position = pickup
-    inserters[i].drop_position = drop[1]
+    inserters[i].drop_position = drop[i]
     inserters[i].direction = direction
   end
-  for i=n / 2 + 1,n do
-    inserters[i].direction = direction
-    inserters[i].pickup_position = pickup
-    inserters[i].drop_position = drop[2]
-    inserters[i].direction = direction
-  end
-end
-
--- 40 items/second / 60 ticks/second / 8 items/tile = 0.0833 tiles/tick
-local BELT_SPEED_FOR_40_PER_SECOND = 40/60/8
-function util.num_inserters(entity)
-  local speed = entity.prototype.belt_speed
-  if speed <= BELT_SPEED_FOR_40_PER_SECOND then return 2
-  else return 4 end
 end
 
 function util.orientation_from_inserters(entity)
