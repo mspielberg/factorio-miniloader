@@ -213,7 +213,6 @@ function configchange.on_mod_version_changed(old)
 end
 
 -- changes in other mods may affect belt speeds, and hence the required number of inserters
-local BELT_SPEED_FOR_40_PER_SECOND = 40/60/8
 function configchange.fix_inserter_counts()
   forall_miniloaders(function(surface, miniloader)
     local inserters = util.get_loader_inserters(miniloader)
@@ -222,17 +221,12 @@ function configchange.fix_inserter_counts()
         " on surface "..surface.name.." has no inserters.")
       return
     end
-    local belt_speed = miniloader.prototype.belt_speed
-    local desired_count = 2
-    if belt_speed > BELT_SPEED_FOR_40_PER_SECOND then
-      desired_count = 4
-    end
+    local desired_count = util.num_inserters(miniloader)
 
     -- remove excess inserters
     for i=desired_count+1,#inserters do
       inserters[i].destroy()
     end
-    if #inserters >= desired_count then return end
 
     -- create missing inserters
     for i=#inserters+1,desired_count do
