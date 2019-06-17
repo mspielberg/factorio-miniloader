@@ -102,15 +102,8 @@ local function create_loaders(prefix, base_underground_name, tint)
   }
   entity.belt_distance = 0
   entity.container_distance = 0
-  entity.belt_length = 0.5
+  entity.belt_length = 0.6
   entity.next_upgrade = nil
-
-  if entity.speed * 480 > 60 then
-    -- BETA support for Ultimate Belts
-    entity.container_distance = 1
-    entity.selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
-    entity.selection_priority = 100
-  end
 
   local filter_entity = util.table.deepcopy(entity)
   filter_entity.name = filter_loader_name .. "-loader"
@@ -138,14 +131,47 @@ local connector_definitions = circuit_connector_definitions.create(
 
 local function inserter_speed(belt_speed)
   local items_per_second = belt_speed * 480
+  -- 2 inserters/miniloader
   if items_per_second <= 15 then
     return 0.12
   elseif items_per_second <= 30 then
-    return 0.35
+    return 0.30 -- 30/s
   elseif items_per_second <= 45 then
-    return 0.4
-  else -- inserters are capped at 60/second due to engine limitations
-    return 0.5
+    --return 0.4 -- 38/s
+    return 0.44 -- 45/s
+    --return 0.45 -- 48/s
+  elseif items_per_second <= 60 then
+    return 0.5 -- 60/s
+  -- 4 inserters/miniloader
+  elseif items_per_second <= 75 then
+    --return 0.35 -- 72/s
+    return 0.36 -- 76/s
+    --return 0.38 -- 84/s
+  elseif items_per_second <= 90 then
+    --return 0.39 -- 75/s
+    return 0.42 -- 90/s
+    --return 0.45 -- 110/s
+  elseif items_per_second <= 120 then
+    return 0.5 -- 120/s
+  -- 6 inserters/miniloader
+  elseif items_per_second <= 135 then
+    --return 0.3 -- 105/s
+    return 0.41 -- 135/s
+  elseif items_per_second <= 180 then
+    return 0.5 -- 180/s
+  -- 8 inserters/miniloader
+  elseif items_per_second <= 225 then
+    --return 0.3 -- 130/s
+    --return 0.45 -- 210/s
+    --return 0.46 -- 210/s
+    --return 0.465 -- 234/s
+    --return 0.47 -- 235/s
+    return 0.48 -- 235/s
+  elseif items_per_second <= 240 then
+    return 0.5 -- 240/s
+  -- 10 inserters/miniloader
+  else
+    return 0.5 -- lots
   end
 end
 
