@@ -45,6 +45,15 @@ if data.raw.item["rapid-transport-belt-mk2"] then
   }
 end
 
+if data.raw.item["k-transport-belt"] then
+  templates["express-"].next_prefix = "k-"
+  templates["k-"] = {
+    prerequisite_techs = {"k-advanced-logistics", "express-miniloader"},
+    tint = {r=0.60, g=0.00, b=0.70},
+    base_underground_name = "k-underground-belt",
+  }
+end
+
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
   templates["ub-ultra-fast-"] = {
