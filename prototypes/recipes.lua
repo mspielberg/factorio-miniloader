@@ -74,6 +74,15 @@ local ingredient_sets = {
     },
   },
 
+  -- Krastorio
+  ["k-miniloader"] = {
+    {
+      {"express-miniloader", 1},
+      {"k-underground-belt", 1},
+      {"stack-inserter", 2},
+    },
+  },
+
   -- UltimateBelts
   ["ub-ultra-fast-miniloader"] = {
     {
