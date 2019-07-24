@@ -163,7 +163,7 @@ local offset = util.offset
 -- drop positions for input  (belt->chest) = { 0.7, +-0.25}, { 0.9, +-0.25}, {1.1, +-0.25}, {1.3, +-0.25}
 -- drop positions for output (chest->belt) = {-0.2, +-0.25}, {-0.0, +-0.25}, {0.1, +-0.25}, {0.3, +-0.25}
 function util.drop_positions(entity)
-  local base_offset = 0.7
+  local base_offset = 1.2
   if entity.loader_type == "output" then
     base_offset = base_offset - 1
   end
@@ -175,13 +175,13 @@ function util.drop_positions(entity)
   out[2] = p2
   for i=1,3 do
     local j = i * 2 + 1
-    out[j  ] = moveposition(p1, offset(dir, 0.20*i, 0))
-    out[j+1] = moveposition(p2, offset(dir, 0.20*i, 0))
+    out[j  ] = moveposition(p1, offset(dir, -0.20*i, 0))
+    out[j+1] = moveposition(p2, offset(dir, -0.20*i, 0))
   end
   for i=0,3 do
     local j = i * 2 + 9
-    out[j  ] = moveposition(p1, offset(dir, 0.20*i, 0))
-    out[j+1] = moveposition(p2, offset(dir, 0.20*i, 0))
+    out[j  ] = moveposition(p1, offset(dir, -0.20*i, 0))
+    out[j+1] = moveposition(p2, offset(dir, -0.20*i, 0))
   end
   return out
 end
