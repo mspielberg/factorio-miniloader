@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.8.2
+Date: 24.07.2019
+  Bugfixes:
+    - Adjust speeds of express belts, again.
+  Compatibility:
+    - Fix non-space miniloaders being buildable in Space Exploration's orbital surfaces.
+---------------------------------------------------------------------------------------------------
 Version: 1.8.1
 Date: 23.07.2019
   Changes:
