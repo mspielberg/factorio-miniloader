@@ -203,7 +203,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     },
     minable = { mining_time = 0.1, result = loader_name },
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
-    collision_mask = base_entity.collision_mask,
+    collision_mask = {"floor-layer", "object-layer", "water-tile", space_collision_layer},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     selection_priority = 50,
     allow_custom_vectors = true,
@@ -265,6 +265,10 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     circuit_wire_max_distance = default_circuit_wire_max_distance,
     next_upgrade = next_upgrade,
   }
+
+  if prefix == "space-" then
+    loader_inserter.collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"}
+  end
 
   if settings.startup["miniloader-energy-usage"].value then
     loader_inserter.energy_per_movement = "2kJ"
