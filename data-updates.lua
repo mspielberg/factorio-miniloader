@@ -25,3 +25,12 @@ end
 if data.raw["item"]["ultimate-miniloader"] then
   update("ultimate-")
 end
+
+-- catch belt speed changes made by other mods in data stage
+for name, ug in pairs(data.raw["underground-belt"]) do
+  local prefix = name:match("(.*)%-underground%-belt")
+  local miniloader = prefix and data.raw["loader"][prefix .. "-miniloader"]
+  if miniloader then
+    miniloader.speed = ug.speed
+  end
+end

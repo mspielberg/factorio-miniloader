@@ -14,7 +14,6 @@
 		"? UltimateBelts >= 0.16.4",
 		"? space-exploration >= 0.1.95",
 		"? xander-mod >= 2.0.0",
-		"? xander-mod-th >= 2.0.0",
-		"(?) SchallBeltConfiguration >= 0.17.0"
+		"? xander-mod-th >= 2.0.0"
 	]
 }
