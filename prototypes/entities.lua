@@ -138,8 +138,8 @@ local function inserter_speed(belt_speed)
     return 0.30 -- 30/s
   elseif items_per_second <= 45 then
     --return 0.36 -- 30/s
-    return 0.37 -- 48/s
-    --return 0.4 -- 60/s
+    --return 0.39 -- 48/s
+    return 0.4 -- 60/s
   elseif items_per_second <= 60 then
     return 0.5 -- 60/s
   -- 4 inserters/miniloader
