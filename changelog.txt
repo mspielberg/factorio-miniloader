@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.8.1
+Date: 23.07.2019
+  Changes:
+    - Adjust speeds of express belts.
+  Compatibility:
+    - Add support for Krastorio's Superior transport belt tier.
+    - Improve support for mods that alter the speed of existing belts.
+---------------------------------------------------------------------------------------------------
 Version: 1.8.0
 Date: 17.06.2019
   Changes:
