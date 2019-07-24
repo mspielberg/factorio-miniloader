@@ -137,16 +137,16 @@ local function inserter_speed(belt_speed)
   elseif items_per_second <= 30 then
     return 0.30 -- 30/s
   elseif items_per_second <= 45 then
-    --return 0.4 -- 38/s
-    return 0.44 -- 45/s
-    --return 0.45 -- 48/s
+    --return 0.36 -- 30/s
+    return 0.37 -- 48/s
+    --return 0.4 -- 60/s
   elseif items_per_second <= 60 then
     return 0.5 -- 60/s
   -- 4 inserters/miniloader
   elseif items_per_second <= 75 then
     --return 0.35 -- 72/s
-    return 0.36 -- 76/s
-    --return 0.38 -- 84/s
+    --return 0.36 -- 76/s
+    return 0.38 -- 84/s
   elseif items_per_second <= 90 then
     --return 0.39 -- 75/s
     return 0.42 -- 90/s
@@ -218,6 +218,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
     pickup_position = {0, -0.2},
     insert_position = {0, 0.8},
     draw_held_item = false,
+    draw_inserter_arrow = false,
     platform_picture = {
       sheets = {
         {
