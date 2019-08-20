@@ -1,6 +1,6 @@
 {
 	"name": "miniloader",
-	"version": "1.8.2",
+	"version": "1.8.3",
 	"factorio_version": "0.17",
 	"title": "Miniloader",
 	"author": "Therax",
@@ -15,6 +15,7 @@
 		"? UltimateBelts >= 0.16.4",
 		"? space-exploration >= 0.1.95",
 		"? xander-mod >= 2.0.0",
-		"? xander-mod-th >= 2.0.0"
+		"? xander-mod-th >= 2.0.0",
+		"(?) SchallBeltConfiguration"
 	]
 }
