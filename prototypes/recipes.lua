@@ -42,6 +42,12 @@ local ingredient_sets = {
     },
   },
 
+  ["chute-miniloader"] = {
+    {
+      {"iron-plate", 4}
+    },
+  },
+
   -- boblogistics
   ["turbo-miniloader"] = {
     {
