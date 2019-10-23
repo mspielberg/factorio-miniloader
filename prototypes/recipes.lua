@@ -165,6 +165,9 @@ local previous_miniloader = {
   ["rapid-mk1-"] = "express-",
   ["rapid-mk2-"] = "rapid-mk1-",
 
+  -- Krastorio
+  ["k-"] = "express-",
+
   -- UltimateBelts
   ["ub-ultra-fast-"] = "express-",
   ["ub-extreme-fast-"] = "ub-ultra-fast-",
