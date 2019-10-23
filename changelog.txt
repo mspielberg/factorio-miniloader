@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.8.4
+Date: 22.10.2019
+  Bugfixes:
+    - Fixed bad ingredient for Krastorio's Superior filter miniloader. (https://mods.factorio.com/mod/miniloader/discussion/5d2e77e45d97e4000b7b6a97)
+---------------------------------------------------------------------------------------------------
 Version: 1.8.3
 Date: 20.08.2019
   Changes:
