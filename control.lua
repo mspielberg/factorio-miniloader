@@ -91,6 +91,7 @@ local function on_built_miniloader(entity, orientation)
     force = entity.force,
     type = orientation.type,
   }
+  loader.destructible = false
 
   entity.inserter_stack_size_override = 1
   for _ = 2, util.num_inserters(loader) do
@@ -100,6 +101,7 @@ local function on_built_miniloader(entity, orientation)
       direction = entity.direction,
       force = entity.force,
     }
+    inserter.destructible = false
     inserter.inserter_stack_size_override = 1
   end
 
