@@ -12,6 +12,15 @@ local function add_migration(migration)
   all_migrations[#all_migrations+1] = migration
 end
 
+local function forall_miniloaders(f)
+  for _, surface in pairs(game.surfaces) do
+    local miniloaders = util.find_miniloaders{surface = surface}
+    for _, entity in pairs(miniloaders) do
+      f(surface, entity)
+    end
+  end
+end
+
 add_migration{
   name = "v1_1_4_inserter_cleanup",
   low = {1,1,0},
@@ -183,7 +192,7 @@ add_migration{
               inserter.position.x..","..inserter.position.y..
               " on surface "..inserter.surface.name)
             inserter.destroy()
-            removed_inserters = removed_loader + 1
+            removed_inserters = removed_inserters + 1
           end
         end
       end
@@ -193,14 +202,29 @@ add_migration{
   end,
 }
 
-local function forall_miniloaders(f)
-  for _, surface in pairs(game.surfaces) do
-    local miniloaders = util.find_miniloaders{surface = surface}
-    for _, entity in pairs(miniloaders) do
-      f(surface, entity)
-    end
-  end
-end
+add_migration{
+  name = "v1_8_5_fix_mismatched_damage",
+  low = {0,0,0},
+  high = {1,8,5},
+  task = function()
+    forall_miniloaders(function(surface, entity)
+      entity.health = entity.prototype.max_health
+      entity.destructible = false
+      local inserters = surface.find_entities_filtered{position = entity.position, type = "inserter"}
+      local fixed = 0
+      for i=2,#inserters do
+        if inserters[i].health < inserters[i].prototype.max_health then
+          fixed = fixed + 1
+          inserters[i].health = inserters[i].prototype.max_health
+        end
+        if fixed > 0 then
+          log("Fixed hidden inserter at "..serpent.line(entity.position))
+        end
+        inserters[i].destructible = false
+      end
+    end)
+  end,
+}
 
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
