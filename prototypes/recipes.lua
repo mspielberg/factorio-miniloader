@@ -244,10 +244,12 @@ local function create_recipes(prefix)
   end
   filter_recipe.result = filter_name
 
-  data:extend{
-    recipe,
-    filter_recipe,
-  }
+  if settings.startup["miniloader-enable-standard"].value then
+    data:extend{recipe}
+  end
+  if settings.startup["miniloader-enable-filter"].value then
+    data:extend{filter_recipe}
+  end
 end
 
 return {
