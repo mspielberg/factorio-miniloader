@@ -289,10 +289,12 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   filter_loader_inserter.filter_count = 5
   filter_loader_inserter.next_upgrade = filter_next_upgrade
 
-  data:extend{
-    loader_inserter,
-    filter_loader_inserter,
-  }
+  if settings.startup["miniloader-enable-standard"].value then
+    data:extend{loader_inserter}
+  end
+  if settings.startup["miniloader-enable-filter"].value then
+    data:extend{filter_loader_inserter}
+  end
 end
 
 return {

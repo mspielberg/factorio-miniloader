@@ -14,4 +14,25 @@ data:extend{
     default_value = true,
     order = "miniloader-snapping",
   },
+
+  {
+    type = "bool-setting",
+    name = "miniloader-enable-standard",
+    setting_type = "startup",
+    default_value = true,
+  },
+
+  {
+    type = "bool-setting",
+    name = "miniloader-enable-filter",
+    setting_type = "startup",
+    default_value = true,
+  },
+
+  {
+    type = "bool-setting",
+    name = "miniloader-enable-chute",
+    setting_type = "startup",
+    default_value = true,
+  },
 }

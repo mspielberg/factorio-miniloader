@@ -9,10 +9,10 @@ local function update(prefix)
   local base_underground = data.raw["underground-belt"][prefix .. "underground-belt"]
   local base_underground_item = data.raw["item"][prefix .. "underground-belt"]
 
-  loader.speed = base_underground.speed
-  loader_item.subgroup = base_underground_item.subgroup
-  filter_loader.speed = base_underground.speed
-  filter_loader_item.subgroup = base_underground_item.subgroup
+  if loader then loader.speed = base_underground.speed end
+  if loader_item then loader_item.subgroup = base_underground_item.subgroup end
+  if filter_loader then filter_loader.speed = base_underground.speed end
+  if filter_loader_item then filter_loader_item.subgroup = base_underground_item.subgroup end
 end
 
 update("")

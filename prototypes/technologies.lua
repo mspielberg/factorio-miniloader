@@ -5,6 +5,15 @@ local function create_technology(prefix, tech_prereqs, tint)
   local filter_name = prefix .. "filter-miniloader"
 
   local main_prereq = data.raw["technology"][tech_prereqs[1]]
+
+  local effects = {}
+  if settings.startup["miniloader-enable-standard"].value then
+    table.insert(effects, { type = "unlock-recipe", recipe = name })
+  end
+  if settings.startup["miniloader-enable-filter"].value then
+    table.insert(effects, { type = "unlock-recipe", recipe = filter_name })
+  end
+
   local technology = {
     type = "technology",
     name = name,
@@ -19,16 +28,7 @@ local function create_technology(prefix, tech_prereqs, tint)
         tint = tint,
       },
     },
-    effects = {
-      {
-        type = "unlock-recipe",
-        recipe = name,
-      },
-      {
-        type = "unlock-recipe",
-        recipe = filter_name,
-      }
-    },
+    effects = effects,
     prerequisites = tech_prereqs,
     unit = util.table.deepcopy(main_prereq.unit),
     order = main_prereq.order
