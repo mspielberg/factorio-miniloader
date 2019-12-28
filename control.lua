@@ -101,8 +101,16 @@ local function on_built_miniloader(entity, orientation)
       direction = entity.direction,
       force = entity.force,
     }
-    inserter.destructible = false
     inserter.inserter_stack_size_override = 1
+  end
+
+  -- ensure only primary inserter can be damaged
+  local inserters = surface.find_entities_filtered{
+    position = entity.position,
+    type = "inserter",
+  }
+  for i=2,#inserters do
+    inserters[i].destructible = false
   end
 
   util.update_inserters(loader)
