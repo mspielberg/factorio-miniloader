@@ -242,4 +242,41 @@ function util.orientation_from_inserters(entity)
   end
 end
 
+function util.rebuild_belt(entity)
+  local surface = entity.surface
+  local name = entity.name
+  local protos = game.get_filtered_entity_prototypes{{filter="type", type=entity.type}}
+  local temporary_replacement
+  for proto_name in pairs(protos) do
+    if proto_name ~= name and proto_name ~= "__self" then
+      temporary_replacement = proto_name
+      break
+    end
+  end
+  if not temporary_replacement then return false end
+
+  local last_user = entity.last_user
+  local params = {
+    name = temporary_replacement,
+    position = entity.position,
+    direction = entity.direction,
+    force = entity.force,
+    fast_replace = true,
+    create_build_effect_smoke = false,
+    type = entity.type:find("loader") and entity.loader_type
+      or entity.type == "underground-belt" and entity.belt_to_ground_type,
+  }
+
+  surface.create_entity(params)
+  params.name = name
+  local belt = surface.create_entity(params)
+
+  if belt then
+    belt.last_user = last_user
+    return true
+  else
+    return false
+  end
+end
+
 return util
