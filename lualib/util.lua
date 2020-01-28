@@ -262,6 +262,7 @@ function util.rebuild_belt(entity)
     direction = entity.direction,
     force = entity.force,
     fast_replace = true,
+    spill = false,
     create_build_effect_smoke = false,
     type = entity.type:find("loader") and entity.loader_type
       or entity.type == "underground-belt" and entity.belt_to_ground_type,
