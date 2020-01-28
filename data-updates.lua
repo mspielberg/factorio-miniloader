@@ -1,9 +1,9 @@
 -- boblogistics does some late changes in the data-updates phase, so we need to react to them here
 
 local function update(prefix)
-  local loader = data.raw["loader"][prefix .. "miniloader-loader"]
+  local loader = data.raw["loader-1x1"][prefix .. "miniloader-loader"]
   local loader_item = data.raw["item"][prefix .. "miniloader"]
-  local filter_loader = data.raw["loader"][prefix .. "filter-miniloader-loader"]
+  local filter_loader = data.raw["loader-1x1"][prefix .. "filter-miniloader-loader"]
   local filter_loader_item = data.raw["item"][prefix .. "filter-miniloader"]
   prefix = string.gsub(prefix, "^ub%-", "")
   local base_underground = data.raw["underground-belt"][prefix .. "underground-belt"]
@@ -29,7 +29,7 @@ end
 -- catch belt speed changes made by other mods in data stage
 for name, ug in pairs(data.raw["underground-belt"]) do
   local prefix = name:match("(.*)%-underground%-belt")
-  local miniloader = prefix and data.raw["loader"][prefix .. "-miniloader"]
+  local miniloader = prefix and data.raw["loader-1x1"][prefix .. "-miniloader"]
   if miniloader then
     miniloader.speed = ug.speed
   end

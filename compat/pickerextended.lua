@@ -24,7 +24,7 @@ local function on_dolly_moved(event)
 
   local loader = entity.surface.find_entities_filtered{
     position = old_pos,
-    type = "loader",
+    type = "loader-1x1",
   }[1]
 
   local new_loader = entity.surface.create_entity{

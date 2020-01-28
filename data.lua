@@ -26,7 +26,7 @@ if settings.startup["miniloader-enable-chute"].value then
 
   data.raw.technology["chute-miniloader"] = nil
   data.raw.recipe["chute-miniloader"].enabled = true
-  data.raw.loader["chute-miniloader-loader"].speed = data.raw.loader["chute-miniloader-loader"].speed / 4
+  data.raw["loader-1x1"]["chute-miniloader-loader"].speed = data.raw["loader-1x1"]["chute-miniloader-loader"].speed / 4
   local inserter = data.raw.inserter["chute-miniloader-inserter"]
   inserter.rotation_speed = data.raw.inserter["chute-miniloader-inserter"].rotation_speed / 4
   inserter.energy_source = {type="void"}
@@ -38,6 +38,6 @@ if settings.startup["miniloader-enable-chute"].value then
 
   data.raw.item["chute-filter-miniloader"] = nil
   data.raw.recipe["chute-filter-miniloader"] = nil
-  data.raw.loader["chute-filter-miniloader-loader"] = nil
+  data.raw["loader-1x1"]["chute-filter-miniloader-loader"] = nil
   data.raw.inserter["chute-filter-miniloader-inserter"] = nil
 end

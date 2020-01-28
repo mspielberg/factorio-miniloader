@@ -98,7 +98,7 @@ end
 
 -- hood_side returns the "back" or hood side of a loader or underground belt
 function util.hood_side(entity)
-  if entity.type == "loader" and entity.loader_type == "output" then
+  if entity.type == "loader-1x1" and entity.loader_type == "output" then
     return util.opposite_direction(entity.direction)
   end
   if entity.type == "underground-belt" and entity.belt_to_ground_type == "output" then
@@ -109,7 +109,7 @@ end
 
 -- belt_side returns the "front" side of a loader or underground belt
 function util.belt_side(entity)
-  if entity.type == "loader" and entity.loader_type == "input" then
+  if entity.type == "loader-1x1" and entity.loader_type == "input" then
     return util.opposite_direction(entity.direction)
   end
   if entity.type == "underground-belt" and entity.belt_to_ground_type == "input" then
@@ -121,7 +121,7 @@ end
 -- miniloader utilities
 
 function util.find_miniloaders(params)
-  params.type = "loader"
+  params.type = "loader-1x1"
   local entities = params.surface.find_entities_filtered(params)
   local out = {}
   for i=1,#entities do

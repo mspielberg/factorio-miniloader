@@ -4,6 +4,7 @@ local util = require("lualib.util")
 
 local beltTypes = {
   ["loader"] = true,
+  ["loader-1x1"] = true,
   ["splitter"] = true,
   ["underground-belt"] = true,
   ["transport-belt"] = true
@@ -113,7 +114,6 @@ local function find_loader_by_entity(entity)
   }
   local loaders = util.find_miniloaders{
     surface = entity.surface,
-    type="loader",
     area=area,
     force=entity.force,
   }
@@ -192,7 +192,7 @@ function snapping.check_for_loaders(event)
 end
 
 -- called when loader was built
-function snapping.snap_loader(loader, event)
+function snapping.snap_loader(loader)
   local entities = find_entity_by_loader(loader)
   for _, ent in ipairs(entities) do
     if beltTypes[ent.type] and snap_loader_to_target(loader, ent) then
