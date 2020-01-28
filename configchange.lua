@@ -16,7 +16,9 @@ local function forall_miniloaders(f)
   for _, surface in pairs(game.surfaces) do
     local miniloaders = util.find_miniloaders{surface = surface}
     for _, entity in pairs(miniloaders) do
-      f(surface, entity)
+      if entity.valid then
+        f(surface, entity)
+      end
     end
   end
 end
