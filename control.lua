@@ -165,8 +165,8 @@ local function on_player_built(ev)
 
     local loader = on_built_miniloader(entity, orientation)
     if use_snapping and not orientation then
-      -- adjusts direction & belt_to_ground_type
-      snapping.snap_loader(loader, ev)
+      -- adjusts direction & loader_type
+      snapping.snap_loader(loader)
     end
   else
     snapping.check_for_loaders(ev)
@@ -216,7 +216,7 @@ local function on_miniloader_inserter_mined(ev)
   local entity = ev.entity
   local loader = entity.surface.find_entities_filtered{
     position = entity.position,
-    type = "loader",
+    type = "loader-1x1",
   }[1]
   if loader then
     if ev.buffer then
@@ -321,8 +321,8 @@ local function on_entity_settings_pasted(ev)
   or util.is_miniloader(src) and util.is_miniloader(dst) then
     circuit.sync_behavior(dst)
     circuit.sync_filters(dst)
-    local src_loader = src.surface.find_entities_filtered{type="loader",position=src.position}[1]
-    local dst_loader = dst.surface.find_entities_filtered{type="loader",position=dst.position}[1]
+    local src_loader = src.surface.find_entities_filtered{type="loader-1x1",position=src.position}[1]
+    local dst_loader = dst.surface.find_entities_filtered{type="loader-1x1",position=dst.position}[1]
     if src_loader and dst_loader then
       dst_loader.loader_type = src_loader.loader_type
       util.update_inserters(dst_loader)

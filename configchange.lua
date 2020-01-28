@@ -96,7 +96,7 @@ add_migration{
   high = {1,4,3},
   task = function()
     for _, surface in pairs(game.surfaces) do
-      for _, entity in ipairs(surface.find_entities_filtered{type="loader"}) do
+      for _, entity in ipairs(surface.find_entities_filtered{type="loader-1x1"}) do
         if util.is_miniloader(entity) then
           local inserters = util.get_loader_inserters(entity)
           for i=1,#inserters do
@@ -172,7 +172,7 @@ add_migration{
     local removed_loaders = 0
     local removed_inserters = 0
     for _, s in pairs(game.surfaces) do
-      for _, loader in pairs(s.find_entities_filtered{type = "loader"}) do
+      for _, loader in pairs(s.find_entities_filtered{type = "loader-1x1"}) do
         if util.is_miniloader(loader) then
           local inserters = util.get_loader_inserters(loader)
           if not next(inserters) then
@@ -186,7 +186,7 @@ add_migration{
       end
       for _, inserter in pairs(s.find_entities_filtered{type = "inserter"}) do
         if util.is_miniloader_inserter(inserter) then
-          local loader = s.find_entities_filtered{type = "loader", position = inserter.position}
+          local loader = s.find_entities_filtered{type = "loader-1x1", position = inserter.position}
           if not next(loader) then
             log("Removing orphaned miniloader-inserter at "..
               inserter.position.x..","..inserter.position.y..

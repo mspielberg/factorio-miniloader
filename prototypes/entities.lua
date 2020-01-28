@@ -12,7 +12,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   local name = loader_name .. "-loader"
 
   local entity = util.table.deepcopy(data.raw["underground-belt"][base_underground_name])
-  entity.type = "loader"
+  entity.type = "loader-1x1"
   entity.name = name
   entity.icons = nil
   entity.flags = {"player-creation"}
@@ -22,6 +22,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.collision_mask = {}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.filter_count = 0
+  entity.fast_replaceable_group = "loader"
   entity.structure = {
     direction_in = {
       sheets = {
@@ -100,7 +101,6 @@ local function create_loaders(prefix, base_underground_name, tint)
       }
     },
   }
-  entity.belt_distance = 0
   entity.container_distance = 0
   entity.belt_length = 0.6
   entity.next_upgrade = nil
