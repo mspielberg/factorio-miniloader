@@ -7,7 +7,7 @@
 	"homepage": "https://forums.factorio.com/viewtopic.php?f=93&t=54343",
 	"description": "Compact and UPS-friendly 1x1 loaders.  Works with train cargo wagons, circuits, filters, and Bob's faster belts.",
 	"dependencies": [
-		"base >= 0.17.50",
+		"base >= 0.18.2",
 		"? bobinserters >= 0.17.1",
 		"? boblogistics >= 0.17.1",
 		"? FactorioExtended-Plus-Transport >= 0.1.5",
