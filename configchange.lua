@@ -228,42 +228,6 @@ add_migration{
   end,
 }
 
-add_migration{
-  name = "v1_9_0_fix_connections",
-  low = {0,0,0},
-  high = {1,9,0},
-  task = function()
-    local successes = 0
-    local failures = {}
-    forall_miniloaders(function(surface, entity)
-      local direction = util.belt_side(entity)
-      local pos = util.moveposition(entity.position, util.offset(direction, 1, 0))
-      local belts = surface.find_entities_filtered{
-        position = pos,
-        type = {"transport-belt", "underground-belt", "splitter", "loader", "loader-1x1"},
-      }
-      for _, belt in pairs(belts) do
-        local success = util.rebuild_belt(belt)
-        if success then
-          successes = successes + 1
-        else
-          failures[#failures+1] = {
-            surface = surface.name,
-            position = entity.position,
-            belt_position = belt.valid and belt.position,
-          }
-        end
-      end
-    end)
-    log("Rebuilt "..successes.." belts attached to miniloaders.")
-    if next(failures) then
-      for _, failure in ipairs(failures) do
-        log("Failed to rebuild belt attached to miniloader: "..serpent.line(failure))
-      end
-    end
-  end,
-}
-
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
