@@ -228,6 +228,34 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_9_4_fix_mined_loaders",
+  low = {0,0,0},
+  high = {1,9,4},
+  task = function()
+    for _, surface in pairs(game.surfaces) do
+      for _, inserter in pairs(surface.find_entities_filtered{type = "inserter"}) do
+        if util.is_miniloader_inserter(inserter) then
+          local loader_name = inserter.name:gsub("%-inserter$", "").."-loader"
+          if not surface.find_entity(loader_name, inserter.position) then
+            log("found miniloader-inserter without miniloader-loader at "
+              ..serpent.line(inserter.position).." on "..surface.name)
+            local orientation = util.orientation_from_inserters(inserter)
+            surface.create_entity{
+              name = loader_name,
+              position = inserter.position,
+              direction = orientation.direction,
+              force = inserter.force,
+              type = orientation.type,
+              create_build_effect_smoke = false,
+            }
+          end
+        end
+      end
+    end
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
