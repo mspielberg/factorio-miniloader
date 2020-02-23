@@ -1,23 +1,28 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.9.4
+Date: 22.02.2020
+  Bugfixes:
+    - Fixed miniloaders getting broken when in range of a Mining Drones depot. (https://mods.factorio.com/mod/miniloader/discussion/5e51413ff26569000df74779)
+---------------------------------------------------------------------------------------------------
 Version: 1.9.3
-Date: 02.02.2019
+Date: 02.02.2020
   Bugfixes:
     - Improved migrations of maps from 0.17.
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.2
-Date: 28.01.2019
+Date: 28.01.2020
   Bugfixes:
     - Fix migrations from 0.17 sometimes leaving stray belt items on the ground.
   Compatibility:
     - Change mininum requirement to Factorio 0.18.2 to ensure migrations from 0.17 work properly.
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.1
-Date: 28.01.2019
+Date: 28.01.2020
   Bugfixes:
     - Fix error when migrating saves with miniloaders placed back to back.
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.0
-Date: 28.01.2019
+Date: 28.01.2020
   Compatibility:
     - Update to Factorio 0.18.
 ---------------------------------------------------------------------------------------------------
