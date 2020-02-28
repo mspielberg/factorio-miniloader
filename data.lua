@@ -28,6 +28,8 @@ if settings.startup["miniloader-enable-chute"].value then
   data.raw.recipe["chute-miniloader"].enabled = true
   data.raw["loader-1x1"]["chute-miniloader-loader"].speed = data.raw["loader-1x1"]["chute-miniloader-loader"].speed / 4
   local inserter = data.raw.inserter["chute-miniloader-inserter"]
+  inserter.localised_description[5] =
+    math.floor(data.raw["loader-1x1"]["chute-miniloader-loader"].speed * 480 * 100 + 0.5) / 100
   inserter.rotation_speed = data.raw.inserter["chute-miniloader-inserter"].rotation_speed / 4
   inserter.energy_source = {type="void"}
   inserter.energy_per_movement = ".0000001J"
