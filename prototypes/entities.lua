@@ -6,6 +6,18 @@ local empty_sheet = {
   frame_count = 1,
 }
 
+data:extend{
+  {
+    name = "miniloader-target-chest",
+    type = "container",
+    flags = {"player-creation"},
+    collision_box = {{-0.1,-0.1},{0.1,0.1}},
+    collision_mask = {},
+    inventory_size = 0,
+    picture = empty_sheet,
+  },
+}
+
 local function create_loaders(prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local filter_loader_name = prefix .. "filter-miniloader"
