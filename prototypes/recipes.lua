@@ -49,6 +49,12 @@ local ingredient_sets = {
   },
 
   -- boblogistics
+  ["basic-miniloader"] = {
+    {
+      {"basic-underground-belt", 1},
+      {"burner-inserter", 12},
+    },
+  },
   ["turbo-miniloader"] = {
     {
       {"express-miniloader", 1},
@@ -179,6 +185,11 @@ local previous_miniloader = {
   ["expedited-"] = "fast-",
 }
 
+if data.raw["transport-belt"]["basic-transport-belt"] then
+  table.insert(ingredient_sets["miniloader"][2], 1, {"basic-miniloader", 1})
+  previous_miniloader[""] = "basic-"
+end
+
 if data.raw.item["expedited-transport-belt"] then
   previous_miniloader["express-"] = "expedited-"
 end
@@ -199,10 +210,17 @@ local filter_inserters = {
 }
 
 -- apply recipe changes due to settings
+local should_require_previous = true
+if settings.startup["bobmods-logistics-beltrequireprevious"] then
+  should_require_previous = settings.startup["bobmods-logistics-beltrequireprevious"].value
+end
 local should_double_recipes = settings.startup["miniloader-double-recipes"].value
 
 for _, sets in pairs(ingredient_sets) do
   for _, set in pairs(sets) do
+    if not should_require_previous and set[1][1]:find("miniloader$") then
+      table.remove(set, 1)
+    end
     if should_double_recipes then
       for _, ingredient in pairs(set) do
         ingredient[2] = ingredient[2] * 2
@@ -242,7 +260,7 @@ local function create_recipes(prefix)
 
   local filter_recipe = util.table.deepcopy(recipe)
   filter_recipe.name = filter_name
-  if previous_miniloader[prefix] then
+  if previous_miniloader[prefix] and data.raw.item[previous_miniloader[prefix]] then
     filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
   end
   local inserter_index, inserter_name
@@ -252,15 +270,17 @@ local function create_recipes(prefix)
       inserter_name = ingredient[1]
     end
   end
+  filter_recipe.results[1][1] = filter_name
   if inserter_name and filter_inserters[inserter_name] then
     filter_recipe.ingredients[inserter_index][1] = filter_inserters[inserter_name]
+  else
+    filter_recipe = nil
   end
-  filter_recipe.result = filter_name
 
   if settings.startup["miniloader-enable-standard"].value then
     data:extend{recipe}
   end
-  if settings.startup["miniloader-enable-filter"].value then
+  if filter_recipe and settings.startup["miniloader-enable-filter"].value then
     data:extend{filter_recipe}
   end
 end

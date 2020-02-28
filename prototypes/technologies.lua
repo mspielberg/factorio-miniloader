@@ -10,7 +10,7 @@ local function create_technology(prefix, tech_prereqs, tint)
   if settings.startup["miniloader-enable-standard"].value then
     table.insert(effects, { type = "unlock-recipe", recipe = name })
   end
-  if settings.startup["miniloader-enable-filter"].value then
+  if data.raw.recipe[filter_name] then
     table.insert(effects, { type = "unlock-recipe", recipe = filter_name })
   end
 
