@@ -1,12 +1,12 @@
 local templates = {
   [""] = {
     next_prefix = "fast-",
-    prerequisite_techs = {"logistics-2"},
+    prerequisite_techs = {"logistics", "fast-inserter"},
     tint = {r=0.8,  g=0.6,  b=0.05},
   },
   ["fast-"] = {
     next_prefix = "express-",
-    prerequisite_techs = {"miniloader"},
+    prerequisite_techs = {"logistics-2", "miniloader"},
     tint = {r=0.75, g=0.07, b=0.07},
   },
   ["express-"] = {
