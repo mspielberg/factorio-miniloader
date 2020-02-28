@@ -198,6 +198,19 @@ local filter_inserters = {
   ["stack-inserter-mk2"] = "stack-filter-inserter-mk2",
 }
 
+-- apply recipe changes due to settings
+local should_double_recipes = settings.startup["miniloader-double-recipes"].value
+
+for _, sets in pairs(ingredient_sets) do
+  for _, set in pairs(sets) do
+    if should_double_recipes then
+      for _, ingredient in pairs(set) do
+        ingredient[2] = ingredient[2] * 2
+      end
+    end
+  end
+end
+
 local function select_ingredient_set(sets)
   for _, set in ipairs(sets) do
     local valid = true
@@ -224,7 +237,7 @@ local function create_recipes(prefix)
     enabled = false,
     energy_required = 1,
     ingredients = select_ingredient_set(ingredient_sets[name]),
-    result = name,
+    results = {{name, should_double and 2 or 1}},
   }
 
   local filter_recipe = util.table.deepcopy(recipe)
