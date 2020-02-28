@@ -379,6 +379,15 @@ local function on_canceled_deconstruction(ev)
   end
 end
 
+local function on_marked_for_upgrade(ev)
+  local entity = ev.entity
+  if not util.is_miniloader_inserter(entity) then return end
+  local main_inserter = entity.surface.find_entity(entity.name, entity.position)
+  if entity == main_inserter then return end
+  local force = ev.player_index and game.get_player(ev.player_index).force or entity.force
+  entity.cancel_upgrade(force)
+end
+
 -- lifecycle events
 
 script.on_init(on_init)
@@ -406,6 +415,9 @@ event.register(defines.events.on_put_item, on_put_item)
 event.register(defines.events.on_player_setup_blueprint, on_setup_blueprint)
 event.register(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)
 event.register(defines.events.on_canceled_deconstruction, on_canceled_deconstruction)
+
+event.register(defines.events.on_marked_for_upgrade, on_marked_for_upgrade,
+  {{filter = "type", type = "inserter"}})
 
 event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
   if ev.setting == "miniloader-snapping" then
