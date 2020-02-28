@@ -15,6 +15,7 @@ local function update(prefix)
   if filter_loader_item then filter_loader_item.subgroup = base_underground_item.subgroup end
 end
 
+update("basic-")
 update("")
 update("fast-")
 update("express-")

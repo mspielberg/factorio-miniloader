@@ -257,9 +257,9 @@ add_migration{
 }
 
 add_migration{
-  name = "v1_9_5_add_fake_target_chests",
+  name = "v1_10_0_add_fake_target_chests",
   low = {0,0,0},
-  high = {1,9,5},
+  high = {1,10,0},
   task = function()
     forall_miniloaders(function(surface, entity)
       surface.create_entity{
@@ -268,6 +268,21 @@ add_migration{
         force = entity.force,
       }
     end)
+  end,
+}
+
+add_migration{
+  name = "v1_10_0_add_boblogistics_basic_miniloader",
+  low = {0,0,0},
+  high = {1,10,0},
+  task = function()
+    if game.technology_prototypes["basic-miniloader"] then
+      for _, f in pairs(game.forces) do
+        if f.technologies["miniloader"].researched then
+          f.technologies["basic-miniloader"].researched = true
+        end
+      end
+    end
   end,
 }
 
