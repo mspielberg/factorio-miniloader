@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.0
+Date: 28.02.2020
+  Balancing:
+    - Unlock standard miniloader with Logistics.
+  Bugfixes:
+    - Fixed upgrade planner sometimes removing circuit wire connections. (https://mods.factorio.com/mod/miniloader/discussion/5e55174c67ec67000ea17b6b)
+  Minor Features:
+    - Added miniloader for Bob's basic transport belts.
+    - Added support for Bob's "belts require previous tier" setting. (https://mods.factorio.com/mod/miniloader/discussion/5e594a1c9c6a8d000e79fad2)
+    - Added belt speed to description.
+    - Added setting to force miniloaders to be crafted in pairs to avoid annoying orphan underground belts in the player's inventory. (https://mods.factorio.com/mod/miniloader/discussion/5e4e075b9564bf000e15917c)
+  Optimisations:
+    - Optimized UPS cost of having many miniloaders.
+---------------------------------------------------------------------------------------------------
 Version: 1.9.4
 Date: 22.02.2020
   Bugfixes:
