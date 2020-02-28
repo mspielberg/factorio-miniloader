@@ -256,6 +256,21 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_9_5_add_fake_target_chests",
+  low = {0,0,0},
+  high = {1,9,5},
+  task = function()
+    forall_miniloaders(function(surface, entity)
+      surface.create_entity{
+        name = "miniloader-target-chest",
+        position = entity.position,
+        force = entity.force,
+      }
+    end)
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do

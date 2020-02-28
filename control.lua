@@ -113,6 +113,13 @@ local function on_built_miniloader(entity, orientation)
     inserters[i].destructible = false
   end
 
+  local chest = surface.create_entity{
+    name = "miniloader-target-chest",
+    position = entity.position,
+    force = entity.force,
+  }
+  chest.destructible = false
+
   util.update_inserters(loader)
   circuit.sync_behavior(entity)
   circuit.sync_filters(entity)
@@ -210,6 +217,10 @@ local function on_miniloader_mined(ev)
     end
     inserters[i].destroy()
   end
+  local chest = entity.surface.find_entity("miniloader-target-chest", entity.position)
+  if chest then
+    chest.destroy()
+  end
 end
 
 local function on_miniloader_inserter_mined(ev)
@@ -240,6 +251,11 @@ local function on_miniloader_inserter_mined(ev)
       end
       inserters[i].destroy()
     end
+  end
+
+  local chest = entity.surface.find_entity("miniloader-target-chest", entity.position)
+  if chest then
+    chest.destroy()
   end
 end
 
