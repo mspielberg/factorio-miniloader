@@ -206,7 +206,8 @@ function util.update_inserters(entity)
   local pickup = util.pickup_position(entity)
   local drop = util.drop_positions(entity)
   local direction = entity.direction
-  if entity.loader_type == "input" then
+  local loader_type = entity.loader_type
+  if loader_type == "input" then
     direction = util.opposite_direction(direction)
   end
 
@@ -215,6 +216,11 @@ function util.update_inserters(entity)
     inserters[i].pickup_position = pickup
     inserters[i].drop_position = drop[i]
     inserters[i].direction = direction
+    if loader_type == "input" then
+      inserters[i].pickup_target = entity
+    else
+      inserters[i].drop_target = entity
+    end
   end
 end
 
