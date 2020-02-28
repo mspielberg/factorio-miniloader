@@ -192,12 +192,17 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
   local speed = inserter_speed(base_entity.speed)
+  local rounded_items_per_second = math.floor(base_entity.speed * 480 * 100 + 0.5) / 100
+  local description = {"",
+    "[font=default-semibold][color=255,230,192]", {"description.belt-speed"}, ":[/color][/font] ",
+    rounded_items_per_second, " ", {"description.belt-items"}, {"per-second-suffix"}}
 
   local loader_inserter = {
     type = "inserter",
     name = name,
     -- this name and icon appear in the power usage UI
     localised_name = {"entity-name." .. loader_name},
+    localised_description = description,
     icons = {
       {
         icon = "__miniloader__/graphics/item/template.png",
