@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.2
+Date: 29.02.2020
+  Bugfixes:
+    - Fix crash on startup when Bob's Logistics setting for Transport belt overhaul is turned off. (https://mods.factorio.com/mod/miniloader/discussion/5e59bf3b06acef000bd533e5)
+---------------------------------------------------------------------------------------------------
 Version: 1.10.1
 Date: 28.02.2020
   Bugfixes:
