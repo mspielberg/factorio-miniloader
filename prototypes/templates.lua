@@ -16,13 +16,16 @@ local templates = {
 }
 
 -- Bob's support
-if data.raw.item["turbo-transport-belt"] then
+if data.raw.item["basic-transport-belt"] then
   templates["basic-"] = {
     next_prefix = "",
     prerequisite_techs = {"logistics-0"},
     tint = {r=0.5, g=0.5, b=0.5},
   }
   templates[""].prerequisite_techs = {"logistics", "basic-miniloader"}
+end
+
+if data.raw.item["turbo-transport-belt"] then
   templates["express-"].next_prefix = "turbo-"
   templates["turbo-"] = {
     next_prefix = "ultimate-",
@@ -51,6 +54,7 @@ if data.raw.item["rapid-transport-belt-mk2"] then
   }
 end
 
+-- Krastorio support
 if data.raw.item["k-transport-belt"] then
   templates["express-"].next_prefix = "k-"
   templates["k-"] = {
