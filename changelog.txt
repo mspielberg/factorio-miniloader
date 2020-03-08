@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.3
+Date: 07.03.2020
+  Bugfixes:
+    - Fix doubled recipes only giving one result. (https://mods.factorio.com/mod/miniloader/discussion/5e63993bc849b1000ce1235c)
+---------------------------------------------------------------------------------------------------
 Version: 1.10.2
 Date: 29.02.2020
   Bugfixes:
