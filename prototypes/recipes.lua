@@ -255,7 +255,7 @@ local function create_recipes(prefix)
     enabled = false,
     energy_required = 1,
     ingredients = select_ingredient_set(ingredient_sets[name]),
-    results = {{name, should_double and 2 or 1}},
+    results = {{name, should_double_recipes and 2 or 1}},
   }
 
   local filter_recipe = util.table.deepcopy(recipe)
