@@ -35,11 +35,18 @@ local function ensure_loader(inserter, orientation)
   local surface = inserter.surface
   local position = inserter.position
   local loader_name = inserter.name:gsub("inserter$", "loader")
-  local existing_loader = util.find_miniloaders{surface=surface, position=position}[1]
-  if existing_loader then
-    return fast_replace_loader(loader_name, existing_loader)
+  local existing_loaders = util.find_miniloaders{surface=surface, position=position}
+  -- somehow multiple loaders
+  for i=2,#existing_loaders do
+    existing_loaders[i].destroy()
   end
-  return create_new_loader(loader_name, inserter, orientation)
+  local existing_loader = existing_loaders[1]
+  if existing_loader and existing_loader.name ~= loader_name then
+    return fast_replace_loader(loader_name, existing_loader)
+  elseif not existing_loader then
+    return create_new_loader(loader_name, inserter, orientation)
+  end
+  return existing_loader
 end
 
 local function create_miniloader_inserter(main_inserter, fast_replace)
