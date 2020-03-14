@@ -53,7 +53,9 @@ local function create_miniloader_inserter(main_inserter, fast_replace)
     create_build_effect_smoke = false,
   }
   new_inserter.last_user = main_inserter.last_user
-  new_inserter.inserter_stack_size_override = 1
+  if settings.global["miniloader-lock-stack-sizes"].value then
+    new_inserter.inserter_stack_size_override = 1
+  end
   return new_inserter
 end
 
@@ -121,6 +123,18 @@ local function fixup(main_inserter, orientation)
   return loader
 end
 
+local function forall(f)
+  for _, surface in pairs(game.surfaces) do
+    local miniloaders = util.find_miniloaders{surface = surface}
+    for _, entity in pairs(miniloaders) do
+      if entity.valid then
+        f(surface, entity)
+      end
+    end
+  end
+end
+
 return {
   fixup = fixup,
+  forall = forall,
 }

@@ -13,16 +13,7 @@ local function add_migration(migration)
   all_migrations[#all_migrations+1] = migration
 end
 
-local function forall_miniloaders(f)
-  for _, surface in pairs(game.surfaces) do
-    local miniloaders = util.find_miniloaders{surface = surface}
-    for _, entity in pairs(miniloaders) do
-      if entity.valid then
-        f(surface, entity)
-      end
-    end
-  end
-end
+local forall_miniloaders = miniloader.forall
 
 add_migration{
   name = "v1_1_4_inserter_cleanup",
@@ -299,12 +290,12 @@ end
 
 -- changes in other mods may affect belt speeds, and hence the required number of inserters
 function configchange.fix_inserter_counts()
-  forall_miniloaders(function(surface, miniloader)
-    local inserters = util.get_loader_inserters(miniloader)
+  forall_miniloaders(function(surface, loader)
+    local inserters = util.get_loader_inserters(loader)
     if not next(inserters) then
-      log("Miniloader at "..miniloader.position.x..", "..miniloader.position.y..
+      log("Miniloader at "..loader.position.x..", "..loader.position.y..
         " on surface "..surface.name.." has no inserters.")
-        miniloader.destroy()
+        loader.destroy()
       return
     end
     miniloader.fixup(inserters[1])
