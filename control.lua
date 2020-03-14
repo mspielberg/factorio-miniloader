@@ -367,5 +367,12 @@ event.register(defines.events.on_marked_for_upgrade, on_marked_for_upgrade)
 event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
   if ev.setting == "miniloader-snapping" then
     use_snapping = settings.global["miniloader-snapping"].value
+  elseif ev.setting == "miniloader-lock-stack-sizes" then
+    local size = settings.global["miniloader-lock-stack-sizes"].value and 1 or 0
+    miniloader.forall(function(surface, miniloader)
+      for _, inserter in pairs(util.get_loader_inserters(miniloader)) do
+        inserter.inserter_stack_size_override = size
+      end
+    end)
   end
 end)
