@@ -95,6 +95,22 @@ local ingredient_sets = {
     },
   },
 
+  -- Krastorio2
+  ["kr-advanced-miniloader"] = {
+    {
+      {"express-miniloader", 1},
+      {"kr-advanced-underground-belt", 1},
+      {"stack-inserter", 2},
+    },
+  },
+  ["kr-superior-miniloader"] = {
+    {
+      {"kr-advanced-miniloader", 1},
+      {"kr-superior-underground-belt", 1},
+      {"kr-superior-inserter", 2},
+    },
+  },
+
   -- UltimateBelts
   ["ub-ultra-fast-miniloader"] = {
     {
@@ -174,6 +190,10 @@ local previous_miniloader = {
   -- Krastorio
   ["k-"] = "express-",
 
+  -- Krastorio2
+  ["kr-advanced-"] = "express-",
+  ["kr-superior-"] = "kr-advanced-",
+
   -- UltimateBelts
   ["ub-ultra-fast-"] = "express-",
   ["ub-extreme-fast-"] = "ub-ultra-fast-",
@@ -207,6 +227,9 @@ local filter_inserters = {
 
   -- FactorioExtended-Plus-Transport
   ["stack-inserter-mk2"] = "stack-filter-inserter-mk2",
+
+  -- Krastorio2
+  ["kr-superior-inserter"] = "kr-superior-filter-inserter",
 }
 
 -- apply recipe changes due to settings
