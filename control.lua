@@ -8,7 +8,6 @@ local snapping = require("snapping")
 local util = require("lualib.util")
 
 local compat_pickerextended = require("compat.pickerextended")
-local compat_upgradeplanner = require("compat.upgradeplanner")
 
 local use_snapping = settings.global["miniloader-snapping"].value
 
@@ -113,9 +112,6 @@ local function on_player_built(ev)
   if ev.mod_name then
     -- might be circuit connected or have filter settings
     on_robot_built(ev)
-    if ev.mod_name == "upgrade-planner" then
-      compat_upgradeplanner.on_built_entity(ev)
-    end
     return
   end
 
@@ -151,12 +147,6 @@ local function on_rotated(ev)
     util.update_inserters(entity)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
-  end
-end
-
-local function on_pre_player_mined_item(ev)
-  if ev.mod_name == "upgrade-planner" then
-    return compat_upgradeplanner.on_pre_player_mined_item(ev)
   end
 end
 
@@ -357,7 +347,6 @@ event.register(defines.events.on_built_entity, on_player_built)
 event.register(defines.events.on_robot_built_entity, on_robot_built)
 event.register(defines.events.on_player_rotated_entity, on_rotated)
 
-event.register(defines.events.on_pre_player_mined_item, on_pre_player_mined_item)
 event.register(defines.events.on_player_mined_entity, on_player_mined_entity)
 event.register(defines.events.on_robot_pre_mined, on_robot_pre_mined)
 event.register(defines.events.on_robot_mined_entity, on_mined)

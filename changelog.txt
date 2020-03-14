@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.4
+Date: 13.03.2020
+  Bugfixes:
+    - Fix handling of miniloader upgrades performed by Construction Drones. ()
+  Minor Features:
+    - Removed compatibility support for Klonan's obsolete Upgrade Planner mod.
+---------------------------------------------------------------------------------------------------
 Version: 1.10.3
 Date: 07.03.2020
   Bugfixes:
