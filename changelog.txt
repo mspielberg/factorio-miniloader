@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.6
+Date: 14.03.2020
+  Bugfixes:
+    - Change migration to prevent crahses on loading some (?) maps saved with older versions.
+  Compatibility:
+    - Add Krastorio2 support.
+---------------------------------------------------------------------------------------------------
 Version: 1.10.5
 Date: 14.03.2020
   Bugfixes:
