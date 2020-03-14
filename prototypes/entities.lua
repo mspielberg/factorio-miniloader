@@ -30,8 +30,8 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
   entity.minable = nil
-  entity.collision_box = {{-0.2, -0.1}, {0.2, 0.1}}
-  entity.collision_mask = {}
+  entity.collision_box = {{-0.2, -0.2}, {0.2, 0.2}}
+  entity.collision_mask = {"floor-layer", "object-layer", "water-tile", space_collision_layer}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.filter_count = 0
   entity.fast_replaceable_group = "loader"
