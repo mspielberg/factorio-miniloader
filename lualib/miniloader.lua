@@ -31,16 +31,32 @@ local function create_new_loader(loader_name, inserter, orientation)
   return loader
 end
 
+local function select_connected_loader(loaders)
+  local selected_loader
+  for _, loader in pairs(loaders) do
+    local tl = loader.get_transport_line(1)
+    if next(tl.output_lines) or next(tl.input_lines) then
+      selected_loader = loader
+      break
+    end
+  end
+  if not selected_loader then
+    selected_loader = loaders[1]
+  end
+  for _, loader in pairs(loaders) do
+    if loader ~= selected_loader then
+      loader.destroy()
+    end
+  end
+  return selected_loader
+end
+
 local function ensure_loader(inserter, orientation)
   local surface = inserter.surface
   local position = inserter.position
   local loader_name = inserter.name:gsub("inserter$", "loader")
   local existing_loaders = util.find_miniloaders{surface=surface, position=position}
-  -- somehow multiple loaders
-  for i=2,#existing_loaders do
-    existing_loaders[i].destroy()
-  end
-  local existing_loader = existing_loaders[1]
+  local existing_loader = select_connected_loader(existing_loaders)
   if existing_loader and existing_loader.name ~= loader_name then
     return fast_replace_loader(loader_name, existing_loader)
   elseif not existing_loader then
