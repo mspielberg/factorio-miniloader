@@ -1,5 +1,6 @@
 local blueprint = require "lualib.blueprint"
 local circuit = require "circuit"
+local miniloader = require "lualib.miniloader"
 local util = require "lualib.util"
 
 local configchange = {}
@@ -303,29 +304,10 @@ function configchange.fix_inserter_counts()
     if not next(inserters) then
       log("Miniloader at "..miniloader.position.x..", "..miniloader.position.y..
         " on surface "..surface.name.." has no inserters.")
+        miniloader.destroy()
       return
     end
-    local desired_count = util.num_inserters(miniloader)
-
-    -- remove excess inserters
-    for i=desired_count+1,#inserters do
-      inserters[i].destroy()
-    end
-
-    -- create missing inserters
-    for i=#inserters+1,desired_count do
-      local inserter = surface.create_entity{
-        name = inserters[1].name,
-        position = inserters[1].position,
-        direction = inserters[1].direction,
-        force = inserters[1].force,
-      }
-      inserter.inserter_stack_size_override = 1
-    end
-    util.update_inserters(miniloader)
-    circuit.sync_behavior(inserters[1])
-    circuit.sync_filters(inserters[1])
-    circuit.sync_partner_connections(inserters[1])
+    miniloader.fixup(inserters[1])
   end)
 end
 
