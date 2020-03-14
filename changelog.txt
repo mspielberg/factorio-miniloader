@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.5
+Date: 14.03.2020
+  Bugfixes:
+    - Fix migration trying to replace miniloaders with themselves, resulting in multiple loaders on the same tile. (https://mods.factorio.com/mod/miniloader/discussion/5e6c7596213254000d67fac2)
+---------------------------------------------------------------------------------------------------
 Version: 1.10.4
 Date: 13.03.2020
   Bugfixes:
