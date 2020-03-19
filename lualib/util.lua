@@ -187,10 +187,16 @@ function util.drop_positions(entity)
 end
 
 function util.get_loader_inserters(entity)
-  return entity.surface.find_entities_filtered{
+  local out = {}
+  for _, e in pairs(entity.surface.find_entities_filtered{
     position = entity.position,
     type = "inserter",
-  }
+  }) do
+    if util.is_miniloader_inserter(e) then
+      out[#out+1] = e
+    end
+  end
+  return out
 end
 
 function util.update_miniloader(entity, direction, type)
