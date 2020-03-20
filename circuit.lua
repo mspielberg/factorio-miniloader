@@ -135,6 +135,7 @@ function M.sync_partner_connections(inserter)
 
   M.sync_behavior(inserter)
   local master_inserter = inserters[1]
+  local other_miniloader_inserters = {}
   for wire_type, ccds in pairs(connections) do
     if not next(ccds) then
       for _, ins in ipairs(inserters) do
@@ -144,6 +145,9 @@ function M.sync_partner_connections(inserter)
       master_inserter.disconnect_neighbour(wire_type)
       for _, ccd in ipairs(ccds) do
         master_inserter.connect_neighbour(ccd)
+        if util.is_miniloader_inserter(ccd.target_entity) then
+          other_miniloader_inserters[#other_miniloader_inserters+1] = ccd.target_entity
+        end
       end
       for i=2,#inserters do
         local ins = inserters[i]
@@ -151,6 +155,10 @@ function M.sync_partner_connections(inserter)
         ins.connect_neighbour{wire=wire_type, target_entity=master_inserter}
       end
     end
+  end
+
+  for _, other_miniloader_inserter in pairs(other_miniloader_inserters) do
+    M.sync_partner_connections(other_miniloader_inserter)
   end
 end
 
