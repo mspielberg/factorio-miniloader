@@ -232,6 +232,7 @@ local function on_placed_blueprint(ev, player, bp)
       if util.is_miniloader_inserter(e) then
         circuit.sync_behavior(e)
         circuit.sync_filters(e)
+        circuit.sync_partner_connections(e)
       end
     end
   end)
