@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.10.8
-Date: ????
+Date: 2020-03-19
   Bugfixes:
     - Fixed load order problems with Krastorio2.
     - Fixed problem where two miniloaders circuit-connected to each other in a blueprint sometimes weren't connected after being built. (https://mods.factorio.com/mod/miniloader/discussion/5e74154258ecbc000e77951c)
