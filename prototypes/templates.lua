@@ -133,13 +133,13 @@ end
 -- note: RFT doesn't adds plutonium tier belts and stuff without PE mod
 if mods["RandomFactorioThings"] then
   templates["nuclear-"] = {
-    prerequisite_techs = {"nuclear-logistics"},
+    prerequisite_techs = {"nuclear-logistics", "express-miniloader"},
     base_underground_name = "nuclear-underground-belt",
     tint = {r=0, g=1, b=0}
   }
   if mods["PlutoniumEnergy"] then
     templates["plutonium-"] = {
-      prerequisite_techs = {"plutonium-logistics"},
+      prerequisite_techs = {"plutonium-logistics", "nuclear-miniloader"},
       base_underground_name = "plutonium-underground-belt",
       tint = {r=0.1,g=0.9,b=0.7}
     }
