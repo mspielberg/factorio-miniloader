@@ -129,4 +129,21 @@ if data.raw.item["se-space-transport-belt"] then
   }
 end
 
+-- RandomFactorioThings and PlutoniumEnergy support
+-- note: RFT doesn't adds plutonium tier belts and stuff without PE mod
+if mods["RandomFactorioThings"] then
+  templates["nuclear-"] = {
+    prerequisite_techs = {"nuclear-logistics"},
+    base_underground_name = "nuclear-underground-belt",
+    tint = {r=0, g=1, b=0}
+  }
+  if mods["PlutoniumEnergy"] then
+    templates["plutonium-"] = {
+      prerequisite_techs = {"plutonium-logistics"},
+      base_underground_name = "plutonium-underground-belt",
+      tint = {r=0.1,g=0.9,b=0.7}
+    }
+  end
+end
+
 return templates
