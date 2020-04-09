@@ -8,12 +8,12 @@ local function create_items(prefix, base_underground_name, tint)
   item.icon = nil
   item.icons = {
     {
-      icon = "__miniloader__/graphics/item/template.png",
-      icon_size = 32,
+      icon = "__miniloader__/graphics/item/icon-base.png",
+      icon_size = 64,
     },
     {
-      icon = "__miniloader__/graphics/item/mask.png",
-      icon_size = 32,
+      icon = "__miniloader__/graphics/item/icon-mask.png",
+      icon_size = 64,
       tint = tint,
     },
   }
@@ -24,7 +24,7 @@ local function create_items(prefix, base_underground_name, tint)
   local filter_item = util.table.deepcopy(item)
   filter_item.name = filter_name
   filter_item.localised_name = {"entity-name." .. filter_name}
-  filter_item.icons[1].icon = "__miniloader__/graphics/item/filter-template.png"
+  filter_item.icons[1].icon = "__miniloader__/graphics/item/filter-icon-base.png"
   filter_item.order, _ = string.gsub(item.order, "e%[", "f[filter-", 1)
   filter_item.place_result = filter_name .. "-inserter"
 

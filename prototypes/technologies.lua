@@ -19,11 +19,11 @@ local function create_technology(prefix, tech_prereqs, tint)
     name = name,
     icons = {
       {
-        icon = "__miniloader__/graphics/technology/template.png",
+        icon = "__miniloader__/graphics/technology/technology-base.png",
         icon_size = 128,
       },
       {
-        icon = "__miniloader__/graphics/technology/mask.png",
+        icon = "__miniloader__/graphics/technology/technology-mask.png",
         icon_size = 128,
         tint = tint,
       },
