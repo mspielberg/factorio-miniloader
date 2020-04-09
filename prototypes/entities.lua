@@ -41,53 +41,50 @@ local function create_loaders(prefix, base_underground_name, tint)
         -- Base
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-base.png",				
-          width    = 96,
-          height   = 96,
-          y        = 0,
-          hr_version = 
-          {
+          width = 96,
+          height = 96,
+          y = 0,
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-base.png",
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 0
+            scale = 0.5,
+            width = 192,
+            y = 0
           }
         },
         -- Mask
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-mask.png",			
-          width    = 96,
-          height   = 96,
-          y        = 0,
-          tint	 = tint,
-          hr_version = 
-          {
+          width = 96,
+          height = 96,
+          y = 0,
+          tint = tint,
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-mask.png",
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 0,
-            tint     = tint,
+            scale = 0.5,
+            width = 192,
+            y = 0,
+            tint = tint,
           }
         },
         -- Shadow
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-shadow.png",			
           draw_as_shadow = true,
-          width    = 96,
-          height   = 96,
-          y        = 0,
-          hr_version = 
-          {
+          width = 96,
+          height = 96,
+          y = 0,
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-shadow.png",
             draw_as_shadow = true,
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 0,
+            scale = 0.5,
+            width = 192,
+            y = 0,
           }
         }
       }
@@ -97,52 +94,49 @@ local function create_loaders(prefix, base_underground_name, tint)
         -- Base
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-base.png",			
-          width    = 96,
-          height   = 96,
-          y        = 96,
-          hr_version = 
-          {
+          width = 96,
+          height = 96,
+          y = 96,
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-base.png",
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 192
+            scale = 0.5,
+            width = 192,
+            y = 192
           }
         },
         -- Mask
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-mask.png",			
-          width    = 96,
-          height   = 96,
-          y        = 96,
-          tint	 = tint,
-          hr_version = 
-          {
+          width = 96,
+          height = 96,
+          y = 96,
+          tint = tint,
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-mask.png",
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 192,
-            tint     = tint
+            scale = 0.5,
+            width = 192,
+            y = 192,
+            tint = tint
           }
         },
         -- Shadow
         {
           filename = "__miniloader__/graphics/entity/miniloader-structure-shadow.png",			
-          width    = 96,
-          height   = 96,
-          y        = 96,
+          width = 96,
+          height = 96,
+          y = 96,
           draw_as_shadow = true,
-          hr_version = 
-          {
+          hr_version = {
             filename = "__miniloader__/graphics/entity/hr-miniloader-structure-shadow.png",
-            height   = 192,
+            height = 192,
             priority = "extra-high",
-            scale    = 0.5,
-            width    = 192,
-            y        = 192,
+            scale = 0.5,
+            width = 192,
+            y = 192,
             draw_as_shadow = true,
           }
         }
@@ -154,8 +148,7 @@ local function create_loaders(prefix, base_underground_name, tint)
         priority = "extra-high",
         width = 96,
         height = 96,
-        hr_version =
-        {
+        hr_version = {
           filename = "__miniloader__/graphics/entity/hr-miniloader-structure-back-patch.png",
           priority = "extra-high",
           width = 192,
@@ -170,8 +163,7 @@ local function create_loaders(prefix, base_underground_name, tint)
         priority = "extra-high",
         width = 96,
         height = 96,
-        hr_version =
-        {
+        hr_version = {
           filename = "__miniloader__/graphics/entity/hr-miniloader-structure-front-patch.png",
           priority = "extra-high",
           width = 192,
