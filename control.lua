@@ -182,7 +182,7 @@ local function on_miniloader_inserter_mined(ev)
     if buffer then
       for i=1,2 do
         local tl = loader.get_transport_line(i)
-        for j=1,#tl do
+        for j=1,math.min(#tl, 256) do
           buffer.insert(tl[j])
         end
         tl.clear()
