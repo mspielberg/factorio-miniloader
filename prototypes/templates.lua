@@ -1,7 +1,7 @@
 local templates = {
   [""] = {
     next_prefix = "fast-",
-    prerequisite_techs = {"logistics", "fast-inserter"},
+    prerequisite_techs = {"logistics", "fast-inserter", "steel-processing"},
     tint = util.color("ffc340D1"),
   },
   ["fast-"] = {
