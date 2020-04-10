@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.0
+Date: 2020-04-10
+  Changes:
+    - Add Steel Processing as a tech prerequisite for standard miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/5e71cb315bcf4f000eca08ed)
+    - New graphics by kirazy! (https://github.com/mspielberg/factorio-miniloader/pull/40)
+  Compatibility:
+    - Remove support for the now abandoned Krastorio Legacy.
+    - Temporarily remove support for Xander Mod until its belt tiers are finalized.
+  Bugfixes:
+    - Fix crash when mining a miniloader with more than 256 items in one of its lanes. (https://github.com/mspielberg/factorio-miniloader/issues/39)
+    - Fix crash when somehow an event arrives with an invalid inventory. (https://mods.factorio.com/mod/miniloader/discussion/5e83025f611080000ee042d2)
+    - Fix miniloader belt portion was missing a collision mask, causing a hard crash in Factorio core. (https://forums.factorio.com/82294)
+---------------------------------------------------------------------------------------------------
 Version: 1.10.8
 Date: 2020-03-19
   Bugfixes:
