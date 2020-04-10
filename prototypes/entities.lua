@@ -12,7 +12,6 @@ data:extend{
     type = "container",
     flags = {"player-creation"},
     collision_box = {{-0.1,-0.1},{0.1,0.1}},
-    collision_mask = {},
     inventory_size = 0,
     picture = empty_sheet,
   },
