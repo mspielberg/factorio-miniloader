@@ -66,18 +66,6 @@ if data.raw.item["rapid-transport-belt-mk2"] then
   }
 end
 
--- Krastorio support
--- Note: Krastorio Legacy is deprecated, and additionally due to changes to Character 
--- Logistics slots is now non-functional for Factorio > 0.18.18
--- if data.raw.item["k-transport-belt"] then
---   templates["express-"].next_prefix = "k-"
---   templates["k-"] = {
---     prerequisite_techs = {"k-advanced-logistics", "express-miniloader"},
---     tint = util.color("971dc6DB"),
---     base_underground_name = "k-underground-belt",
---   }
--- end
-
 -- Krastorio2 support
 if data.raw.item["kr-superior-transport-belt"] then
   templates["express-"].next_prefix = "kr-advanced-"
@@ -141,19 +129,6 @@ if data.raw.technology["ultimate-logistics"] then
     tint = util.color(ub_hexes.ultimate),
     base_underground_name = "original-ultimate-underground-belt",
   }
-end
-
--- xander-mod support
--- Note: Xander mod no longer appears to have an expedited transport belt. 
--- It does have a low-level Crude belt.
-if data.raw.item["expedited-transport-belt"] then
-  templates["fast-"].next_prefix = "expedited-"
-  templates["expedited-"] = {
-    next_prefix = "express-",
-    prerequisite_techs = {"logistics-3", "fast-miniloader"},
-    tint = {r=0.40, g=0.70, b=0.40},
-  }
-  templates["express-"].prerequisite_techs = {"logistics-4", "expedited-miniloader"}
 end
 
 -- space-exploration support
