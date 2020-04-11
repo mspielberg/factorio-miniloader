@@ -278,6 +278,21 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_11_1_remove_stray_chests",
+  low = {0,0,0},
+  high = {1,11,1},
+  task = function()
+    for _, s in pairs(game.surfaces) do
+      for _, chest in pairs(s.find_entities_filtered{name = "miniloader-target-chest"}) do
+        if not next(util.find_miniloaders{surface = s, position = chest.position}) then
+          chest.destroy()
+        end
+      end
+    end
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
