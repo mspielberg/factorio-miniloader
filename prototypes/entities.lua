@@ -12,6 +12,7 @@ data:extend{
     type = "container",
     flags = {"player-creation"},
     collision_box = {{-0.1,-0.1},{0.1,0.1}},
+    collision_mask = {},
     inventory_size = 0,
     picture = empty_sheet,
   },
@@ -30,7 +31,7 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.localised_name = {"entity-name." .. loader_name}
   entity.minable = nil
   entity.collision_box = {{-0.2, -0.2}, {0.2, 0.2}}
-  entity.collision_mask = {"floor-layer", "object-layer", "water-tile", space_collision_layer}
+  entity.collision_mask = {}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.filter_count = 0
   entity.fast_replaceable_group = "loader"
