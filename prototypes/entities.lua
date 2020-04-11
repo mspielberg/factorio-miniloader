@@ -203,48 +203,6 @@ local connector_definitions = circuit_connector_definitions.create(
   }
 )
 
-local function inserter_speed(belt_speed)
-  local items_per_second = belt_speed * 480
-  -- 2 inserters/miniloader
-  if items_per_second <= 15 then
-    return 0.12
-  elseif items_per_second <= 30 then
-    return 0.30 -- 30/s
-  elseif items_per_second <= 60 then
-    return 0.5 -- 60/s
-  -- 4 inserters/miniloader
-  elseif items_per_second <= 75 then
-    --return 0.35 -- 72/s
-    --return 0.36 -- 76/s
-    return 0.38 -- 84/s
-  elseif items_per_second <= 90 then
-    --return 0.39 -- 75/s
-    return 0.42 -- 90/s
-    --return 0.45 -- 110/s
-  elseif items_per_second <= 120 then
-    return 0.5 -- 120/s
-  -- 6 inserters/miniloader
-  elseif items_per_second <= 135 then
-    --return 0.3 -- 105/s
-    return 0.41 -- 135/s
-  elseif items_per_second <= 180 then
-    return 0.5 -- 180/s
-  -- 8 inserters/miniloader
-  elseif items_per_second <= 225 then
-    --return 0.3 -- 130/s
-    --return 0.45 -- 210/s
-    --return 0.46 -- 210/s
-    --return 0.465 -- 234/s
-    --return 0.47 -- 235/s
-    return 0.48 -- 235/s
-  elseif items_per_second <= 240 then
-    return 0.5 -- 240/s
-  -- 10 inserters/miniloader
-  else
-    return 0.5 -- lots
-  end
-end
-
 local function create_inserters(prefix, next_prefix, base_underground_name, tint)
   local loader_name = prefix .. "miniloader"
   local name = loader_name .. "-inserter"
@@ -253,7 +211,6 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   local filter_name = filter_loader_name .. "-inserter"
   local filter_next_upgrade = next_prefix and next_prefix .. "filter-miniloader-inserter"
   local base_entity = data.raw["underground-belt"][base_underground_name]
-  local speed = inserter_speed(base_entity.speed)
   local rounded_items_per_second = math.floor(base_entity.speed * 480 * 100 + 0.5) / 100
   local description = {"",
     "[font=default-semibold][color=255,230,192]", {"description.belt-speed"}, ":[/color][/font] ",
@@ -288,7 +245,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       type = "void",
     },
     extension_speed = 1,
-    rotation_speed = speed,
+    rotation_speed = 0.5,
     fast_replaceable_group = "miniloader-inserter",
     pickup_position = {0, -0.2},
     insert_position = {0, 0.8},
