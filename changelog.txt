@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.1
+Date: 2020-04-11
+  Bufixes:
+    - Fix Picker Dollies integration leaving behind an invisible chest. (https://mods.factorio.com/mod/miniloader/discussion/5e90fadfc0f6d0000e6713ba)
+    - Remove collision masks from miniloader belt portion again, since it broke the ability to fast replace miniloaders.
+    - Make all miniloader inserters max speed again, to hopefully resolve timing issues that cause miniloaders to not keep up with belts in some circumstances. (https://mods.factorio.com/mod/miniloader/discussion/5e8cbf5865e928000cfdd690)
+---------------------------------------------------------------------------------------------------
 Version: 1.11.0
 Date: 2020-04-10
   Changes:
