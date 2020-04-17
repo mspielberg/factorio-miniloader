@@ -164,6 +164,21 @@ local ingredient_sets = {
       {"stack-inserter", 4},
     },
   },
+
+  -- Random Factorio Things
+  ["nuclear-miniloader"] = {
+    {
+      {"nuclear-underground-belt", 1},
+      {"nuclear-stack-inserter", 4}
+    }  
+  }
+  -- ...with PluyoniumEnergy
+  ["plutonium-miniloader"] = {
+    {
+      {"plutonium-underground-belt", 1},
+      {"plutonium-stack-inserter", 4}
+    }
+  }
 }
 
 if data.raw["inserter"]["turbo-inserter"] then
