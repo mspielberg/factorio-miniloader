@@ -218,6 +218,10 @@ local previous_miniloader = {
 
   -- xander-mod
   ["expedited-"] = "fast-",
+
+  -- Random Factorio Things
+  ["nuclear-"] = "express-",
+  ["plutonium"] = "nuclear-"
 }
 
 if data.raw["transport-belt"]["basic-transport-belt"] then
@@ -245,6 +249,10 @@ local filter_inserters = {
 
   -- Krastorio2
   ["kr-superior-inserter"] = "kr-superior-filter-inserter",
+
+  -- Random Factorio Things
+  ["nuclear-stack-inserter"] = "nuclear-stack-filter-inserter"
+  ["plutonium-stack-inserter"] = ["nuclear-stack-filter-inserter"]
 }
 
 -- apply recipe changes due to settings
