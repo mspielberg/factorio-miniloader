@@ -172,7 +172,6 @@ local ingredient_sets = {
       {"nuclear-stack-inserter", 4}
     }  
   },
-  -- ...with PluyoniumEnergy
   ["plutonium-miniloader"] = {
     {
       {"plutonium-underground-belt", 1},
