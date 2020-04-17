@@ -140,7 +140,7 @@ if data.raw.item["se-space-transport-belt"] then
 end
 
 -- RandomFactorioThings and PlutoniumEnergy support
--- note: RFT doesn't adds plutonium tier belts and stuff without PE mod
+-- note: RFT doesn't add belts and other plutonium machinery without PE mod
 if mods["RandomFactorioThings"] then
   templates["nuclear-"] = {
     prerequisite_techs = {"nuclear-logistics", "express-miniloader"},
