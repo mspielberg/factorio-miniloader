@@ -46,6 +46,10 @@ local function on_dolly_moved(event)
   end
 
   loader.destroy()
+
+  -- move chest
+  local chest = entity.surface.find_entity("miniloader-target-chest", old_pos)
+  chest.teleport(new_pos)
 end
 
 function M.on_load()

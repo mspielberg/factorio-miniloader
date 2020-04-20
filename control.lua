@@ -152,15 +152,16 @@ end
 
 local function on_miniloader_mined(ev)
   local entity = ev.entity
+  local buffer = ev.buffer and ev.buffer.valid and ev.buffer
   local inserters = util.get_loader_inserters(entity)
-  if ev.buffer and inserters[1] then
+  if buffer and inserters[1] then
     local _, item_to_place = next(inserters[1].prototype.items_to_place_this)
-    ev.buffer.insert{desired_count=1, name=item_to_place.name}
+    buffer.insert{desired_count=1, name=item_to_place.name}
   end
   for i=1,#inserters do
     -- return items to player / robot if mined
-    if ev.buffer and inserters[i] ~= entity and inserters[i].held_stack.valid_for_read then
-      ev.buffer.insert(inserters[i].held_stack)
+    if buffer and inserters[i] ~= entity and inserters[i].held_stack.valid_for_read then
+      buffer.insert(inserters[i].held_stack)
     end
     inserters[i].destroy()
   end
@@ -172,16 +173,17 @@ end
 
 local function on_miniloader_inserter_mined(ev)
   local entity = ev.entity
+  local buffer = ev.buffer and ev.buffer.valid and ev.buffer
   local loader = entity.surface.find_entities_filtered{
     position = entity.position,
     type = "loader-1x1",
   }[1]
   if loader then
-    if ev.buffer then
+    if buffer then
       for i=1,2 do
         local tl = loader.get_transport_line(i)
-        for j=1,#tl do
-          ev.buffer.insert(tl[j])
+        for j=1,math.min(#tl, 256) do
+          buffer.insert(tl[j])
         end
         tl.clear()
       end
@@ -193,8 +195,8 @@ local function on_miniloader_inserter_mined(ev)
   for i=1,#inserters do
     if inserters[i] ~= entity then
       -- return items in inserter hand to player / robot if mined
-      if ev.buffer and inserters[i].held_stack.valid_for_read then
-        ev.buffer.insert(inserters[i].held_stack)
+      if buffer and inserters[i].held_stack.valid_for_read then
+        buffer.insert(inserters[i].held_stack)
       end
       inserters[i].destroy()
     end

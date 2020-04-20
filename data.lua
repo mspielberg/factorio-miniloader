@@ -21,7 +21,7 @@ end
 if settings.startup["miniloader-enable-chute"].value then
   local standard_enabled = settings.startup["miniloader-enable-standard"].value
   settings.startup["miniloader-enable-standard"].value = true
-  create_miniloader("chute-", "", {"logistics"}, {r=0.5,g=0.5,b=0.5}, "underground-belt")
+  create_miniloader("chute-", "", {"logistics"}, util.color("808080D1"), "underground-belt")
   settings.startup["miniloader-enable-standard"].value = standard_enabled
 
   data.raw.technology["chute-miniloader"] = nil
