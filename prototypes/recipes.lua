@@ -251,7 +251,7 @@ local filter_inserters = {
 
   -- Random Factorio Things
   ["nuclear-stack-inserter"] = "nuclear-stack-filter-inserter"
-  ["plutonium-stack-inserter"] = ["nuclear-stack-filter-inserter"]
+  ["plutonium-stack-inserter"] = "nuclear-stack-filter-inserter"
 }
 
 -- apply recipe changes due to settings
