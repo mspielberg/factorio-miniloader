@@ -79,6 +79,21 @@ if data.raw.item["kr-superior-transport-belt"] then
   }
 end
 
+-- RandomFactorioThings and PlutoniumEnergy support
+-- note: RFT doesn't add belts and other plutonium machinery without PE mod
+if mods["RandomFactorioThings"] then
+  templates["nuclear-"] = {
+    prerequisite_techs = {"nuclear-logistics", "express-miniloader"},
+    tint = {r=0, g=1, b=0}
+  }
+  if mods["PlutoniumEnergy"] then
+    templates["plutonium-"] = {
+      prerequisite_techs = {"plutonium-logistics", "nuclear-miniloader"},
+      tint = {r=0.1,g=0.9,b=0.7}
+    }
+  end
+end
+
 -- UltimateBelts support
 if data.raw.technology["ultimate-logistics"] then
   -- Support both sets of Ultimate Belt colors
@@ -137,23 +152,6 @@ if data.raw.item["se-space-transport-belt"] then
     prerequisite_techs = {"se-space-platform-scaffold"},
     base_underground_name = "se-space-underground-belt",
   }
-end
-
--- RandomFactorioThings and PlutoniumEnergy support
--- note: RFT doesn't add belts and other plutonium machinery without PE mod
-if mods["RandomFactorioThings"] then
-  templates["nuclear-"] = {
-    prerequisite_techs = {"nuclear-logistics", "express-miniloader"},
-    base_underground_name = "nuclear-underground-belt",
-    tint = {r=0, g=1, b=0}
-  }
-  if mods["PlutoniumEnergy"] then
-    templates["plutonium-"] = {
-      prerequisite_techs = {"plutonium-logistics", "nuclear-miniloader"},
-      base_underground_name = "plutonium-underground-belt",
-      tint = {r=0.1,g=0.9,b=0.7}
-    }
-  end
 end
 
 return templates
