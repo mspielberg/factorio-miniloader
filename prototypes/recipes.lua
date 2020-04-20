@@ -169,12 +169,14 @@ local ingredient_sets = {
   ["nuclear-miniloader"] = {
     {
       {"nuclear-underground-belt", 1},
+      {"express-miniloader", 1},
       {"nuclear-stack-inserter", 4}
     }  
   },
   ["plutonium-miniloader"] = {
     {
       {"plutonium-underground-belt", 1},
+      {"nuclear-miniloader", 1},
       {"plutonium-stack-inserter", 4}
     }
   }
@@ -250,7 +252,7 @@ local filter_inserters = {
   ["kr-superior-inserter"] = "kr-superior-filter-inserter",
 
   -- Random Factorio Things
-  ["nuclear-stack-inserter"] = "nuclear-stack-filter-inserter"
+  ["nuclear-stack-inserter"] = "nuclear-stack-filter-inserter",
   ["plutonium-stack-inserter"] = "nuclear-stack-filter-inserter"
 }
 
