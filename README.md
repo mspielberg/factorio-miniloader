@@ -23,6 +23,8 @@ Belts from the following mods are fully supported:
 * Space Exploration
 * Ultimate Belts
 * Xander Mod
+* Random Factorio Things
+* Plutonium Energy
 
 ## Videos and Spotlights
 
