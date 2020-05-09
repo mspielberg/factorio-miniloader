@@ -27,6 +27,14 @@ if data.raw["item"]["ultimate-miniloader"] then
   update("ultimate-")
 end
 
+if mods["boblogistics"] then
+  bobmods.lib.tech.remove_science_pack("express-miniloader", "production-science-pack")
+  if data.raw.tool["advanced-logistic-science-pack"] then
+    bobmods.lib.tech.replace_science_pack("turbo-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+    bobmods.lib.tech.replace_science_pack("ultimate-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+  end
+end
+
 -- catch belt speed changes made by other mods in data stage
 for name, ug in pairs(data.raw["underground-belt"]) do
   local prefix = name:match("(.*)%-underground%-belt")
