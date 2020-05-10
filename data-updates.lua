@@ -32,6 +32,17 @@ if mods["boblogistics"] then
   if data.raw.tool["advanced-logistic-science-pack"] then
     bobmods.lib.tech.replace_science_pack("turbo-miniloader", "production-science-pack", "advanced-logistic-science-pack")
     bobmods.lib.tech.replace_science_pack("ultimate-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+    if settings.startup["followBobTiers"].value == true then
+      bobmods.lib.tech.add_science_pack("ub-ultra-fast-miniloader", "advanced-logistic-science-pack", 1)
+      bobmods.lib.tech.add_science_pack("ub-ultra-fast-miniloader", "utility-science-pack", 1)
+      bobmods.lib.tech.replace_science_pack("ub-extreme-fast-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+      bobmods.lib.tech.add_science_pack("ub-extreme-fast-miniloader", "utility-science-pack", 1)
+      bobmods.lib.tech.replace_science_pack("ub-ultra-express-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+      bobmods.lib.tech.add_science_pack("ub-ultra-express-miniloader", "utility-science-pack", 1)
+      bobmods.lib.tech.replace_science_pack("ub-extreme-express-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+      bobmods.lib.tech.replace_science_pack("ub-ultimate-miniloader", "production-science-pack", "advanced-logistic-science-pack")
+      bobmods.lib.tech.add_science_pack("ub-ultimate-miniloader", "space-science-pack", 1)
+    end
   end
 end
 
