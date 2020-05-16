@@ -57,6 +57,12 @@ Note that filter miniloaders behave like filter inserters, and not like vanilla
 loaders: if no filters are set then no items will be moved. You must set at
 least one filter.
 
+## Localization
+
+Interested in translating Miniloader to your language? Visit
+[Crowdin](https://crowdin.com/project/factorio-mods-localization) and the changes
+will be integrated into the next release.
+
 ## Known Issues
 
 * The power usage UI counts each miniloader multiple times, since it shows the
