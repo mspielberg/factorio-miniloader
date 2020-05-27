@@ -1,5 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.1
+Date: 2020-05-10
+  Changes:
+    - Readjusted Science packs when Bob's mods are present
+---------------------------------------------------------------------------------------------------
+Version: 1.11.1
 Date: 2020-04-11
   Bufixes:
     - Fix Picker Dollies integration leaving behind an invisible chest. (https://mods.factorio.com/mod/miniloader/discussion/5e90fadfc0f6d0000e6713ba)
