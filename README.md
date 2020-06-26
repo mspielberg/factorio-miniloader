@@ -76,3 +76,7 @@ will be integrated into the next release.
 * Articulating &mdash; for the original Loader Snapping.
 * Optera &mdash; for Loader Redux's revised and improved loader snapping code, adapted
   here for Miniloaders with permission.
+
+## Translation
+
+You are welcome to help with localization, please use [this Crowdin project](https://crowdin.com/project/factorio-mods-localization). You can find more details [here](https://github.com/dima74/factorio-mods-localization#how-to-translate-using-crowdin).
