@@ -3,6 +3,7 @@ Version: 1.11.2
 Date: 2020-07-30
   Bugfixes:
     - Fix poor performance when placing blueprints in Factorio 0.18.37+. (https://forums.factorio.com/87261)
+    - Fix snapping setting not affecting snapping when belts are placed. (https://mods.factorio.com/mod/miniloader/discussion/5f1faaa94ab73a606a449c30)
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.1
 Date: 2020-04-11
