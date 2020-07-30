@@ -9,8 +9,6 @@ local util = require("lualib.util")
 
 local compat_pickerextended = require("compat.pickerextended")
 
-local use_snapping = settings.global["miniloader-snapping"].value
-
 --[[
   loader_type = "input"
   +------------------+
@@ -53,6 +51,10 @@ local function register_bobs_blacklist()
       end
     end
   end
+end
+
+local function use_snapping(player_index)
+  return settings.get_player_settings(game.players[player_index])["miniloader-snapping"].value
 end
 
 -- Event Handlers
@@ -124,11 +126,11 @@ local function on_player_built(ev)
     end
 
     local loader = on_built_miniloader(entity, orientation)
-    if use_snapping and not orientation then
+    if use_snapping(ev.player_index) and not orientation then
       -- adjusts direction & loader_type
       snapping.snap_loader(loader)
     end
-  elseif use_snapping then
+  elseif use_snapping(ev.player_index) then
     snapping.check_for_loaders(ev)
   end
 end
@@ -145,7 +147,7 @@ local function on_rotated(ev)
     util.update_inserters(miniloader)
   elseif util.is_miniloader(entity) then
     util.update_inserters(entity)
-  elseif use_snapping then
+  elseif use_snapping(ev.player_index) then
     snapping.check_for_loaders(ev)
   end
 end
@@ -368,9 +370,7 @@ event.register(defines.events.on_canceled_deconstruction, on_canceled_deconstruc
 event.register(defines.events.on_marked_for_upgrade, on_marked_for_upgrade)
 
 event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
-  if ev.setting == "miniloader-snapping" then
-    use_snapping = settings.global["miniloader-snapping"].value
-  elseif ev.setting == "miniloader-lock-stack-sizes" then
+  if ev.setting == "miniloader-lock-stack-sizes" then
     local size = settings.global["miniloader-lock-stack-sizes"].value and 1 or 0
     miniloader.forall(function(surface, miniloader)
       for _, inserter in pairs(util.get_loader_inserters(miniloader)) do
