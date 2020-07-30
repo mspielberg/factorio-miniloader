@@ -108,7 +108,7 @@ function M.bounding_box(bp)
   local bottom = -math.huge
 
   local entities = bp.get_blueprint_entities()
-  if entities then
+  if entities and next(entities) then
     for _, e in pairs(entities) do
       local pos = e.position
       if pos.x < left then left = pos.x - 0.5 end
@@ -116,6 +116,8 @@ function M.bounding_box(bp)
       if pos.x > right then right = pos.x + 0.5 end
       if pos.y > bottom then bottom = pos.y + 0.5 end
     end
+  else
+    left, top, right, bottom = 0, 0, 0, 0
   end
 
   local center_x = (right - left) / 2
