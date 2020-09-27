@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.12.1
+Date: 2020-09-27
+  Bugfixes:
+    - Fix crash when snapping to a non-belt entity. (https://mods.factorio.com/mod/miniloader/discussion/5f70290bc7cfa2d0e5e5bde4)
+---------------------------------------------------------------------------------------------------
 Version: 1.12.0
 Date: 2020-09-26
   Minor Features:

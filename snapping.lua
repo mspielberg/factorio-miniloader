@@ -96,8 +96,7 @@ local function idiot_snap(loader, entity)
   if axis_distance(ep, lp, util.opposite_direction(direction)) > distance then
     direction = util.opposite_direction(direction)
   end
-  if loader.direction ~= direction or loader.loader_type ~= "output" then
-    --loader.surface.create_entity{name="flying-text", position={loader.position.x-.25, loader.position.y-.5}, text = "^", color = {r=1}}
+  if loader.direction ~= direction or loader.type == "entity-ghost" or loader.loader_type ~= "output" then
     util.update_miniloader(loader, direction, "output")
     return true
   end
