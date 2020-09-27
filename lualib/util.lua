@@ -199,7 +199,24 @@ function util.get_loader_inserters(entity)
   return out
 end
 
+local function update_miniloader_ghost(ghost, direction, type)
+  local position = ghost.position
+  -- We should normally destroy the ghost and recreate it facing the right direction,
+  -- but destroying an entity during its on_built_entity handler makes for compatibility
+  -- headaches.
+  if type == "input" then
+    ghost.pickup_position = position
+    ghost.drop_position = moveposition(position, offset(direction, 1, 0))
+  else
+    ghost.pickup_position = moveposition(position, offset(direction, -1, 0))
+    ghost.drop_position = position
+  end
+end
+
 function util.update_miniloader(entity, direction, type)
+  if entity.type == "entity-ghost" and entity.ghost_type == "inserter" then
+    return update_miniloader_ghost(entity, direction, type)
+  end
   if entity.loader_type ~= type then
     entity.rotate()
   end

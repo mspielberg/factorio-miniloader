@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.11.4
+Version: 1.12.0
 Date: XXXX-XX-XX
+  Minor Features:
+    - Apply snapping to miniloader ghosts when placed by a player. (https://mods.factorio.com/mod/miniloader/discussion/5f3c350a14ad95fdcafc77d6)
+    - Update officially to Factorio 1.0.
   Bugfixes:
     - Fix crash on startup when disabling normal miniloaders but leaving filter miniloaders enabled (https://mods.factorio.com/mod/miniloader/discussion/5f69433361c8c581e99227cd)
 ---------------------------------------------------------------------------------------------------

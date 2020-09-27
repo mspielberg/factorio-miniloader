@@ -68,7 +68,7 @@ local function snap_loader_to_target(loader, entity)
     return false
   end
 
-  if direction ~= ldir or loader.loader_type ~= type then
+  if direction ~= ldir or loader.type == "entity-ghost" or loader.loader_type ~= type then
     util.update_miniloader(loader, direction, type)
   end
   return true

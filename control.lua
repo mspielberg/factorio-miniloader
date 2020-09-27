@@ -128,6 +128,8 @@ local function on_player_built(ev)
       -- adjusts direction & loader_type
       snapping.snap_loader(loader)
     end
+  elseif use_snapping and entity.type == "entity-ghost" and util.is_miniloader_inserter_name(entity.ghost_name) then
+    snapping.snap_loader(entity)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
   end
