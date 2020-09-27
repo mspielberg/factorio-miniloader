@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.4
+Date: XXXX-XX-XX
+  Bugfixes:
+    - Fix crash on startup when disabling normal miniloaders but leaving filter miniloaders enabled (https://mods.factorio.com/mod/miniloader/discussion/5f69433361c8c581e99227cd)
+---------------------------------------------------------------------------------------------------
 Version: 1.11.3
 Date: 2020-07-30
   Bugfixes:

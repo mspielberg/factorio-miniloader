@@ -307,7 +307,7 @@ local function create_recipes(prefix)
 
   local filter_recipe = util.table.deepcopy(recipe)
   filter_recipe.name = filter_name
-  if previous_miniloader[prefix] and data.raw.item[previous_miniloader[prefix]] then
+  if previous_miniloader[prefix] and data.raw.item[previous_miniloader[prefix] .. "filter-miniloader"] then
     filter_recipe.ingredients[1][1] = previous_miniloader[prefix] .. "filter-miniloader"
   end
   local inserter_index, inserter_name
