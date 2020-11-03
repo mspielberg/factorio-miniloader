@@ -226,7 +226,10 @@ local function on_placed_blueprint(ev, player, bp)
     util.rotate_box(bp_area, ev.direction),
     ev.position
   )
+  local old_snapping = use_snapping
+  use_snapping = false
   event.on_next_tick(function()
+    use_snapping = old_snapping
     if not surface.valid then return end
     local inserter_entities = surface.find_entities_filtered{
       area = surface_area,
