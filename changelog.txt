@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.12.2
+Date: 2020-11-03
+  Bugfixes:
+    - Fix crash when blueprinting only tiles. (https://mods.factorio.com/mod/miniloader/discussion/5f22fbe962d0188b18b80c49)
+    - Fix snapping affecting blueprints unintentionally. (https://mods.factorio.com/mod/miniloader/discussion/5f720f57c0437e6cde6d4687)
+---------------------------------------------------------------------------------------------------
 Version: 1.12.1
 Date: 2020-09-27
   Bugfixes:
@@ -11,12 +17,6 @@ Date: 2020-09-26
     - Update officially to Factorio 1.0.
   Bugfixes:
     - Fix crash on startup when disabling normal miniloaders but leaving filter miniloaders enabled (https://mods.factorio.com/mod/miniloader/discussion/5f69433361c8c581e99227cd)
----------------------------------------------------------------------------------------------------
-Version: 1.11.3
-Date: 2020-07-30
-  Bugfixes:
-    - Fix crash when blueprinting only tiles. (https://mods.factorio.com/mod/miniloader/discussion/5f22fbe962d0188b18b80c49)
-    - Fix snapping affecting blueprints unintentionally. (https://mods.factorio.com/mod/miniloader/discussion/5f720f57c0437e6cde6d4687)
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.2
 Date: 2020-07-30
