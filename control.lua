@@ -58,6 +58,7 @@ end
 -- Event Handlers
 
 local function on_init()
+  global.player_placed_blueprint = {}
   circuit.on_init()
   compat_pickerextended.on_load()
 end
@@ -128,7 +129,10 @@ local function on_player_built(ev)
       -- adjusts direction & loader_type
       snapping.snap_loader(loader)
     end
-  elseif use_snapping and entity.type == "entity-ghost" and util.is_miniloader_inserter_name(entity.ghost_name) then
+  elseif use_snapping
+  and entity.type == "entity-ghost"
+  and util.is_miniloader_inserter_name(entity.ghost_name)
+  and global.player_placed_blueprint[ev.player_index] ~= ev.tick then
     snapping.snap_loader(entity)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
@@ -220,16 +224,15 @@ local function on_mined(ev)
 end
 
 local function on_placed_blueprint(ev, player, bp)
+  global.player_placed_blueprint[ev.player_index] = ev.tick
+
   local surface = player.surface
   local bp_area = blueprint.bounding_box(bp)
   local surface_area = util.move_box(
     util.rotate_box(bp_area, ev.direction),
     ev.position
   )
-  local old_snapping = use_snapping
-  use_snapping = false
   event.on_next_tick(function()
-    use_snapping = old_snapping
     if not surface.valid then return end
     local inserter_entities = surface.find_entities_filtered{
       area = surface_area,

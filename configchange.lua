@@ -293,6 +293,15 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_12_3_add_global_player_placed_blueprint",
+  low = {0,0,0},
+  high = {1,12,3},
+  task = function()
+    global.player_placed_blueprint = {}
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do
