@@ -30,8 +30,8 @@ local function create_loaders(prefix, base_underground_name, tint)
   entity.flags = {"player-creation"}
   entity.localised_name = {"entity-name." .. loader_name}
   entity.minable = nil
-  entity.collision_box = {{-0.2, -0.2}, {0.2, 0.2}}
-  entity.collision_mask = {}
+  entity.collision_box = {{-0.3, -0.3}, {0.3, 0.3}}
+  entity.collision_mask = {"transport-belt-layer"}
   entity.selection_box = {{0, 0}, {0, 0}}
   entity.filter_count = 0
   entity.fast_replaceable_group = "loader"
@@ -255,7 +255,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
       sheets = {
         -- Base
         {
-          filename = "__miniloader__/graphics/entity/miniloader-inserter-base.png",			
+          filename = "__miniloader__/graphics/entity/miniloader-inserter-base.png",
           width    = 96,
           height   = 96,
           y        = 96,
@@ -271,7 +271,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
         },
         -- Mask
         {
-          filename = "__miniloader__/graphics/entity/miniloader-structure-mask.png",			
+          filename = "__miniloader__/graphics/entity/miniloader-structure-mask.png",
           width    = 96,
           height   = 96,
           y        = 96,
@@ -289,7 +289,7 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
         },
         -- Shadow
         {
-          filename = "__miniloader__/graphics/entity/miniloader-structure-shadow.png",			
+          filename = "__miniloader__/graphics/entity/miniloader-structure-shadow.png",
           width    = 96,
           height   = 96,
           y        = 96,

@@ -11,7 +11,7 @@
   on_player_cursor_stack_changed: after 1
   on_robot_built_entity: 2
   on_built_entity: 3
-  on_put_item: 4
+  on_pre_build: 4
   on_tick: after 4
 ]]
 
@@ -242,19 +242,17 @@ local function setup_after_blueprint_placed(preexisting_entities)
   event.register(defines.events.on_tick, handler)
 end
 
-local function on_put_item(ev)
-  if ev.mod_name == 'Bluebuild' then return end
+local function on_pre_build(ev)
   local player = game.players[ev.player_index]
-  if not player.cursor_stack then
-    log("on_put_item event sent from "..ev.mod_name.." while player cursor_stack is empty")
-    return
-  end
   if not blueprint.is_setup_bp(player.cursor_stack) then return end
   local bp = player.cursor_stack
   local bp_area = blueprint.bounding_box(bp)
-  local surface_area = util.move_box(
-    util.rotate_box(bp_area, ev.direction),
-    ev.position
+  local surface_area = util.expand_box(
+    util.move_box(
+      util.rotate_box(bp_area, ev.direction),
+      ev.position
+    ),
+    1
   )
   local preexisting_entities = player.surface.find_entities(surface_area)
   -- check again at the end of this tick, after blueprint has been placed
@@ -288,7 +286,7 @@ function M.on_load()
     {defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died},
     on_entity_mined
   )
-  event.register(defines.events.on_put_item, on_put_item)
+  event.register(defines.events.on_pre_build, on_pre_build)
 end
 
 return M

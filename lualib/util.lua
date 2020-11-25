@@ -73,6 +73,13 @@ function util.move_box(box, offset)
   }
 end
 
+function util.expand_box(box, size)
+  return {
+    left_top = { x = box.left_top.x - size, y = box.left_top.y - size },
+    right_bottom = { x = box.right_bottom.x + size, y = box.right_bottom.y + size },
+  }
+end
+
 function util.entity_key(entity)
   return entity.surface.name.."@"..entity.position.x..","..entity.position.y
 end

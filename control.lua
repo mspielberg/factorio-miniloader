@@ -248,7 +248,7 @@ local function on_placed_blueprint(ev, player, bp)
   end)
 end
 
-local function on_put_item(ev)
+local function on_pre_build(ev)
   local player_index = ev.player_index
   local player = game.players[player_index]
   local cursor_stack = player.cursor_stack
@@ -367,7 +367,7 @@ event.register(defines.events.script_raised_revive, on_script_revive)
 event.register(defines.events.script_raised_destroy, on_mined)
 
 event.register(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
-event.register(defines.events.on_put_item, on_put_item)
+event.register(defines.events.on_pre_build, on_pre_build)
 
 event.register(defines.events.on_player_setup_blueprint, on_setup_blueprint)
 event.register(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)

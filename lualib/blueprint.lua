@@ -120,8 +120,8 @@ function M.bounding_box(bp)
     left, top, right, bottom = 0, 0, 0, 0
   end
 
-  local center_x = (right - left) / 2
-  local center_y = (bottom - top) / 2
+  local center_x = (right + left) / 2
+  local center_y = (bottom + top) / 2
 
   return {
     left_top = {x = left - center_x, y = top - center_y},
