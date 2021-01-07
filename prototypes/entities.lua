@@ -319,6 +319,9 @@ local function create_inserters(prefix, next_prefix, base_underground_name, tint
   if prefix == "space-" then
     loader_inserter.collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"}
   end
+  if prefix == "deep-space-" then
+    loader_inserter.collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"}
+  end
 
   if settings.startup["miniloader-energy-usage"].value then
     loader_inserter.energy_per_movement = "2kJ"
