@@ -84,12 +84,12 @@ end
 if mods["RandomFactorioThings"] then
   templates["nuclear-"] = {
     prerequisite_techs = {"nuclear-logistics", "express-miniloader"},
-    tint = {r=0, g=1, b=0}
+    tint = util.color("00ff00")
   }
   if mods["PlutoniumEnergy"] then
     templates["plutonium-"] = {
       prerequisite_techs = {"plutonium-logistics", "nuclear-miniloader"},
-      tint = {r=0.1,g=0.9,b=0.7}
+      tint = util.color("00e1ffde")
     }
   end
 end
