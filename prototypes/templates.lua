@@ -154,4 +154,13 @@ if data.raw.item["se-space-transport-belt"] then
   }
 end
 
+if data.raw.item["se-deep-space-transport-belt-black"] then
+  templates["deep-space-"] = {
+    prerequisite_techs = {"se-deep-space-transport-belt"},
+    tint = {r=0,g=0,b=0},
+    base_underground_name = "se-deep-space-underground-belt-black",
+  }
+  templates["space-"]["next_prefix"] = "deep-space-"
+end
+
 return templates
