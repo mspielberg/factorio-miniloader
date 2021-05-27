@@ -123,6 +123,10 @@ local function on_player_built(ev)
        miniloader_mined.tick == ev.tick and
        miniloader_mined.player_index == ev.player_index then
       orientation = miniloader_mined.orientation
+    elseif global.player_placed_blueprint[ev.player_index] == ev.tick then
+      -- Editor instant blueprint construction fires as on_player_built during same tick as blueprint being placed
+      -- No ghost is placed at all.
+      orientation = util.orientation_from_inserters(entity)
     end
 
     local loader = on_built_miniloader(entity, orientation)
