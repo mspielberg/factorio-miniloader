@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: X.X.X
+Date: XXXX-XX-XX
+  Bugfixes:
+    - Fix crash when creating a blueprint using a blueprint book with a blank blueprint in the active slot, and holding Shift to bypass the configuration dialog. (https://mods.factorio.com/mod/miniloader/discussion/60a412070a985520b1abd862)
+---------------------------------------------------------------------------------------------------
 Version: 1.13.1
 Date: 2021-01-04
   Bugfixes:

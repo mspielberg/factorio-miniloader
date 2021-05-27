@@ -308,6 +308,9 @@ local function on_setup_blueprint(ev)
   if not bp or not bp.valid_for_read then
     bp = player.cursor_stack
   end
+  while bp.is_blueprint_book do
+    bp = bp.get_inventory(defines.inventory.item_main)[bp.active_index]
+  end
   blueprint.filter_miniloaders(bp)
 end
 
