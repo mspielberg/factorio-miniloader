@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.1
+Date: 2021-05-26
+  Bugfixes:
+    - Fix miniloaders being reset to input during save game migration. (https://mods.factorio.com/mod/miniloader/discussion/60afa0accd95c9c1f1597447)
+---------------------------------------------------------------------------------------------------
 Version: 1.14.0
 Date: 2021-05-26
   Minor Features:

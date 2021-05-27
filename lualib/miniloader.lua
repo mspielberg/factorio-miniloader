@@ -134,7 +134,12 @@ end
 
 local function fixup(main_inserter, orientation)
   if not orientation then
-    orientation = {direction = util.opposite_direction(main_inserter.direction), type = "input"}
+    local existing_loader = util.find_miniloaders{surface = main_inserter.surface, position = main_inserter.position}[1]
+    if existing_loader then
+      orientation = {direction = existing_loader.direction, type = existing_loader.loader_type}
+    else
+      orientation = {direction = util.opposite_direction(main_inserter.direction), type = "input"}
+    end
   end
   local loader = ensure_loader(main_inserter, orientation)
   ensure_inserters(util.num_inserters(loader), main_inserter)
