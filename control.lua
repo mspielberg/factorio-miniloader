@@ -237,18 +237,46 @@ local function on_placed_blueprint(ev, player, bp)
     util.rotate_box(bp_area, ev.direction),
     ev.position
   )
-  event.on_next_tick(function()
-    if not surface.valid then return end
-    local inserter_entities = surface.find_entities_filtered{
+
+  local blueprint_contained_miniloader = false
+  for _, bp_entity in pairs(bp.get_blueprint_entities()) do
+    if util.is_miniloader_inserter_name(bp_entity.name) then
+      blueprint_contained_miniloader = true
+      break
+    end
+  end
+
+  if blueprint_contained_miniloader then
+    -- remember where we have placed a blueprint so we can check for changes next tick
+    if not global.placed_blueprint_areas then global.placed_blueprint_areas = {} end
+    global.placed_blueprint_areas[#global.placed_blueprint_areas+1] = {
+      surface = surface,
       area = surface_area,
-      type = "inserter",
     }
-    for _, e in pairs(inserter_entities) do
-      if util.is_miniloader_inserter(e) then
-        miniloader.fixup(e, util.orientation_from_inserters(e))
+  end
+end
+
+-- A blueprint placed over existing miniloaders in the previous tick
+-- may have changed their orientation.
+local function check_placed_blueprints_for_miniloaders()
+  if not global.placed_blueprint_areas or not next(global.placed_blueprint_areas) then return end
+  for _, data in ipairs(global.placed_blueprint_areas) do
+    local surface = data.surface
+    local area = data.area
+    if surface.valid then
+      local inserter_entities = surface.find_entities_filtered{
+        area = area,
+        type = "inserter",
+      }
+      for _, e in pairs(inserter_entities) do
+        if util.is_miniloader_inserter(e) then
+          miniloader.fixup(e, util.orientation_from_inserters(e))
+        end
       end
     end
-  end)
+  end
+
+  global.placed_blueprint_areas = {}
 end
 
 local function on_pre_build(ev)
@@ -393,3 +421,5 @@ event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
     end)
   end
 end)
+
+event.register(defines.events.on_tick, check_placed_blueprints_for_miniloaders)
