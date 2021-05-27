@@ -61,6 +61,7 @@ local function on_init()
   global.player_placed_blueprint = {}
   circuit.on_init()
   compat_pickerextended.on_load()
+  register_bobs_blacklist()
 end
 
 local function on_load()
