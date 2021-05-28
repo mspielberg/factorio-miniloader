@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.2
+Date: 2021-05-27
+  Bugfixes:
+    - Fix crash when placing blueprint with no entities. (https://mods.factorio.com/mod/miniloader/discussion/60afed6b3b5d1012994e3b1d)
+---------------------------------------------------------------------------------------------------
 Version: 1.14.1
 Date: 2021-05-27
   Bugfixes:

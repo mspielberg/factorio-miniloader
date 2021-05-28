@@ -239,7 +239,7 @@ local function on_placed_blueprint(ev, player, bp)
   )
 
   local blueprint_contained_miniloader = false
-  for _, bp_entity in pairs(bp.get_blueprint_entities()) do
+  for _, bp_entity in pairs(bp.get_blueprint_entities() or {}) do
     if util.is_miniloader_inserter_name(bp_entity.name) then
       blueprint_contained_miniloader = true
       break
