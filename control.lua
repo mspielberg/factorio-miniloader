@@ -59,6 +59,7 @@ end
 
 local function on_init()
   global.player_placed_blueprint = {}
+  global.previous_opened_blueprint_for = {}
   circuit.on_init()
   compat_pickerextended.on_load()
   register_bobs_blacklist()
@@ -335,15 +336,21 @@ local function on_entity_settings_pasted(ev)
   end
 end
 
+local function on_gui_closed(event)
+  if event.gui_type == defines.gui_type.item
+  and event.item
+  and event.item.is_blueprint
+  and event.item.is_blueprint_setup()
+  then
+    global.previous_opened_blueprint_for[event.player_index] = {
+      blueprint = event.item,
+      tick = event.tick,
+    }
+  end
+end
+
 local function on_setup_blueprint(ev)
-  local player = game.players[ev.player_index]
-  local bp = player.blueprint_to_setup
-  if not bp or not bp.valid_for_read then
-    bp = player.cursor_stack
-  end
-  while bp.is_blueprint_book do
-    bp = bp.get_inventory(defines.inventory.item_main)[bp.active_index]
-  end
+  local bp = blueprint.get_blueprint_to_setup(ev.player_index)
   blueprint.filter_miniloaders(bp)
 end
 
@@ -408,6 +415,8 @@ event.register(defines.events.on_marked_for_deconstruction, on_marked_for_decons
 event.register(defines.events.on_canceled_deconstruction, on_canceled_deconstruction)
 
 event.register(defines.events.on_marked_for_upgrade, on_marked_for_upgrade)
+
+event.register(defines.events.on_gui_closed, on_gui_closed)
 
 event.register(defines.events.on_runtime_mod_setting_changed, function(ev)
   if ev.setting == "miniloader-snapping" then
