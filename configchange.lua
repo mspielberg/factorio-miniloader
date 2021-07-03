@@ -96,7 +96,7 @@ add_migration{
 }
 
 add_migration{
-  name = "v1_14_3_add_global_last_openet_blueprint",
+  name = "v1_14_3_add_global_previous_opened_blueprint_for",
   low = {0,0,0},
   high = {1,14,3},
   task = function()
