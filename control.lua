@@ -137,9 +137,21 @@ local function on_player_built(ev)
     end
   elseif use_snapping
   and entity.type == "entity-ghost"
-  and util.is_miniloader_inserter_name(entity.ghost_name)
-  and global.player_placed_blueprint[ev.player_index] ~= ev.tick then
-    snapping.snap_loader(entity)
+  and util.is_miniloader_inserter_name(entity.ghost_name) then
+    if global.player_placed_blueprint[ev.player_index] == ev.tick then
+      -- ghost placed as part of blueprint
+      -- remove duplicate ghosts
+      local colocated_ghosts = entity.surface.find_entities_filtered{
+        position = entity.position,
+        ghost_name = entity.ghost_name,
+      }
+      for i=1,#colocated_ghosts-1 do
+        colocated_ghosts[i].destroy()
+      end
+    else
+      -- single ghost placed with shift click
+      snapping.snap_loader(entity)
+    end
   elseif use_snapping then
     snapping.check_for_loaders(ev)
   end

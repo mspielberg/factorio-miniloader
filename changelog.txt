@@ -2,7 +2,8 @@
 Version: 1.14.3
 Date: 2021-XX-XX
   Bugfixes:
-    - Change logic for blueprint setup when using Select New Contents button. (https://mods.factorio.com/mod/miniloader/discussion/60b12ec417dbea783f0ec190)
+    - Prevent Select New Contents button from creating blueprints with multiple miniloaders in the same position. (https://mods.factorio.com/mod/miniloader/discussion/60b12ec417dbea783f0ec190)
+    - Add workaround when placing blueprints with multiple miniloaders in the same position. (https://mods.factorio.com/mod/miniloader/discussion/60b12ec417dbea783f0ec190)
 ---------------------------------------------------------------------------------------------------
 Version: 1.14.2
 Date: 2021-05-27
