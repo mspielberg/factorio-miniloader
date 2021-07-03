@@ -211,12 +211,14 @@ local function update_miniloader_ghost(ghost, direction, type)
   -- We should normally destroy the ghost and recreate it facing the right direction,
   -- but destroying an entity during its on_built_entity handler makes for compatibility
   -- headaches.
+
+  -- add offset within tile to inform orientation_from_inserters that this ghost is preconfigured
   if type == "input" then
-    ghost.pickup_position = position
-    ghost.drop_position = moveposition(position, offset(direction, 1, 0))
+    ghost.pickup_position = moveposition(position, offset(direction, 0.25, 0.25))
+    ghost.drop_position = moveposition(position, offset(direction, 1, 0.25))
   else
-    ghost.pickup_position = moveposition(position, offset(direction, -1, 0))
-    ghost.drop_position = position
+    ghost.pickup_position = moveposition(position, offset(direction, -1, 0.25))
+    ghost.drop_position = moveposition(position, offset(direction, 0.25, 0.25))
   end
 end
 
