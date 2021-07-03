@@ -271,7 +271,9 @@ end
 
 function util.orientation_from_inserters(entity)
   local inserter = util.select_main_inserter(entity.surface, entity.position)
-  if inserter.drop_position.x > inserter.position.x + 0.5 then
+  if inserter.drop_position.x == inserter.position.x or inserter.drop_position.y == inserter.position.y then
+    return nil -- freshly placed with no inherited positions
+  elseif inserter.drop_position.x > inserter.position.x + 0.5 then
     return {direction=defines.direction.east, type="input"}
   elseif inserter.drop_position.x < inserter.position.x - 0.5 then
     return {direction=defines.direction.west, type="input"}

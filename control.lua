@@ -108,28 +108,11 @@ local function on_script_revive(ev)
   end
 end
 
-local miniloader_mined
-
 local function on_player_built(ev)
   local entity = ev.created_entity
-  if ev.mod_name then
-    -- might be circuit connected or have filter settings
-    on_robot_built(ev)
-    return
-  end
 
   if util.is_miniloader_inserter(entity) then
-    local orientation
-    if miniloader_mined and
-       miniloader_mined.tick == ev.tick and
-       miniloader_mined.player_index == ev.player_index then
-      orientation = miniloader_mined.orientation
-    elseif global.player_placed_blueprint[ev.player_index] == ev.tick then
-      -- Editor instant blueprint construction fires as on_player_built during same tick as blueprint being placed
-      -- No ghost is placed at all.
-      orientation = util.orientation_from_inserters(entity)
-    end
-
+    local orientation = util.orientation_from_inserters(entity)
     local loader = on_built_miniloader(entity, orientation)
     if use_snapping and not orientation then
       -- adjusts direction & loader_type
@@ -299,37 +282,14 @@ local function on_pre_build(ev)
   if cursor_stack and blueprint.is_setup_bp(cursor_stack) then
     return on_placed_blueprint(ev, player, cursor_stack)
   end
-  local entities = player.surface.find_entities_filtered{position = ev.position}
-  for _, entity in ipairs(entities) do
-    if entity.name == "entity-ghost" and util.is_miniloader_inserter_name(entity.ghost_name) then
-      -- building over a ghost
-      miniloader_mined = {
-        tick = ev.tick,
-        player_index = player_index,
-        orientation = util.orientation_from_inserters(entity),
-      }
-      return
-    end
-  end
 end
 
 local function on_player_mined_entity(ev)
-  local entity = ev.entity
-  if util.is_miniloader_inserter(entity) then
-    -- might be a fast replace, so store current orientation
-    miniloader_mined = {
-      tick = ev.tick,
-      player_index = ev.player_index,
-      orientation = util.orientation_from_inserters(entity),
-    }
-  end
   on_mined(ev)
 end
 
 local function on_robot_pre_mined(ev)
-  if ev.instant_deconstruction then
-    on_mined(ev)
-  end
+  on_mined(ev)
 end
 
 local function on_entity_settings_pasted(ev)
