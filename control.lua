@@ -325,6 +325,7 @@ end
 
 local function on_setup_blueprint(ev)
   local bp = blueprint.get_blueprint_to_setup(ev.player_index)
+  if not bp then return end
   blueprint.filter_miniloaders(bp)
 end
 
