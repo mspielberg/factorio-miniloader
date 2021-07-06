@@ -280,7 +280,7 @@ end
 local function on_pre_build(ev)
   local player_index = ev.player_index
   local player = game.players[player_index]
-  local bp_entities = bp.get_blueprint_entities()
+  local bp_entities = player.get_blueprint_entities()
   if bp_entities then
     return on_placed_blueprint(ev, player, bp_entities)
   end
