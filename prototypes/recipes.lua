@@ -185,6 +185,21 @@ local ingredient_sets = {
       {"nuclear-miniloader", 1},
       {"plutonium-stack-inserter", 4}
     }
+  },
+  --modmashsplinterlogistics
+  ["high-speed-miniloader"] = {
+    {
+      {"high-speed-underground-belt-structure", 1},
+      {"express-miniloader", 1},
+	  {"stack-inserter", 8}
+    }  
+  },
+  ["regenerative-miniloader"] = {
+    {
+      {"regenerative-underground-belt-structure", 1},
+      {"high-speed-miniloader", 1},
+	  {"stack-inserter", 16}
+    }
   }
 }
 

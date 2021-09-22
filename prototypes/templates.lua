@@ -163,4 +163,20 @@ if data.raw.item["se-deep-space-transport-belt-black"] then
   templates["space-"]["next_prefix"] = "deep-space-"
 end
 
+--modmashsplinterlogistics
+if data.raw.item["high-speed-transport-belt"] then
+  templates["high-speed-"] = {
+    prerequisite_techs = {"logistics-4"},
+	tint = {r=218,g=205,b=183},
+    base_underground_name = "high-speed-underground-belt-structure",
+  }
+end
+if data.raw.item["regenerative-transport-belt"] then
+  templates["regenerative-"] = {
+    prerequisite_techs = {"logistics-5"},
+	tint = {r=230,g=30,b=230},
+    base_underground_name = "regenerative-underground-belt-structure",
+  }
+end
+
 return templates
