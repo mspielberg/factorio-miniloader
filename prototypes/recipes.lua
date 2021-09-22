@@ -191,14 +191,14 @@ local ingredient_sets = {
     {
       {"high-speed-underground-belt-structure", 1},
       {"express-miniloader", 1},
-	  {"stack-inserter", 8}
+      {"stack-inserter", 8}
     }  
   },
   ["regenerative-miniloader"] = {
     {
       {"regenerative-underground-belt-structure", 1},
       {"high-speed-miniloader", 1},
-	  {"stack-inserter", 16}
+      {"stack-inserter", 16}
     }
   }
 }
