@@ -1,6 +1,6 @@
 {
 	"name": "miniloader",
-	"version": "1.14.6",
+	"version": "1.14.8",
 	"factorio_version": "1.1",
 	"title": "Miniloader",
 	"author": "Therax",
@@ -16,6 +16,7 @@
 		"? UltimateBelts >= 0.16.4",
 		"? UltimateBelts_Owoshima_And_Pankeko-Mod >= 0.16.4",
 		"? space-exploration >= 0.1.95",
-		"(?) SchallBeltConfiguration"
+		"(?) SchallBeltConfiguration",
+		"? modmashsplinterlogistics"
 	]
 }
