@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.8
+Date: 2022-01-17
+  Bugfixes:
+    - Remove ancient hack for Creative Mod compatibility that was causing items to be lost when robots mine miniloaders. (https://mods.factorio.com/mod/miniloader/discussion/61de19d0312787dc9688dbc3)
+---------------------------------------------------------------------------------------------------
 Version: 1.14.7
 Date: 2022-01-17
   Bugfixes:
