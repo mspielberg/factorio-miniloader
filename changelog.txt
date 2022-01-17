@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.7
+Date: 2022-01-17
+  Bugfixes:
+    - Fix circuit wire connections sometimes getting lost when using Construction Drones.
+    - Prevent miniloaders from snapping when using undo after deconstruction.
+  Translation:
+    - Update translations for fr, zh-TW.
+---------------------------------------------------------------------------------------------------
 Version: 1.14.6
 Date: 2021-09-10
   Bugfixes:
