@@ -183,4 +183,8 @@ function M.on_load()
   onwireplaced.on_load()
 end
 
+function M.on_configuration_changed()
+  onwireplaced.on_configuration_changed()
+end
+
 return M
