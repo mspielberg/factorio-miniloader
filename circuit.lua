@@ -4,20 +4,22 @@ local util = require "lualib.util"
 
 local M = {}
 
-function M.sync_filters(entity)
+local function sync_inserter_filters(inserters, source_index)
+  if #inserters < 3 then
+    return
+  end
+
+  local source_inserter = inserters[source_index]
   local filters = {}
-  local slots = entity.filter_slot_count
-  local inserter_filter_mode
+  local slots = source_inserter.filter_slot_count
+  local inserter_filter_mode = source_inserter.inserter_filter_mode
 
   for i=1,slots do
-    filters[i] = entity.get_filter(i)
-  end
-  if entity.type == "inserter" then
-    inserter_filter_mode = entity.inserter_filter_mode
+    filters[i] = source_inserter.get_filter(i)
   end
 
-  local inserters = util.get_loader_inserters(entity)
-  for _, ins in ipairs(inserters) do
+  for i = source_index + 2, #inserters, 2 do
+    local ins = inserters[i]
     for j=1,slots do
       ins.set_filter(j, filters[j])
     end
@@ -25,6 +27,35 @@ function M.sync_filters(entity)
       ins.inserter_filter_mode = inserter_filter_mode
     end
   end
+end
+
+local function sync_left_to_right_inserter_filters(inserters)
+  local source_inserter = inserters[1]
+  local filters = {}
+  local slots = source_inserter.filter_slot_count
+  local inserter_filter_mode = source_inserter.inserter_filter_mode
+
+  for i=1,slots do
+    filters[i] = source_inserter.get_filter(i)
+  end
+
+  local dest_inserter = inserters[2]
+  for j=1,slots do
+    dest_inserter.set_filter(j, filters[j])
+  end
+  if inserter_filter_mode then
+    dest_inserter.inserter_filter_mode = inserter_filter_mode
+  end
+end
+
+function M.sync_filters(entity)
+  local inserters = util.get_loader_inserters(entity)
+  local loader = (util.find_miniloaders{surface = entity.surface, position = entity.position})[1]
+  if not util.is_filter_miniloader_inserter(inserters[1]) or loader.loader_type == "input" then
+    sync_left_to_right_inserter_filters(inserters)
+  end
+  sync_inserter_filters(inserters, 1)
+  sync_inserter_filters(inserters, 2)
 end
 
 local function inserter_with_control_behavior(inserters)

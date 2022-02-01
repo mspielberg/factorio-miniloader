@@ -3,7 +3,7 @@ local circuit = require("circuit")
 local configchange = require("configchange")
 local event = require("lualib.event")
 local miniloader = require("lualib.miniloader")
-local _ = require("gui")
+local gui = require("gui")
 local snapping = require("snapping")
 local util = require("lualib.util")
 
@@ -62,12 +62,14 @@ local function on_init()
   global.previous_opened_blueprint_for = {}
   circuit.on_init()
   compat_pickerextended.on_load()
+  gui.on_init()
   register_bobs_blacklist()
 end
 
 local function on_load()
   circuit.on_load()
   compat_pickerextended.on_load()
+  gui.on_load()
 end
 
 local function on_configuration_changed(configuration_changed_data)
@@ -75,6 +77,7 @@ local function on_configuration_changed(configuration_changed_data)
   if mod_change and mod_change.old_version and mod_change.old_version ~= mod_change.new_version then
     configchange.on_mod_version_changed(mod_change.old_version)
     circuit.on_configuration_changed()
+    gui.on_configuration_changed()
   end
   register_bobs_blacklist()
   configchange.fix_inserter_counts()

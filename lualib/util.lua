@@ -152,6 +152,14 @@ function util.is_miniloader_inserter_name(name)
   return name:find("miniloader%-inserter$") ~= nil
 end
 
+function util.is_filter_miniloader_inserter(entity)
+  return util.is_filter_miniloader_inserter_name(entity.name)
+end
+
+function util.is_filter_miniloader_inserter_name(name)
+  return name:find("filter%-miniloader%-inserter$") ~= nil
+end
+
 -- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
 local BELT_SPEED_FOR_60_PER_SECOND = 60/60/8
 function util.num_inserters(entity)
