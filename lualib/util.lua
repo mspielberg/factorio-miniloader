@@ -279,8 +279,7 @@ function util.select_main_inserter(surface, position)
   return inserters[1]
 end
 
-function util.orientation_from_inserters(entity)
-  local inserter = util.select_main_inserter(entity.surface, entity.position)
+function util.orientation_from_inserter(inserter)
   if inserter.drop_position.x == inserter.position.x or inserter.drop_position.y == inserter.position.y then
     return nil -- freshly placed with no inherited positions
   elseif inserter.drop_position.x > inserter.position.x + 0.5 then
@@ -300,6 +299,11 @@ function util.orientation_from_inserters(entity)
   elseif inserter.pickup_position.y < inserter.position.y - 0.5 then
     return {direction=defines.direction.south, type="output"}
   end
+end
+
+function util.orientation_from_inserters(entity)
+  local inserter = util.select_main_inserter(entity.surface, entity.position)
+  return util.orientation_from_inserter(inserter)
 end
 
 function util.rebuild_belt(entity)
