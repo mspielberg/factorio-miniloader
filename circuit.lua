@@ -63,14 +63,22 @@ function M.sync_behavior(inserter)
   end
 end
 
-local function connected_non_partners(inserters)
+local function ccds_match(ccd1, ccd2)
+  if ccd1 == nil or ccd2 == nil then return false end
+  return
+       ccd1.entity == ccd2.entity        and ccd1.target_entity == ccd2.target_entity
+    or ccd1.entity == ccd2.target_entity and ccd1.target_entity == ccd2.entity
+end
+
+local function connected_non_partners(inserters, removed)
   local out = {[defines.wire_type.red] = {}, [defines.wire_type.green] = {}}
   for _, inserter in ipairs(inserters) do
     local ccds = inserter.circuit_connection_definitions
     local pos = inserter.position
     for _, ccd in ipairs(ccds) do
+      ccd.entity = inserter
       local otherpos = ccd.target_entity.position
-      if otherpos.x ~= pos.x or otherpos.y ~= pos.y then
+      if (otherpos.x ~= pos.x or otherpos.y ~= pos.y) and not ccds_match(ccd, removed) then
         table.insert(out[ccd.wire], ccd)
       end
     end
@@ -128,9 +136,12 @@ local function partner_connections_need_sync(inserters, connections)
   return false
 end
 
-function M.sync_partner_connections(inserter)
+function M.sync_partner_connections(inserter, removed)
   local inserters = util.get_loader_inserters(inserter)
-  local connections = connected_non_partners(inserters)
+  local connections = connected_non_partners(inserters, removed)
+  game.print("sync_partner_connections:")
+  game.print(serpent.block(inserters))
+  game.print(serpent.block(connections))
 
   if not partner_connections_need_sync(inserters, connections) then
     return
@@ -165,7 +176,7 @@ function M.sync_partner_connections(inserter)
   end
 end
 
-local function on_wire_change(ev)
+local function on_wire_added(ev)
   for _, entity in ipairs{ev.entity, ev.target_entity} do
     if entity.valid and util.is_miniloader_inserter(entity) then
       M.sync_partner_connections(entity)
@@ -173,14 +184,23 @@ local function on_wire_change(ev)
   end
 end
 
+local function on_wire_removed(ev)
+  for _, entity in ipairs{ev.entity, ev.target_entity} do
+    if entity.valid and util.is_miniloader_inserter(entity) then
+      M.sync_partner_connections(entity, ev)
+    end
+  end
+end
+
 function M.on_init()
-  event.register({onwireplaced.on_wire_added, onwireplaced.on_wire_removed}, on_wire_change)
   onwireplaced.on_init()
+  M.on_load()
 end
 
 function M.on_load()
-  event.register({onwireplaced.on_wire_added, onwireplaced.on_wire_removed}, on_wire_change)
   onwireplaced.on_load()
+  event.register(onwireplaced.on_wire_added, on_wire_added)
+  event.register(onwireplaced.on_wire_removed, on_wire_removed)
 end
 
 function M.on_configuration_changed()
