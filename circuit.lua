@@ -48,10 +48,14 @@ local function sync_left_to_right_inserter_filters(inserters)
   end
 end
 
+local function is_output_filter_miniloader_inserter(inserter)
+  return util.is_filter_miniloader_inserter(inserter)
+  and util.orientation_from_inserter(inserter).type == "output"
+end
+
 function M.sync_filters(entity)
   local inserters = util.get_loader_inserters(entity)
-  local loader = (util.find_miniloaders{surface = entity.surface, position = entity.position})[1]
-  if not util.is_filter_miniloader_inserter(inserters[1]) or loader.loader_type == "input" then
+  if not is_output_filter_miniloader_inserter(inserters[1]) then
     sync_left_to_right_inserter_filters(inserters)
   end
   sync_inserter_filters(inserters, 1)
@@ -67,6 +71,19 @@ local function inserter_with_control_behavior(inserters)
   return nil
 end
 
+local function sync_inserter_behavior(source_inserter, target)
+  local source_behavior = source_inserter.get_control_behavior()
+  local behavior = target.get_or_create_control_behavior()
+  behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
+  behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
+  behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
+  behavior.circuit_set_stack_size = false
+  behavior.circuit_stack_control_signal = {type="item"}
+  behavior.circuit_condition = source_behavior.circuit_condition
+  behavior.logistic_condition = source_behavior.logistic_condition
+  behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+end
+
 function M.sync_behavior(inserter)
   local inserters = util.get_loader_inserters(inserter)
   local stack_size_override = settings.global["miniloader-lock-stack-sizes"].value
@@ -75,22 +92,16 @@ function M.sync_behavior(inserter)
     target.inserter_stack_size_override = stack_size_override
   end
 
-  local template_inserter = inserter_with_control_behavior(inserters)
-  if not template_inserter then
-    return
+  local source_inserter = inserters[1]
+  if not is_output_filter_miniloader_inserter(source_inserter) then
+    sync_inserter_behavior(source_inserter, inserters[2])
   end
-  local source_behavior = template_inserter.get_control_behavior()
-
-  for _, target in ipairs(inserters) do
-    local behavior = target.get_or_create_control_behavior()
-    behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
-    behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
-    behavior.circuit_hand_read_mode = source_behavior.circuit_hand_read_mode
-    behavior.circuit_set_stack_size = false
-    behavior.circuit_stack_control_signal = {type="item"}
-    behavior.circuit_condition = source_behavior.circuit_condition
-    behavior.logistic_condition = source_behavior.logistic_condition
-    behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
+  for i = 3, #inserters, 2 do
+    sync_inserter_behavior(source_inserter, inserters[i])
+  end
+  source_inserter = inserters[2]
+  for i = 4, #inserters, 2 do
+    sync_inserter_behavior(source_inserter, inserters[i])
   end
 end
 
