@@ -21,11 +21,17 @@ local function create_lane_swap_gui(parent, entity, is_right_side)
     name = "content",
     style = "inside_shallow_frame_with_padding",
   }
-  inner_frame.add{
+  inner_frame.style.horizontally_stretchable = false
+  local flow = inner_frame.add{
+    type = "flow",
+    direction = "horizontal",
+  }
+  flow.style.horizontal_spacing = 20
+  flow.add{
     type = "label",
     caption = {"miniloader-gui.configuring-lane"},
   }
-  inner_frame.add{
+  flow.add{
     type = "switch",
     name = "miniloader_lane_switch",
     switch_state = is_right_side and "right" or "left",
