@@ -71,14 +71,11 @@ local function on_gui_opened(ev)
   monitored_entities[ev.player_index] = entity
   ontick.register(monitor_open_guis, POLL_INTERVAL)
 
-  if util.is_filter_miniloader_inserter(entity) then
-    local orientation = util.orientation_from_inserter(entity)
-    if orientation.type == "output" then
-      local player = game.get_player(ev.player_index)
-      local relative = player.gui.relative
-      local inserters = util.get_loader_inserters(entity)
-      create_lane_swap_gui(relative, entity, entity == inserters[2])
-    end
+  if util.is_output_filter_miniloader_inserter(entity) then
+    local player = game.get_player(ev.player_index)
+    local relative = player.gui.relative
+    local inserters = util.get_loader_inserters(entity)
+    create_lane_swap_gui(relative, entity, entity == inserters[2])
   end
 end
 

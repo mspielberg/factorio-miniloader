@@ -296,14 +296,21 @@ local function on_entity_settings_pasted(ev)
   local dst = ev.destination
   if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst)
   or util.is_miniloader(src) and util.is_miniloader(dst) then
-    circuit.sync_behavior(dst)
-    circuit.sync_filters(dst)
     local src_loader = src.surface.find_entities_filtered{type="loader-1x1",position=src.position}[1]
     local dst_loader = dst.surface.find_entities_filtered{type="loader-1x1",position=dst.position}[1]
     if src_loader and dst_loader then
       dst_loader.loader_type = src_loader.loader_type
       util.update_inserters(dst_loader)
     end
+    if util.is_output_filter_miniloader_inserter(src) then
+      local right_src = util.get_loader_inserters(src)[2]
+      local right_dst = util.get_loader_inserters(dst)[2]
+      if right_src and right_dst then
+        circuit.copy_inserter_settings(right_src, right_dst)
+      end
+    end
+    circuit.sync_behavior(dst)
+    circuit.sync_filters(dst)
   end
 end
 
