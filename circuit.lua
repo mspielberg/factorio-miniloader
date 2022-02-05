@@ -4,62 +4,45 @@ local util = require "lualib.util"
 
 local M = {}
 
-local function sync_inserter_filters(inserters, source_index)
-  if #inserters < 3 then
-    return
-  end
-
-  local source_inserter = inserters[source_index]
-  local filters = {}
-  local slots = source_inserter.filter_slot_count
-  local inserter_filter_mode = source_inserter.inserter_filter_mode
-
+local function get_inserter_filters(inserter)
+  local slots = inserter.filter_slot_count
+  filters = {}
   for i=1,slots do
-    filters[i] = source_inserter.get_filter(i)
+    filters[i] = inserter.get_filter(i)
   end
-
-  for i = source_index + 2, #inserters, 2 do
-    local ins = inserters[i]
-    for j=1,slots do
-      ins.set_filter(j, filters[j])
-    end
-    if inserter_filter_mode then
-      ins.inserter_filter_mode = inserter_filter_mode
-    end
-  end
+  return filters
 end
 
-local function sync_left_to_right_inserter_filters(inserters)
-  local source_inserter = inserters[1]
-  local filters = {}
-  local slots = source_inserter.filter_slot_count
+local function copy_inserter_filters(source_inserter, dest_inserter, filters)
+  local slots = dest_inserter.filter_slot_count
   local inserter_filter_mode = source_inserter.inserter_filter_mode
 
-  for i=1,slots do
-    filters[i] = source_inserter.get_filter(i)
-  end
-
-  local dest_inserter = inserters[2]
-  for j=1,slots do
-    dest_inserter.set_filter(j, filters[j])
-  end
   if inserter_filter_mode then
     dest_inserter.inserter_filter_mode = inserter_filter_mode
   end
-end
 
-local function is_output_filter_miniloader_inserter(inserter)
-  return util.is_filter_miniloader_inserter(inserter)
-  and util.orientation_from_inserter(inserter).type == "output"
+  if not filters then
+    filters = get_inserter_filters(source_inserter)
+  end
+
+  for i=1,slots do
+    dest_inserter.set_filter(i, filters[i])
+  end
 end
 
 function M.sync_filters(entity)
   local inserters = util.get_loader_inserters(entity)
-  if not is_output_filter_miniloader_inserter(inserters[1]) then
-    sync_left_to_right_inserter_filters(inserters)
+  local source_inserter = inserters[1]
+  if not util.is_output_filter_miniloader_inserter(source_inserter) then
+    copy_inserter_filters(source_inserter, inserters[2])
   end
-  sync_inserter_filters(inserters, 1)
-  sync_inserter_filters(inserters, 2)
+  for i = 3, #inserters, 2 do
+    copy_inserter_filters(source_inserter, inserters[i])
+  end
+  source_inserter = inserters[2]
+  for i = 4, #inserters, 2 do
+    copy_inserter_filters(source_inserter, inserters[i])
+  end
 end
 
 local function inserter_with_control_behavior(inserters)
@@ -71,8 +54,8 @@ local function inserter_with_control_behavior(inserters)
   return nil
 end
 
-local function sync_inserter_behavior(source_inserter, target)
-  local source_behavior = source_inserter.get_control_behavior()
+local function copy_inserter_behavior(source_inserter, target)
+  local source_behavior = source_inserter.get_or_create_control_behavior()
   local behavior = target.get_or_create_control_behavior()
   behavior.circuit_read_hand_contents = source_behavior.circuit_read_hand_contents
   behavior.circuit_mode_of_operation = source_behavior.circuit_mode_of_operation
@@ -84,6 +67,11 @@ local function sync_inserter_behavior(source_inserter, target)
   behavior.connect_to_logistic_network = source_behavior.connect_to_logistic_network
 end
 
+function M.copy_inserter_settings(source, target)
+  copy_inserter_filters(source, target)
+  copy_inserter_behavior(source, target)
+end
+
 function M.sync_behavior(inserter)
   local inserters = util.get_loader_inserters(inserter)
   local stack_size_override = settings.global["miniloader-lock-stack-sizes"].value
@@ -93,15 +81,15 @@ function M.sync_behavior(inserter)
   end
 
   local source_inserter = inserters[1]
-  if not is_output_filter_miniloader_inserter(source_inserter) then
-    sync_inserter_behavior(source_inserter, inserters[2])
+  if not util.is_output_filter_miniloader_inserter(source_inserter) then
+    copy_inserter_behavior(source_inserter, inserters[2])
   end
   for i = 3, #inserters, 2 do
-    sync_inserter_behavior(source_inserter, inserters[i])
+    copy_inserter_behavior(source_inserter, inserters[i])
   end
   source_inserter = inserters[2]
   for i = 4, #inserters, 2 do
-    sync_inserter_behavior(source_inserter, inserters[i])
+    copy_inserter_behavior(source_inserter, inserters[i])
   end
 end
 
@@ -181,9 +169,6 @@ end
 function M.sync_partner_connections(inserter, removed)
   local inserters = util.get_loader_inserters(inserter)
   local connections = connected_non_partners(inserters, removed)
-  game.print("sync_partner_connections:")
-  game.print(serpent.block(inserters))
-  game.print(serpent.block(connections))
 
   if not partner_connections_need_sync(inserters, connections) then
     return
