@@ -305,4 +305,19 @@ function M.on_load()
   event.register(defines.events.on_pre_build, on_pre_build)
 end
 
+function M.on_configuration_changed()
+  if global.onwireplaced then
+    global.monitored_players = global.onwireplaced.monitored_players or {}
+    global.selected_ccd_set_for = global.onwireplaced.selected_ccd_set_for or {}
+    global.onwireplaced = nil
+  end
+  if not global.monitored_players then
+    global.monitored_players = {}
+  end
+  if not global.selected_ccd_set_for then
+    global.selected_ccd_set_for = {}
+  end
+  M.on_load()
+end
+
 return M

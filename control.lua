@@ -73,6 +73,7 @@ end
 local function on_configuration_changed(configuration_changed_data)
   local mod_change = configuration_changed_data.mod_changes["miniloader"]
   if mod_change and mod_change.old_version and mod_change.old_version ~= mod_change.new_version then
+    circuit.on_configuration_changed()
     configchange.on_mod_version_changed(mod_change.old_version)
   end
   register_bobs_blacklist()

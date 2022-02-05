@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.9
+Date: 2022-02-05
+  Bugfixes:
+    - Fix saves broken by 1.15.0 release.
+---------------------------------------------------------------------------------------------------
 Version: 1.14.8
 Date: 2022-01-17
   Bugfixes:
@@ -27,7 +32,7 @@ Date: 2021-07-05
   Bugfixes:
     - Fix snapping being incorrectly applied to blueprint ghosts when blueprints are placed directly from the blueprint library. (https://mods.factorio.com/mod/miniloader/discussion/60b12ec417dbea783f0ec190)
     - Avoid crash when updating blueprints from inside blueprint books or the blueprint library. (https://mods.factorio.com/mod/miniloader/discussion/60e0ee0d3277109b8056f5d4)
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 Version: 1.14.3
 Date: 2021-07-03
   Minor Features:
