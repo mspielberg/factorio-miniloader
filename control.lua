@@ -60,6 +60,7 @@ end
 local function on_init()
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
+  global.secondary_inserter_settings = {}
   circuit.on_init()
   compat_pickerextended.on_load()
   gui.on_init()
@@ -112,6 +113,36 @@ local function on_script_revive(ev)
   end
 end
 
+local function preserve_secondary_inserter_settings(ghosts)
+  -- select a secondary inserter ghost
+  local ghost
+  for i = 1, #ghosts do
+    if util.orientation_from_inserter(ghosts[i]).is_secondary then
+      ghost = ghosts[i]
+      break
+    end
+  end
+  if not ghost then return end
+
+  local settings = global.secondary_inserter_settings
+  local surface = ghost.surface
+  local position = ghost.position
+
+  local surface_settings = settings[surface.index]
+  if not surface_settings then
+    surface_settings = {}
+    settings[surface.index] = surface_settings
+  end
+
+  local x_settings = surface_settings[position.x]
+  if not x_settings then
+    x_settings = {}
+    surface_settings[position.x] = x_settings
+  end
+
+  x_settings[position.y] = circuit.capture_settings(ghost)
+end
+
 local function on_player_built(ev)
   local entity = ev.created_entity
 
@@ -125,13 +156,22 @@ local function on_player_built(ev)
   elseif use_snapping
   and entity.type == "entity-ghost"
   and util.is_miniloader_inserter_name(entity.ghost_name) then
+    local is_output_filter_miniloader_inserter =
+      util.is_filter_miniloader_inserter_name(entity.ghost_name)
+      and util.orientation_from_inserter(entity).type == "output"
+
     -- remove duplicate ghosts
     local colocated_ghosts = entity.surface.find_entities_filtered{
       position = entity.position,
       ghost_name = entity.ghost_name,
     }
-    for i=1,#colocated_ghosts-1 do
-      colocated_ghosts[i].destroy()
+    if is_output_filter_miniloader_inserter then
+      preserve_secondary_inserter_settings(colocated_ghosts)
+    end
+    for _, ghost in pairs(colocated_ghosts) do
+      if ghost ~= entity then
+        ghost.destroy()
+      end
     end
     if util.orientation_from_inserters(entity) == nil then
       snapping.snap_loader(entity)

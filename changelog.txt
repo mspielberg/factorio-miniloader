@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.15.1
+Date: 2022-XX-XX
+  Major features:
+    - Filter miniloaders in output mode can have filters and circuit conditions set for individual lanes.
+---------------------------------------------------------------------------------------------------
 Version: 1.14.9
 Date: 2022-XX-XX
   Bugfixes:

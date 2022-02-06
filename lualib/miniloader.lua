@@ -132,6 +132,23 @@ local function ensure_chest(main_inserter)
   return chest
 end
 
+local function restore_secondary_inserter_settings(inserter)
+  local surface_index = inserter.surface.index
+  local surface_settings = global.secondary_inserter_settings[surface_index]
+  if not surface_settings then return end
+  local position = inserter.position
+  local x_settings = surface_settings[position.x]
+  if not x_settings then return end
+  local inserter_settings = x_settings[position.y]
+  if not inserter_settings then return end
+
+  circuit.apply_settings(inserter_settings, inserter)
+
+  x_settings[position.y] = nil
+  if not next(x_settings) then surface_settings[position.x] = nil end
+  if not next(surface_settings) then global.secondary_inserter_settings[surface_index] = nil end
+end
+
 local function fixup(main_inserter, orientation)
   if not orientation then
     local existing_loader = util.find_miniloaders{surface = main_inserter.surface, position = main_inserter.position}[1]
@@ -146,8 +163,12 @@ local function fixup(main_inserter, orientation)
   ensure_chest(main_inserter)
 
   util.update_inserters(loader)
-  circuit.sync_behavior(main_inserter)
-  circuit.sync_filters(main_inserter)
+  if util.is_output_filter_miniloader_inserter(main_inserter) then
+    local inserters = util.get_loader_inserters{surface = main_inserter.surface, position = main_inserter.position}
+    restore_secondary_inserter_settings(inserters[2])
+  end
+  circuit.sync_behavior(main_inserter, main_inserter)
+  circuit.sync_filters(main_inserter, main_inserter)
   circuit.sync_partner_connections(main_inserter)
 
   return loader
