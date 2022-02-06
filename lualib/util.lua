@@ -152,17 +152,9 @@ function util.is_miniloader_inserter_name(name)
   return name:find("miniloader%-inserter$") ~= nil
 end
 
-function util.is_filter_miniloader_inserter(entity)
-  return util.is_filter_miniloader_inserter_name(entity.name)
-end
-
-function util.is_filter_miniloader_inserter_name(name)
-  return name:find("filter%-miniloader%-inserter$") ~= nil
-end
-
-function util.is_output_filter_miniloader_inserter(inserter)
-  return util.is_filter_miniloader_inserter(inserter)
-  and util.orientation_from_inserter(inserter).type == "output"
+function util.is_output_miniloader_inserter(inserter)
+  local orientation = util.orientation_from_inserter(inserter)
+  return orientation and orientation.type == "output"
 end
 
 -- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick

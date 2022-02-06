@@ -15,22 +15,8 @@ local function inserters_in_position(bp_entities, starting_index)
   return out
 end
 
-local function count_connections(bp_entity)
-  local out = 0
-  if not bp_entity.connections then
-    return 0
-  end
-  for _, circuit in pairs(bp_entity.connections) do
-    for _, wire_connections in pairs(circuit) do
-      out = out + #wire_connections
-    end
-  end
-  return out
-end
-
 local function find_slaves(miniloader_inserters, to_remove)
-  if not util.is_filter_miniloader_inserter(miniloader_inserters[1])
-  or util.orientation_from_bp_inserter(miniloader_inserters[1]).type ~= "output" then
+  if util.orientation_from_bp_inserter(miniloader_inserters[1]).type ~= "output" then
     to_remove[miniloader_inserters[2].entity_number] = true
   end
   for i = 3, #miniloader_inserters do

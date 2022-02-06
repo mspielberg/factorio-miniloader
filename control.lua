@@ -156,16 +156,12 @@ local function on_player_built(ev)
   elseif use_snapping
   and entity.type == "entity-ghost"
   and util.is_miniloader_inserter_name(entity.ghost_name) then
-    local is_output_filter_miniloader_inserter =
-      util.is_filter_miniloader_inserter_name(entity.ghost_name)
-      and util.orientation_from_inserter(entity).type == "output"
-
     -- remove duplicate ghosts
     local colocated_ghosts = entity.surface.find_entities_filtered{
       position = entity.position,
       ghost_name = entity.ghost_name,
     }
-    if is_output_filter_miniloader_inserter then
+    if util.is_output_miniloader_inserter(entity) then
       preserve_secondary_inserter_settings(colocated_ghosts)
     end
     for _, ghost in pairs(colocated_ghosts) do
@@ -342,7 +338,7 @@ local function on_entity_settings_pasted(ev)
       dst_loader.loader_type = src_loader.loader_type
       util.update_inserters(dst_loader)
     end
-    if util.is_output_filter_miniloader_inserter(src) then
+    if util.is_output_miniloader_inserter(src) then
       local right_src = util.get_loader_inserters(src)[2]
       local right_dst = util.get_loader_inserters(dst)[2]
       if right_src and right_dst then
