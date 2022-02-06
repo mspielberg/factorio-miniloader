@@ -33,7 +33,7 @@ end
 function M.sync_filters(entity, is_authoritative)
   local inserters = util.get_loader_inserters(entity)
   local source_inserter = is_authoritative and entity or inserters[1]
-  if not util.is_output_filter_miniloader_inserter(entity) then
+  if not util.is_output_miniloader_inserter(entity) then
     -- sync left and right lanes
     copy_inserter_filters(entity, inserters[2])
   end
@@ -73,7 +73,7 @@ function M.sync_behavior(inserter, is_authoritative)
   end
 
   local source_inserter = is_authoritative and inserter or inserters[1]
-  if not util.is_output_filter_miniloader_inserter(source_inserter) then
+  if not util.is_output_miniloader_inserter(source_inserter) then
     -- sync left and right lanes
     copy_inserter_behavior(source_inserter, inserters[2])
   end

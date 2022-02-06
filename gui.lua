@@ -71,7 +71,7 @@ local function on_gui_opened(ev)
   monitored_entities[ev.player_index] = entity
   ontick.register(monitor_open_guis, POLL_INTERVAL)
 
-  if util.is_output_filter_miniloader_inserter(entity) then
+  if util.is_output_miniloader_inserter(entity) then
     local player = game.get_player(ev.player_index)
     local relative = player.gui.relative
     local inserters = util.get_loader_inserters(entity)
@@ -101,7 +101,7 @@ local function on_gui_switch_state_changed(ev)
   if element.name == "miniloader_lane_switch" then
     local player = game.get_player(ev.player_index)
     local entity = player.opened
-    if not util.is_filter_miniloader_inserter(entity) then
+    if not util.is_output_miniloader_inserter(entity) then
       return
     end
     local inserters = util.get_loader_inserters(entity)

@@ -163,7 +163,7 @@ local function fixup(main_inserter, orientation)
   ensure_chest(main_inserter)
 
   util.update_inserters(loader)
-  if util.is_output_filter_miniloader_inserter(main_inserter) then
+  if util.is_output_miniloader_inserter(main_inserter) then
     local inserters = util.get_loader_inserters{surface = main_inserter.surface, position = main_inserter.position}
     restore_secondary_inserter_settings(inserters[2])
   end
