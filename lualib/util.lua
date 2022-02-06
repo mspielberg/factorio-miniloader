@@ -284,8 +284,36 @@ function util.select_main_inserter(surface, position)
   return inserters[1]
 end
 
+function util.orientation_from_bp_inserter(bp_inserter)
+  local position_x = bp_inserter.position.x
+  local position_y = bp_inserter.position.y
+  local drop_position_x = bp_inserter.drop_position.x + position_x
+  local drop_position_y = bp_inserter.drop_position.y + position_y
+  local pickup_position_x = bp_inserter.pickup_position.x + position_x
+  local pickup_position_y = bp_inserter.pickup_position.y + position_y
+  if drop_position_x == position_x or drop_position_y == position_y then
+    return nil -- freshly placed with no inherited positions
+  elseif drop_position_x > position_x + 0.5 then
+    return {direction=defines.direction.east, type="input"}
+  elseif drop_position_x < position_x - 0.5 then
+    return {direction=defines.direction.west, type="input"}
+  elseif drop_position_y > position_y + 0.5 then
+    return {direction=defines.direction.south, type="input"}
+  elseif drop_position_y < position_y - 0.5 then
+    return {direction=defines.direction.north, type="input"}
+  elseif pickup_position_x > position_x + 0.5 then
+    return {direction=defines.direction.west, type="output"}
+  elseif pickup_position_x < position_x - 0.5 then
+    return {direction=defines.direction.east, type="output"}
+  elseif pickup_position_y > position_y + 0.5 then
+    return {direction=defines.direction.north, type="output"}
+  elseif pickup_position_y < position_y - 0.5 then
+    return {direction=defines.direction.south, type="output"}
+  end
+end
+
 function util.orientation_from_inserter(inserter)
-  if inserter.drop_position.x == inserter.position.x or inserter.drop_position.y == inserter.position.y then
+  if inserter.drop_position.x == inserter.position.x and inserter.drop_position.y == inserter.position.y then
     return nil -- freshly placed with no inherited positions
   elseif inserter.drop_position.x > inserter.position.x + 0.5 then
     return {direction=defines.direction.east, type="input"}
@@ -296,13 +324,13 @@ function util.orientation_from_inserter(inserter)
   elseif inserter.drop_position.y < inserter.position.y - 0.5 then
     return {direction=defines.direction.north, type="input"}
   elseif inserter.pickup_position.x > inserter.position.x + 0.5 then
-    return {direction=defines.direction.west, type="output"}
+    return {direction=defines.direction.west, type="output", is_secondary=inserter.drop_position.y < inserter.position.y}
   elseif inserter.pickup_position.x < inserter.position.x - 0.5 then
-    return {direction=defines.direction.east, type="output"}
+    return {direction=defines.direction.east, type="output", is_secondary=inserter.drop_position.y > inserter.position.y}
   elseif inserter.pickup_position.y > inserter.position.y + 0.5 then
-    return {direction=defines.direction.north, type="output"}
+    return {direction=defines.direction.north, type="output", is_secondary=inserter.drop_position.x > inserter.position.x}
   elseif inserter.pickup_position.y < inserter.position.y - 0.5 then
-    return {direction=defines.direction.south, type="output"}
+    return {direction=defines.direction.south, type="output", is_secondary=inserter.drop_position.x < inserter.position.x}
   end
 end
 

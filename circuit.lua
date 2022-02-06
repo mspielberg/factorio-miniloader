@@ -6,7 +6,7 @@ local M = {}
 
 local function get_inserter_filters(inserter)
   local slots = inserter.filter_slot_count
-  filters = {}
+  local filters = {}
   for i=1,slots do
     filters[i] = inserter.get_filter(i)
   end
@@ -30,28 +30,20 @@ local function copy_inserter_filters(source_inserter, dest_inserter, filters)
   end
 end
 
-function M.sync_filters(entity)
+function M.sync_filters(entity, is_authoritative)
   local inserters = util.get_loader_inserters(entity)
-  local source_inserter = inserters[1]
-  if not util.is_output_filter_miniloader_inserter(source_inserter) then
-    copy_inserter_filters(source_inserter, inserters[2])
+  local source_inserter = is_authoritative and entity or inserters[1]
+  if not util.is_output_filter_miniloader_inserter(entity) then
+    -- sync left and right lanes
+    copy_inserter_filters(entity, inserters[2])
   end
-  for i = 3, #inserters, 2 do
+  for i = 1, #inserters, 2 do
     copy_inserter_filters(source_inserter, inserters[i])
   end
   source_inserter = inserters[2]
   for i = 4, #inserters, 2 do
     copy_inserter_filters(source_inserter, inserters[i])
   end
-end
-
-local function inserter_with_control_behavior(inserters)
-  for _, inserter in ipairs(inserters) do
-    if inserter.get_control_behavior() then
-      return inserter
-    end
-  end
-  return nil
 end
 
 local function copy_inserter_behavior(source_inserter, target)
@@ -72,7 +64,7 @@ function M.copy_inserter_settings(source, target)
   copy_inserter_behavior(source, target)
 end
 
-function M.sync_behavior(inserter)
+function M.sync_behavior(inserter, is_authoritative)
   local inserters = util.get_loader_inserters(inserter)
   local stack_size_override = settings.global["miniloader-lock-stack-sizes"].value
     and 1 or inserters[1].inserter_stack_size_override
@@ -80,11 +72,12 @@ function M.sync_behavior(inserter)
     target.inserter_stack_size_override = stack_size_override
   end
 
-  local source_inserter = inserters[1]
+  local source_inserter = is_authoritative and inserter or inserters[1]
   if not util.is_output_filter_miniloader_inserter(source_inserter) then
+    -- sync left and right lanes
     copy_inserter_behavior(source_inserter, inserters[2])
   end
-  for i = 3, #inserters, 2 do
+  for i = 1, #inserters, 2 do
     copy_inserter_behavior(source_inserter, inserters[i])
   end
   source_inserter = inserters[2]
@@ -200,6 +193,43 @@ function M.sync_partner_connections(inserter, removed)
 
   for _, other_miniloader_inserter in pairs(other_miniloader_inserters) do
     M.sync_partner_connections(other_miniloader_inserter)
+  end
+end
+
+local control_behavior_keys = {
+  "circuit_condition", "logistic_condition", "connect_to_logistic_network",
+  "circuit_read_hand_contents", "circuit_mode_of_operation", "circuit_hand_read_mode", "circuit_set_stack_size", "circuit_stack_control_signal",
+}
+
+function M.capture_settings(ghost)
+  local control_behavior = ghost.get_control_behavior()
+  local control_behavior_state
+  if control_behavior then
+    control_behavior_state = {}
+    for _, key in pairs(control_behavior_keys) do
+      control_behavior_state[key] = control_behavior[key]
+    end
+  end
+
+  local filters = {}
+  for i=1,ghost.filter_slot_count do
+    filters[i] = ghost.get_filter(i)
+  end
+
+  return {
+    control_behavior = control_behavior_state,
+    filters = filters,
+  }
+end
+
+function M.apply_settings(settings, inserter)
+  local limit = math.min(inserter.filter_slot_count, #settings.filters)
+  for i = 1, limit do
+    inserter.set_filter(i, settings.filters[i])
+  end
+  local control_behavior = inserter.get_or_create_control_behavior()
+  for k, v in pairs(settings.control_behavior) do
+    control_behavior[k] = v
   end
 end
 

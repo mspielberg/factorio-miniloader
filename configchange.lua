@@ -104,6 +104,15 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_15_1_add_secondary_inserter_settings_global",
+  low = {0,0,0},
+  high = {1,15,1},
+  task = function()
+    global.secondary_inserter_settings = {}
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do

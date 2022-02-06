@@ -28,25 +28,14 @@ local function count_connections(bp_entity)
   return out
 end
 
--- Expects a list of miniloader-inserter blueprint entities in a single position.
--- Only the miniloader-inserter with the most circuit connections is retained,
--- the others are added to to_remove.
 local function find_slaves(miniloader_inserters, to_remove)
-  local most_connected_inserter
-  local most_connections
-  for _, inserter in ipairs(miniloader_inserters) do
-    local num_connections = count_connections(inserter)
-    if not most_connected_inserter or num_connections > most_connections then
-      most_connected_inserter = inserter
-      most_connections = num_connections
-    end
+  if not util.is_filter_miniloader_inserter(miniloader_inserters[1])
+  or util.orientation_from_bp_inserter(miniloader_inserters[1]).type ~= "output" then
+    to_remove[miniloader_inserters[2].entity_number] = true
   end
-
-  -- iterate back over and record slaves
-  for _, inserter in ipairs(miniloader_inserters) do
-    if inserter ~= most_connected_inserter then
-      to_remove[inserter.entity_number] = true
-    end
+  for i = 3, #miniloader_inserters do
+    local inserter = miniloader_inserters[i]
+    to_remove[inserter.entity_number] = true
   end
 end
 
@@ -165,10 +154,15 @@ function M.filter_miniloaders(bp)
     return
   end
   local to_remove = {}
-  for i, ent in ipairs(bp_entities) do
+  local i = 1
+  while i <= #bp_entities do
+    local ent = bp_entities[i]
     if util.is_miniloader_inserter(ent) then
       local overlapping = inserters_in_position(bp_entities, i)
       find_slaves(overlapping, to_remove)
+      i = i + #overlapping
+    else
+      i = i + 1
     end
   end
   if next(to_remove) then
