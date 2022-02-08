@@ -1,10 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.15.1
-Date: 2022-XX-XX
+Date: 2022-02-08
   Major features:
-    - Filter miniloaders in output mode can have filters and circuit conditions set for individual lanes.
+    - Miniloaders in output mode can have filters and circuit conditions set for individual lanes.  Blueprinting and copy-paste mostly work but some issues may remain.
   Bugfixes:
-    - Remove a potential source of event desyncs when joining a multiplayer server.
+    - Fix a potential source of event desyncs when joining a multiplayer server.
     - Fix miniloaders being left in a bad state when the last entity connected to a miniloader with circuit wires is mined.
 ---------------------------------------------------------------------------------------------------
 Version: 1.14.9
@@ -15,10 +15,7 @@ Date: 2022-02-05
 Version: 1.15.0
 Date: 2022-02-02
   Major Features:
-    - Filter miniloaders in output mode now have a custom GUI for setting separate filters for left and right belt lanes.
-  Bugfixes:
-    - Remove a potential source of event desyncs when joining a multiplayer server.
-    - Fix miniloaders being left in a bad state when the last entity connected to a miniloader with circuit wires is mined.
+    - WITHDRAWN
 ---------------------------------------------------------------------------------------------------
 Version: 1.14.8
 Date: 2022-01-17
