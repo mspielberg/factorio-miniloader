@@ -83,10 +83,24 @@ local function on_configuration_changed(configuration_changed_data)
   configchange.fix_inserter_counts()
 end
 
+local fast_replace_miniloader_state
 
 local function on_built_miniloader(entity, orientation, tags)
   if not orientation then
     orientation = {direction = util.opposite_direction(entity.direction), type = "input"}
+  end
+  if not tags
+  and util.is_output_miniloader_inserter(entity)
+  and fast_replace_miniloader_state
+  and fast_replace_miniloader_state.tick == game.tick
+  and fast_replace_miniloader_state.surface == entity.surface
+  and fast_replace_miniloader_state.position.x == entity.position.x
+  and fast_replace_miniloader_state.position.y == entity.position.y
+  then
+    tags = {
+      right_lane_settings = fast_replace_miniloader_state.settings,
+    }
+    fast_replace_miniloader_state = nil
   end
   return miniloader.fixup(entity, orientation, tags)
 end
@@ -202,6 +216,14 @@ local function on_miniloader_inserter_mined(ev)
   end
 
   local inserters = util.get_loader_inserters(entity)
+  if util.is_output_miniloader_inserter(entity) then
+    fast_replace_miniloader_state = {
+      position = entity.position,
+      settings = util.capture_settings(inserters[2]),
+      surface = entity.surface,
+      tick = ev.tick,
+    }
+  end
   for i=1,#inserters do
     if inserters[i] ~= entity then
       -- return items in inserter hand to player / robot if mined
