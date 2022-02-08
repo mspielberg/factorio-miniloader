@@ -311,6 +311,18 @@ local function on_pre_build(ev)
   end
 end
 
+local function on_pre_player_mined_item(ev)
+  local entity = ev.entity
+  if entity.name == "entity-ghost" and entity.tags and entity.tags.right_lane_settings then
+    fast_replace_miniloader_state = {
+      position = entity.position,
+      settings = entity.tags.right_lane_settings,
+      surface = entity.surface,
+      tick = ev.tick,
+    }
+  end
+end
+
 local function on_player_mined_entity(ev)
   on_mined(ev)
 end
@@ -409,6 +421,7 @@ event.register(defines.events.on_built_entity, on_player_built)
 event.register(defines.events.on_robot_built_entity, on_robot_built)
 event.register(defines.events.on_player_rotated_entity, on_rotated)
 
+event.register(defines.events.on_pre_player_mined_item, on_pre_player_mined_item)
 event.register(defines.events.on_player_mined_entity, on_player_mined_entity)
 event.register(defines.events.on_robot_mined_entity, on_mined)
 event.register(defines.events.on_entity_died, on_mined)
