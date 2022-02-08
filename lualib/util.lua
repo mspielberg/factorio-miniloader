@@ -369,4 +369,42 @@ function util.rebuild_belt(entity)
   end
 end
 
+local control_behavior_keys = {
+  "circuit_condition", "logistic_condition", "connect_to_logistic_network",
+  "circuit_read_hand_contents", "circuit_mode_of_operation", "circuit_hand_read_mode", "circuit_set_stack_size", "circuit_stack_control_signal",
+}
+
+function util.capture_settings(ghost)
+  local control_behavior = ghost.get_control_behavior()
+  local control_behavior_state
+  if control_behavior then
+    control_behavior_state = {}
+    for _, key in pairs(control_behavior_keys) do
+      control_behavior_state[key] = control_behavior[key]
+    end
+  end
+
+  local filters = {}
+  for i=1,ghost.filter_slot_count do
+    filters[i] = ghost.get_filter(i)
+  end
+
+  return {
+    control_behavior = control_behavior_state,
+    filters = filters,
+  }
+end
+
+function util.apply_settings(settings, inserter)
+  local limit = math.min(inserter.filter_slot_count, #settings.filters)
+  for i = 1, limit do
+    inserter.set_filter(i, settings.filters[i])
+  end
+  local control_behavior = inserter.get_or_create_control_behavior()
+  for k, v in pairs(settings.control_behavior) do
+    control_behavior[k] = v
+  end
+end
+
+
 return util

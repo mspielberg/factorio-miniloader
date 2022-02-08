@@ -30,9 +30,9 @@ local function copy_inserter_filters(source_inserter, dest_inserter, filters)
   end
 end
 
-function M.sync_filters(entity, is_authoritative)
+function M.sync_filters(entity)
   local inserters = util.get_loader_inserters(entity)
-  local source_inserter = is_authoritative and entity or inserters[1]
+  local source_inserter = inserters[1]
   if not util.is_output_miniloader_inserter(entity) then
     -- sync left and right lanes
     copy_inserter_filters(entity, inserters[2])
@@ -64,7 +64,7 @@ function M.copy_inserter_settings(source, target)
   copy_inserter_behavior(source, target)
 end
 
-function M.sync_behavior(inserter, is_authoritative)
+function M.sync_behavior(inserter)
   local inserters = util.get_loader_inserters(inserter)
   local stack_size_override = settings.global["miniloader-lock-stack-sizes"].value
     and 1 or inserters[1].inserter_stack_size_override
@@ -72,7 +72,7 @@ function M.sync_behavior(inserter, is_authoritative)
     target.inserter_stack_size_override = stack_size_override
   end
 
-  local source_inserter = is_authoritative and inserter or inserters[1]
+  local source_inserter = inserters[1]
   if not util.is_output_miniloader_inserter(source_inserter) then
     -- sync left and right lanes
     copy_inserter_behavior(source_inserter, inserters[2])
