@@ -60,7 +60,6 @@ end
 local function on_init()
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
-  global.secondary_inserter_settings = {}
   circuit.on_init()
   compat_pickerextended.on_load()
   gui.on_init()
