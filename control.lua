@@ -60,7 +60,6 @@ end
 local function on_init()
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
-  global.secondary_inserter_settings = {}
   circuit.on_init()
   compat_pickerextended.on_load()
   gui.on_init()
@@ -85,17 +84,17 @@ local function on_configuration_changed(configuration_changed_data)
 end
 
 
-local function on_built_miniloader(entity, orientation)
+local function on_built_miniloader(entity, orientation, tags)
   if not orientation then
     orientation = {direction = util.opposite_direction(entity.direction), type = "input"}
   end
-  return miniloader.fixup(entity, orientation)
+  return miniloader.fixup(entity, orientation, tags)
 end
 
 local function on_robot_built(ev)
   local entity = ev.created_entity
   if util.is_miniloader_inserter(entity) then
-    on_built_miniloader(entity, util.orientation_from_inserters(entity))
+    on_built_miniloader(entity, util.orientation_from_inserters(entity), ev.tags)
   end
 end
 
@@ -109,38 +108,8 @@ end
 local function on_script_revive(ev)
   local entity = ev.entity
   if entity and util.is_miniloader_inserter(entity) then
-    on_built_miniloader(entity, util.orientation_from_inserters(entity))
+    on_built_miniloader(entity, util.orientation_from_inserters(entity), ev.tags)
   end
-end
-
-local function preserve_secondary_inserter_settings(ghosts)
-  -- select a secondary inserter ghost
-  local ghost
-  for i = 1, #ghosts do
-    if util.orientation_from_inserter(ghosts[i]).is_secondary then
-      ghost = ghosts[i]
-      break
-    end
-  end
-  if not ghost then return end
-
-  local settings = global.secondary_inserter_settings
-  local surface = ghost.surface
-  local position = ghost.position
-
-  local surface_settings = settings[surface.index]
-  if not surface_settings then
-    surface_settings = {}
-    settings[surface.index] = surface_settings
-  end
-
-  local x_settings = surface_settings[position.x]
-  if not x_settings then
-    x_settings = {}
-    surface_settings[position.x] = x_settings
-  end
-
-  x_settings[position.y] = circuit.capture_settings(ghost)
 end
 
 local function on_player_built(ev)
@@ -148,7 +117,7 @@ local function on_player_built(ev)
 
   if util.is_miniloader_inserter(entity) then
     local orientation = util.orientation_from_inserters(entity)
-    local loader = on_built_miniloader(entity, orientation)
+    local loader = on_built_miniloader(entity, orientation, ev.tags)
     if use_snapping and not orientation then
       -- adjusts direction & loader_type
       snapping.snap_loader(loader)
@@ -161,9 +130,6 @@ local function on_player_built(ev)
       position = entity.position,
       ghost_name = entity.ghost_name,
     }
-    if util.is_output_miniloader_inserter(entity) then
-      preserve_secondary_inserter_settings(colocated_ghosts)
-    end
     for _, ghost in pairs(colocated_ghosts) do
       if ghost ~= entity then
         ghost.destroy()
@@ -373,7 +339,7 @@ end
 local function on_setup_blueprint(ev)
   local bp = blueprint.get_blueprint_to_setup(ev.player_index)
   if not (bp and bp.valid_for_read) then return end
-  blueprint.filter_miniloaders(bp)
+  blueprint.filter_miniloaders(bp, ev.surface)
 end
 
 local function on_marked_for_deconstruction(ev)

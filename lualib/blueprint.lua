@@ -10,16 +10,24 @@ local function inserters_in_position(bp_entities, starting_index)
     local ent = bp_entities[i]
     if ent.position.x == x and ent.position.y == y and util.is_miniloader_inserter(ent) then
       out[#out+1] = ent
+    else
+      break
     end
   end
   return out
 end
 
-local function find_slaves(miniloader_inserters, to_remove)
-  if util.orientation_from_bp_inserter(miniloader_inserters[1]).type ~= "output" then
-    to_remove[miniloader_inserters[2].entity_number] = true
+local function tag_with_configuration(surface, bp_entity)
+  local right_lane_inserter = surface.find_entities_filtered{type = "inserter", position = bp_entity.position}[2]
+  if right_lane_inserter and util.is_output_miniloader_inserter(right_lane_inserter) then
+    bp_entity.tags = {
+      right_lane_settings = util.capture_settings(right_lane_inserter),
+    }
   end
-  for i = 3, #miniloader_inserters do
+end
+
+local function find_slaves(miniloader_inserters, to_remove)
+  for i = 2, #miniloader_inserters do
     local inserter = miniloader_inserters[i]
     to_remove[inserter.entity_number] = true
   end
@@ -134,7 +142,7 @@ function M.get_blueprint_to_setup(player_index)
   end
 end
 
-function M.filter_miniloaders(bp)
+function M.filter_miniloaders(bp, surface)
   local bp_entities = bp.get_blueprint_entities()
   if not bp_entities then
     return
@@ -145,6 +153,7 @@ function M.filter_miniloaders(bp)
     local ent = bp_entities[i]
     if util.is_miniloader_inserter(ent) then
       local overlapping = inserters_in_position(bp_entities, i)
+      tag_with_configuration(surface, overlapping[1])
       find_slaves(overlapping, to_remove)
       i = i + #overlapping
     else
