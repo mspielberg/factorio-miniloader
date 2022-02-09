@@ -33,6 +33,9 @@ end
 function M.sync_filters(entity)
   local inserters = util.get_loader_inserters(entity)
   local source_inserter = inserters[1]
+
+  if #inserters < 2 then return end
+
   if not util.is_output_miniloader_inserter(entity) then
     -- sync left and right lanes
     copy_inserter_filters(entity, inserters[2])
@@ -71,6 +74,8 @@ function M.sync_behavior(inserter)
   for _, target in ipairs(inserters) do
     target.inserter_stack_size_override = stack_size_override
   end
+
+  if #inserters < 2 then return end
 
   local source_inserter = inserters[1]
   if not util.is_output_miniloader_inserter(source_inserter) then
