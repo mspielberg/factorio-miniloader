@@ -375,13 +375,10 @@ local control_behavior_keys = {
 }
 
 function util.capture_settings(ghost)
-  local control_behavior = ghost.get_control_behavior()
-  local control_behavior_state
-  if control_behavior then
-    control_behavior_state = {}
-    for _, key in pairs(control_behavior_keys) do
-      control_behavior_state[key] = control_behavior[key]
-    end
+  local control_behavior = ghost.get_or_create_control_behavior()
+  local control_behavior_state = {}
+  for _, key in pairs(control_behavior_keys) do
+    control_behavior_state[key] = control_behavior[key]
   end
 
   local filters = {}
