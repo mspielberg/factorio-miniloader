@@ -3,6 +3,7 @@ Version: 1.15.2
 Date: 2022-02-08
   Bugfixes:
     - Fix crash when mining a circuit-connected miniloader. (https://mods.factorio.com/mod/miniloader/discussion/620310a56e7833117189b7e9)
+    - Fix chutes being able to connect to circuit networks, contrary to the intended design.
 ---------------------------------------------------------------------------------------------------
 Version: 1.15.1
 Date: 2022-02-08
