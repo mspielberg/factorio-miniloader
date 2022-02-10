@@ -150,6 +150,7 @@ local function fixup(main_inserter, orientation, tags)
 
   util.update_inserters(loader)
   if tags and tags.right_lane_settings then
+    global.split_lane_configuration[inserters[1].unit_number] = true
     util.apply_settings(tags.right_lane_settings, inserters[2])
   end
   circuit.sync_behavior(main_inserter)

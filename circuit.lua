@@ -36,7 +36,8 @@ function M.sync_filters(entity)
 
   if #inserters < 2 then return end
 
-  if not util.is_output_miniloader_inserter(entity) then
+  if not util.is_output_miniloader_inserter(entity)
+  or not global.split_lane_configuration[source_inserter.unit_number] then
     -- sync left and right lanes
     copy_inserter_filters(entity, inserters[2])
   end
@@ -78,7 +79,8 @@ function M.sync_behavior(inserter)
   if #inserters < 2 then return end
 
   local source_inserter = inserters[1]
-  if not util.is_output_miniloader_inserter(source_inserter) then
+  if not util.is_output_miniloader_inserter(source_inserter)
+  or not global.split_lane_configuration[source_inserter.unit_number] then
     -- sync left and right lanes
     copy_inserter_behavior(source_inserter, inserters[2])
   end

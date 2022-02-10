@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.15.4
+Date: 2022-02-10
+  Changes:
+    - Output miniloaders now have a GUI like splitter priority to choose whether the lanes have separate filters and circuit conditions.  The default is to share settings between lanes.
+---------------------------------------------------------------------------------------------------
 Version: 1.15.3
 Date: 2022-02-08
   Bugfixes:

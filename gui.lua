@@ -6,7 +6,7 @@ local util = require "lualib.util"
 -- how often to poll ControlBehavior settings when a miniloader-inserter GUI is open
 local POLL_INTERVAL = 15
 
-local function create_lane_swap_gui(parent, entity, is_right_side)
+local function create_lane_swap_gui(parent, entity, switch_state)
   local frame = parent.add{
     type = "frame",
     name = "miniloader_lane_swap",
@@ -28,15 +28,18 @@ local function create_lane_swap_gui(parent, entity, is_right_side)
   }
   flow.style.horizontal_spacing = 20
   flow.add{
-    type = "label",
-    caption = {"miniloader-gui.configuring-lane"},
+    type = "checkbox",
+    name = "miniloader_split_lane_checkbox",
+    caption = {"miniloader-gui.split-lane-configuration"},
+    state = switch_state ~= "none",
   }
   flow.add{
     type = "switch",
     name = "miniloader_lane_switch",
-    switch_state = is_right_side and "right" or "left",
+    allow_none_state = true,
     left_label_caption = {"gui-splitter.left"},
     right_label_caption = {"gui-splitter.right"},
+    switch_state = switch_state,
   }
   return frame
 end
@@ -75,7 +78,10 @@ local function on_gui_opened(ev)
     local player = game.get_player(ev.player_index)
     local relative = player.gui.relative
     local inserters = util.get_loader_inserters(entity)
-    create_lane_swap_gui(relative, entity, entity == inserters[2])
+    local switch_state = (entity == inserters[2]) and "right"
+      or (global.split_lane_configuration[entity.unit_number]) and "left"
+      or "none"
+    create_lane_swap_gui(relative, entity, switch_state)
   end
 end
 
@@ -96,17 +102,34 @@ local function on_gui_closed(ev)
   end
 end
 
+local function on_gui_checked_state_changed(ev)
+  local element = ev.element
+  if element.name ~= "miniloader_split_lane_checkbox" then return end
+  local player = game.get_player(ev.player_index)
+  if player.opened_gui_type ~= defines.gui_type.entity then return end
+  local entity = player.opened
+  if not util.is_output_miniloader_inserter(entity) then return end
+
+  local inserters = util.get_loader_inserters(entity)
+  local main_inserter = inserters[1]
+  global.split_lane_configuration[main_inserter.unit_number] = element.state and true or nil
+  element.parent.miniloader_lane_switch.switch_state = element.state and "left" or "none"
+  player.opened = main_inserter
+end
+
 local function on_gui_switch_state_changed(ev)
   local element = ev.element
-  if element.name == "miniloader_lane_switch" then
-    local player = game.get_player(ev.player_index)
-    local entity = player.opened
-    if not util.is_output_miniloader_inserter(entity) then
-      return
-    end
-    local inserters = util.get_loader_inserters(entity)
-    player.opened = element.switch_state == "left" and inserters[1] or inserters[2]
-  end
+  if element.name ~= "miniloader_lane_switch" then return end
+  local player = game.get_player(ev.player_index)
+  if player.opened_gui_type ~= defines.gui_type.entity then return end
+  local entity = player.opened
+  if not util.is_output_miniloader_inserter(entity) then return end
+
+  local inserters = util.get_loader_inserters(entity)
+  local main_inserter = inserters[1]
+  global.split_lane_configuration[main_inserter.unit_number] = element.switch_state ~= "none" and true or nil
+  element.parent.miniloader_split_lane_checkbox.state = element.switch_state ~= "none"
+  player.opened = element.switch_state == "right" and inserters[2] or inserters[1]
 end
 
 local M = {}
@@ -128,6 +151,7 @@ function M.on_load()
   end
   event.register(defines.events.on_gui_opened, on_gui_opened)
   event.register(defines.events.on_gui_closed, on_gui_closed)
+  event.register(defines.events.on_gui_checked_state_changed, on_gui_checked_state_changed)
   event.register(defines.events.on_gui_switch_state_changed, on_gui_switch_state_changed)
 end
 

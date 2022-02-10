@@ -104,6 +104,15 @@ add_migration{
   end,
 }
 
+add_migration{
+  name = "v1_15_4_add_global_split_lane_configuration",
+  low = {0,0,0},
+  high = {1,15,4},
+  task = function()
+    global.split_lane_configuration = {}
+  end,
+}
+
 function configchange.on_mod_version_changed(old)
   old = version.parse(old)
   for _, migration in ipairs(all_migrations) do

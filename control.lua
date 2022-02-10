@@ -60,6 +60,7 @@ end
 local function on_init()
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
+  global.split_lane_configuration = {}
   circuit.on_init()
   compat_pickerextended.on_load()
   gui.on_init()
@@ -98,7 +99,7 @@ local function on_built_miniloader(entity, orientation, tags)
   and fast_replace_miniloader_state.position.y == entity.position.y
   then
     tags = {
-      right_lane_settings = fast_replace_miniloader_state.settings,
+      right_lane_settings = fast_replace_miniloader_state.right_lane_settings,
     }
     fast_replace_miniloader_state = nil
   end
@@ -216,13 +217,15 @@ local function on_miniloader_inserter_mined(ev)
   end
 
   local inserters = util.get_loader_inserters(entity)
-  if util.is_output_miniloader_inserter(entity) then
+  if util.is_output_miniloader_inserter(entity)
+  and global.split_lane_configuration[entity.unit_number] then
     fast_replace_miniloader_state = {
       position = entity.position,
-      settings = util.capture_settings(inserters[2]),
+      right_lane_settings = util.capture_settings(inserters[2]),
       surface = entity.surface,
       tick = ev.tick,
     }
+    global.split_lane_configuration[entity.unit_number] = nil
   end
   for i=1,#inserters do
     if inserters[i] ~= entity then
@@ -316,7 +319,7 @@ local function on_pre_player_mined_item(ev)
   if entity.name == "entity-ghost" and entity.tags and entity.tags.right_lane_settings then
     fast_replace_miniloader_state = {
       position = entity.position,
-      settings = entity.tags.right_lane_settings,
+      right_lane_settings = entity.tags.right_lane_settings,
       surface = entity.surface,
       tick = ev.tick,
     }
@@ -330,8 +333,7 @@ end
 local function on_entity_settings_pasted(ev)
   local src = ev.source
   local dst = ev.destination
-  if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst)
-  or util.is_miniloader(src) and util.is_miniloader(dst) then
+  if util.is_miniloader_inserter(src) and util.is_miniloader_inserter(dst) then
     local src_loader = src.surface.find_entities_filtered{type="loader-1x1",position=src.position}[1]
     local dst_loader = dst.surface.find_entities_filtered{type="loader-1x1",position=dst.position}[1]
     if src_loader and dst_loader then
@@ -342,6 +344,7 @@ local function on_entity_settings_pasted(ev)
       local right_src = util.get_loader_inserters(src)[2]
       local right_dst = util.get_loader_inserters(dst)[2]
       if right_src and right_dst then
+        global.split_lane_configuration[dst.unit_number] = global.split_lane_configuration[src.unit_number]
         circuit.copy_inserter_settings(right_src, right_dst)
       end
     end

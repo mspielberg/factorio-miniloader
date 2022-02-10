@@ -18,7 +18,9 @@ local function inserters_in_position(bp_entities, starting_index)
 end
 
 local function tag_with_configuration(surface, bp_entity)
-  local right_lane_inserter = surface.find_entities_filtered{type = "inserter", position = bp_entity.position}[2]
+  local inserters = surface.find_entities_filtered{ type = "inserter", position = bp_entity.position }
+  if not global.split_lane_configuration[inserters[1].unit_number] then return end
+  local right_lane_inserter = inserters[2]
   if right_lane_inserter and util.is_output_miniloader_inserter(right_lane_inserter) then
     bp_entity.tags = {
       right_lane_settings = util.capture_settings(right_lane_inserter),
