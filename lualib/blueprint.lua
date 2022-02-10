@@ -19,6 +19,7 @@ end
 
 local function tag_with_configuration(surface, bp_entity)
   local inserters = surface.find_entities_filtered{ type = "inserter", position = bp_entity.position }
+  if not inserters[1] then return end
   if not global.split_lane_configuration[inserters[1].unit_number] then return end
   local right_lane_inserter = inserters[2]
   if right_lane_inserter and util.is_output_miniloader_inserter(right_lane_inserter) then

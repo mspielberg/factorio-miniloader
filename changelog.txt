@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.XX.X
+Date: 2022-02-10
+  Bugfixes:
+    - Fix crash when capturing a miniloader ghost in a blueprint. (https://mods.factorio.com/mod/miniloader/discussion/62056e0ed3a2b4955aa85472)
+---------------------------------------------------------------------------------------------------
 Version: 1.15.4
 Date: 2022-02-10
   Changes:
