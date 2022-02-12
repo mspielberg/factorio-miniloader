@@ -164,6 +164,12 @@ function M.on_configuration_changed()
       monitored_entities = {},
     }
   end
+  for _, player in pairs(game.players) do
+    if player.gui.relative.miniloader_lane_swap then
+      player.opened = nil
+      player.gui.relative.miniloader_lane_swap.destroy()
+    end
+  end
   M.on_load()
 end
 
