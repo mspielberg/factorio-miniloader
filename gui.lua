@@ -7,6 +7,9 @@ local util = require "lualib.util"
 local POLL_INTERVAL = 15
 
 local function create_lane_swap_gui(parent, entity, switch_state)
+  if parent.miniloader_lane_swap then
+    parent.miniloader_lane_swap.destroy()
+  end
   local frame = parent.add{
     type = "frame",
     name = "miniloader_lane_swap",
