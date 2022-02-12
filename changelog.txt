@@ -3,7 +3,7 @@ Version: 1.15.6
 Date: 2022-02-12
   Bugfixes:
     - Fix crash when GUI is already present. (https://mods.factorio.com/mod/miniloader/discussion/6206ee992adbb851d2d74d02)
--------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 Version: 1.15.5
 Date: 2022-02-10
   Bugfixes:
