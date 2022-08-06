@@ -261,6 +261,64 @@ function util.update_inserters(entity)
   end
 end
 
+function util.update_filters(entity)
+  local inserters = util.get_loader_inserters(entity)
+  if #inserters < 2 or inserters[1].filter_slot_count == 0 then return end
+
+  local is_split=false
+  local old_main = nil
+  for i=1,#inserters do
+    if global.split_lane_configuration[inserters[i].unit_number] ~= nil then
+      is_split = global.split_lane_configuration[inserters[i].unit_number]
+      global.split_lane_configuration[inserters[i].unit_number] = nil
+      old_main = inserters[i]
+      break
+    end
+  end
+  global.split_lane_configuration[inserters[1].unit_number] = is_split
+
+  if not is_split then return end
+
+  local first_mode = old_main.inserter_filter_mode
+  local first_filters = {}
+  for i=1,old_main.filter_slot_count do
+    first_filters[i] = old_main.get_filter(i)
+  end
+  local old_secondary = nil
+  for i=1,#inserters do
+    if inserters[i].inserter_filter_mode ~= first_mode then
+      old_secondary = inserters[i]
+      break
+    end
+    for j=1,inserters[i].filter_slot_count do
+      local cur_filter = inserters[i].get_filter(j)
+      if cur_filter ~= first_filters[j] then
+        old_secondary = inserters[i]
+        break
+      end
+    end
+  end
+  if old_secondary == nil then return end
+  local second_mode = old_secondary.inserter_filter_mode
+  local second_filters = {}
+  for i=1,old_secondary.filter_slot_count do
+    second_filters[i] = old_secondary.get_filter(i)
+  end
+
+  for i=1, #inserters, 2 do
+    inserters[i].inserter_filter_mode = first_mode
+    for j=1, inserters[i].filter_slot_count do
+      inserters[i].set_filter(j, first_filters[j])
+    end
+  end
+  for i=2, #inserters, 2 do
+    inserters[i].inserter_filter_mode = second_mode
+    for j=1, inserters[i].filter_slot_count do
+      inserters[i].set_filter(j, second_filters[j])
+    end
+  end
+end
+
 function util.select_main_inserter(surface, position)
   local inserters = surface.find_entities_filtered{type = "inserter", position = position}
   if not next(inserters) then

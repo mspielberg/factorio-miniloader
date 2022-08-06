@@ -149,6 +149,7 @@ local function fixup(main_inserter, orientation, tags)
   ensure_chest(main_inserter)
 
   util.update_inserters(loader)
+  util.update_filters(loader)
   if tags and tags.right_lane_settings then
     global.split_lane_configuration[inserters[1].unit_number] = true
     util.apply_settings(tags.right_lane_settings, inserters[2])
