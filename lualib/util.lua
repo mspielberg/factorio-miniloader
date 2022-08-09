@@ -211,6 +211,101 @@ function util.get_loader_inserters(entity)
   return out
 end
 
+function util.get_inserter_lane(inserter)
+  local factors = nil
+  if inserter.direction == defines.direction.north then
+    factors = {x=1, y=0}
+  elseif inserter.direction == defines.direction.east then
+    factors = {x=0, y=1}
+  elseif inserter.direction == defines.direction.south then
+    factors = {x=-1, y=0}
+  elseif inserter.direction == defines.direction.west then
+    factors = {x=0, y=-1}
+  else
+    error("invalid direction for miniloader inserter")
+  end
+
+  local left = (inserter.position.x - inserter.drop_position.x) * factors.x
+             + (inserter.position.y - inserter.drop_position.y) * factors.y
+  if left >= 0.2 then
+    return "left"
+  elseif left <= -0.2 then
+    return "right"
+  else
+    return nil
+  end
+end
+
+function util.get_loader_filter_settings(entity)
+  local inserters = util.get_loader_inserters(entity)
+  local settings = {
+    split = false,
+    mode = {left = "whitelist", right = "whitelist"},
+    filters = {left = {}, right = {}}
+  }
+  if #inserters < 1 or inserters[1].filter_slot_count < 1 then
+    return nil
+  elseif #inserters == 1 then
+    settings.mode.left = inserters[1].inserter_filter_mode
+    settings.mode.right = settings.mode.left
+    for i=1,inserters[1].filter_slot_count do
+      settings.filters.left[i] = inserters[1].get_filter(i)
+      settings.filters.right[i] = settings.filters.left[i]
+    end
+    if global.split_lane_configuration[inserters[1].unit_number] then
+      settings.split = true
+    end
+    return settings
+  end
+
+  local opposite_lane = { left = "right", right = "left" }
+  local have_lanes = {left = false, right = false}
+  for _, inserter in ipairs(inserters) do
+    local inserter_lane = util.get_inserter_lane(inserter)
+    if inserter_lane == nil then
+      error("Found miniloader inserter not dropping on a lane")
+    end
+    if not have_lanes[inserter_lane] then
+      if inserter.inserter_filter_mode == nil then error("nil inserter mode") end
+      settings.mode[inserter_lane] = inserter.inserter_filter_mode
+      for i=1,inserter.filter_slot_count do
+        settings.filters[inserter_lane][i] = inserter.get_filter(i)
+      end
+      have_lanes[inserter_lane] = true
+      if have_lanes[opposite_lane[inserter_lane]] then
+        break
+      end
+    end
+  end
+  for i=1,#inserters do
+    if global.split_lane_configuration[inserters[i].unit_number] ~= nil then
+      settings.split = global.split_lane_configuration[inserters[i].unit_number]
+      break
+    end
+  end
+  return settings
+end
+
+function util.get_split_configuration(entity)
+  local inserters = util.get_loader_inserters(entity)
+  local is_split = nil
+  for i=1,#inserters do
+    is_split = global.split_lane_configuration[inserters[i].unit_number]
+    if  is_split ~= nil then
+      break
+    end
+  end
+  return is_split
+end
+
+function util.set_split_configuration(entity, is_split)
+  local inserters = util.get_loader_inserters(entity)
+  for i=1,#inserters do
+    global.split_lane_configuration[inserters[i].unit_number] = nil
+  end
+  global.split_lane_configuration[inserters[1].unit_number] = is_split
+end
+
 local function update_miniloader_ghost(ghost, direction, type)
   local position = ghost.position
   -- We should normally destroy the ghost and recreate it facing the right direction,
@@ -239,6 +334,7 @@ function util.update_miniloader(entity, direction, type)
 end
 
 function util.update_inserters(entity)
+  local filter_settings = util.get_loader_filter_settings(entity)
   local inserters = util.get_loader_inserters(entity)
   local pickup = util.pickup_position(entity)
   local drop = util.drop_positions(entity)
@@ -248,73 +344,132 @@ function util.update_inserters(entity)
     direction = util.opposite_direction(direction)
   end
 
+  local swapped_items = { left = {}, right = {} }
   for i=1,#inserters do
+    local original_lane = nil
+    if inserters[i].drop_position ~= drop[i] then
+      if inserters[i].held_stack.count ~= 0 then
+        original_lane = util.get_inserter_lane(inserters[i])
+      end
+      inserters[i].drop_position = drop[i]
+    end
+
     inserters[i].direction = direction
     inserters[i].pickup_position = pickup
-    inserters[i].drop_position = drop[i]
-    inserters[i].direction = direction
     if loader_type == "input" then
       inserters[i].pickup_target = entity
     else
       inserters[i].drop_target = entity
     end
-  end
-end
 
-function util.update_filters(entity)
-  local inserters = util.get_loader_inserters(entity)
-  if #inserters < 2 or inserters[1].filter_slot_count == 0 then return end
-
-  local is_split=false
-  local old_main = nil
-  for i=1,#inserters do
-    if global.split_lane_configuration[inserters[i].unit_number] ~= nil then
-      is_split = global.split_lane_configuration[inserters[i].unit_number]
-      global.split_lane_configuration[inserters[i].unit_number] = nil
-      old_main = inserters[i]
-      break
+    if original_lane ~= nil then
+      local final_lane = util.get_inserter_lane(inserters[i])
+      if final_lane ~= original_lane then
+        swapped_items[original_lane][#swapped_items[original_lane]+1] = inserters[i]
+      end
     end
   end
-  global.split_lane_configuration[inserters[1].unit_number] = is_split
 
-  if not is_split then return end
-
-  local first_mode = old_main.inserter_filter_mode
-  local first_filters = {}
-  for i=1,old_main.filter_slot_count do
-    first_filters[i] = old_main.get_filter(i)
+  while #swapped_items.left ~= 0 and #swapped_items.right ~= 0 do
+    local left_ix = #swapped_items.left
+    local left_stack = swapped_items.left[left_ix].held_stack
+    local right_ix = #swapped_items.right
+    local right_stack = swapped_items.right[right_ix].held_stack
+    if not left_stack.swap_stack(right_stack) then
+      error("Could not swap held items between inserters")
+    end
+    swapped_items.left[left_ix] = nil
+    swapped_items.right[right_ix] = nil
   end
-  local old_secondary = nil
-  for i=1,#inserters do
-    if inserters[i].inserter_filter_mode ~= first_mode then
-      old_secondary = inserters[i]
+  local next_check = 1
+  for i=1,#swapped_items.left do
+    if next_check > #inserters then
+      if global.debug then
+        game.print("Ran out of left lane inserters to swap items to")
+      end
       break
     end
-    for j=1,inserters[i].filter_slot_count do
-      local cur_filter = inserters[i].get_filter(j)
-      if cur_filter ~= first_filters[j] then
-        old_secondary = inserters[i]
+    for ci=next_check,#inserters do
+      next_check = ci + 1
+      if inserters[ci].held_stack.count == 0
+          and util.get_inserter_lane(inserters[ci]) == "left" then
+        target_stack = inserters[ci].held_stack
+        source_stack = swapped_items.left[i].held_stack
+        if not source_stack.swap_stack(target_stack) then
+          error("Could not swap held item stack with empty inserter")
+        end
         break
       end
     end
   end
-  if old_secondary == nil then return end
-  local second_mode = old_secondary.inserter_filter_mode
-  local second_filters = {}
-  for i=1,old_secondary.filter_slot_count do
-    second_filters[i] = old_secondary.get_filter(i)
-  end
-
-  for i=1, #inserters, 2 do
-    inserters[i].inserter_filter_mode = first_mode
-    for j=1, inserters[i].filter_slot_count do
-      inserters[i].set_filter(j, first_filters[j])
+  next_check = 1
+  for i=1,#swapped_items.right do
+    if next_check > #inserters then
+      if global.debug then
+        game.print("Ran out of right lane inserters to swap items to")
+      end
+      break
+    end
+    for ci=next_check,#inserters do
+      next_check = ci + 1
+      if inserters[ci].held_stack.count == 0
+          and util.get_inserter_lane(inserters[ci]) == "right" then
+        target_stack = inserters[ci].held_stack
+        source_stack = swapped_items.right[i].held_stack
+        if not source_stack.swap_stack(target_stack) then
+          error("Could not swap held item stack with empty inserter")
+        end
+        break
+      end
     end
   end
-  for i=2, #inserters, 2 do
-    inserters[i].inserter_filter_mode = second_mode
-    for j=1, inserters[i].filter_slot_count do
-      inserters[i].set_filter(j, second_filters[j])
+
+  util.update_filters(entity, filter_settings)
+end
+
+function util.update_filters(entity, settings)
+  if settings == nil then return end
+  local inserters = util.get_loader_inserters(entity)
+  if #inserters < 1 or inserters[1].filter_slot_count == 0 then return end
+
+  for i=1,#inserters do
+    local lane = util.get_inserter_lane(inserters[i])
+    if lane == nil then
+      if global.debug then
+        game.print("update_filters got inserter not assigned to a lane")
+      end
+      lane = "left"
+    end
+    inserters[i].inserter_filter_mode = settings.mode[lane]
+    for slot=1,inserters[i].filter_slot_count do
+      inserters[i].set_filter(slot, settings.filters[lane][slot])
+    end
+    global.split_lane_configuration[inserters[i].unit_number] = nil
+  end
+  global.split_lane_configuration[inserters[1].unit_number] = settings.split
+end
+
+function util.propagate_filters(entity)
+  local inserters = util.get_loader_inserters(entity)
+  if #inserters < 1 or inserters[1].filter_slot_count == 0 then return end
+  local target_lane = nil
+  if util.get_split_configuration(entity) then
+    target_lane = util.get_inserter_lane(entity)
+    if not target_lane and global.debug then
+      game.print("propagate_filters given non-lane inserter for lane propagation")
+    end
+  end
+  local mode = entity.inserter_filter_mode
+  local filters = {}
+  for i=1,entity.filter_slot_count do
+    filters[i] = entity.get_filter(i)
+  end
+  for i=1,#inserters do
+    if target_lane == nil or util.get_inserter_lane(inserters[i]) == target_lane then
+      inserters[i].inserter_filter_mode = mode
+      for slot=1,inserters[i].filter_slot_count do
+        inserters[i].set_filter(slot, filters[slot])
+      end
     end
   end
 end
@@ -451,10 +606,6 @@ function util.capture_settings(ghost)
 end
 
 function util.apply_settings(settings, inserter)
-  local limit = math.min(inserter.filter_slot_count, #settings.filters)
-  for i = 1, limit do
-    inserter.set_filter(i, settings.filters[i])
-  end
   local control_behavior = inserter.get_or_create_control_behavior()
   for k, v in pairs(settings.control_behavior) do
     control_behavior[k] = v

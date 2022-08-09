@@ -58,6 +58,7 @@ end
 -- Event Handlers
 
 local function on_init()
+  global.debug = true
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
   global.split_lane_configuration = {}
@@ -218,14 +219,14 @@ local function on_miniloader_inserter_mined(ev)
 
   local inserters = util.get_loader_inserters(entity)
   if util.is_output_miniloader_inserter(entity)
-  and global.split_lane_configuration[entity.unit_number] then
+  and util.get_split_configuration(entity) then
     fast_replace_miniloader_state = {
       position = entity.position,
       right_lane_settings = util.capture_settings(inserters[2]),
       surface = entity.surface,
       tick = ev.tick,
     }
-    global.split_lane_configuration[entity.unit_number] = nil
+    util.set_split_configuration(entity, nil)
   end
   for i=1,#inserters do
     if inserters[i] ~= entity then
@@ -344,12 +345,13 @@ local function on_entity_settings_pasted(ev)
       local right_src = util.get_loader_inserters(src)[2]
       local right_dst = util.get_loader_inserters(dst)[2]
       if right_src and right_dst then
-        global.split_lane_configuration[dst.unit_number] = global.split_lane_configuration[src.unit_number]
+        util.set_split_configuration(dst, util.get_split_configuration(src))
         circuit.copy_inserter_settings(right_src, right_dst)
+        util.propagate_filters(right_dst)
       end
     end
     circuit.sync_behavior(dst)
-    circuit.sync_filters(dst)
+    util.propagate_filters(dst)
   end
 end
 
