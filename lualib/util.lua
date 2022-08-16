@@ -24,6 +24,20 @@ function util.offset(direction, longitudinal, orthogonal)
   end
 end
 
+function util.rotate_position(position, direction)
+  if direction == defines.direction.north then
+    return position
+  elseif direction == defines.direction.east then
+    return { x = -position.y, y = position.x }
+  elseif direction == defines.direction.south then
+    return { x = -position.x, y = -position.y }
+  elseif direction == defines.direction.west then
+    return { x = position.y, y = -position.x }
+  else
+    error("invalid position passed to rotate_position")
+  end
+end
+
 -- BoundingBox utilities
 
 --[[
@@ -211,9 +225,10 @@ function util.get_loader_inserters(entity)
   return out
 end
 
-function util.get_inserter_lane(inserter)
+function util.get_inserter_lane(inserter, blueprint_entity)
   local factors = nil
-  if inserter.direction == defines.direction.north then
+  if inserter.direction == defines.direction.north
+      or (blueprint_entity and inserter.direction == nil) then
     factors = {x=1, y=0}
   elseif inserter.direction == defines.direction.east then
     factors = {x=0, y=1}
@@ -222,11 +237,15 @@ function util.get_inserter_lane(inserter)
   elseif inserter.direction == defines.direction.west then
     factors = {x=0, y=-1}
   else
-    error("invalid direction for miniloader inserter")
+    error("invalid direction for miniloader inserter: ".. serpent.line(inserter.direction))
   end
 
-  local left = (inserter.position.x - inserter.drop_position.x) * factors.x
-             + (inserter.position.y - inserter.drop_position.y) * factors.y
+  local base_position = inserter.position
+  if blueprint_entity then
+    base_position = { x=0, y=0 }
+  end
+  local left = (base_position.x - inserter.drop_position.x) * factors.x
+             + (base_position.y - inserter.drop_position.y) * factors.y
   if left >= 0.2 then
     return "left"
   elseif left <= -0.2 then
@@ -238,14 +257,21 @@ end
 
 function util.get_loader_filter_settings(entity)
   local inserters = util.get_loader_inserters(entity)
+  if #inserters < 1 or inserters[1].filter_slot_count < 1 then
+    return nil
+  end
   local settings = {
     split = false,
     mode = {left = "whitelist", right = "whitelist"},
     filters = {left = {}, right = {}}
   }
-  if #inserters < 1 or inserters[1].filter_slot_count < 1 then
-    return nil
-  elseif #inserters == 1 then
+  for i=1,#inserters do
+    if global.split_lane_configuration[inserters[i].unit_number] ~= nil then
+      settings.split = global.split_lane_configuration[inserters[i].unit_number]
+      break
+    end
+  end
+  if settings.split == false or #inserters == 1 then
     settings.mode.left = inserters[1].inserter_filter_mode
     settings.mode.right = settings.mode.left
     for i=1,inserters[1].filter_slot_count do
@@ -263,9 +289,10 @@ function util.get_loader_filter_settings(entity)
   for _, inserter in ipairs(inserters) do
     local inserter_lane = util.get_inserter_lane(inserter)
     if inserter_lane == nil then
-      error("Found miniloader inserter not dropping on a lane")
-    end
-    if not have_lanes[inserter_lane] then
+      if global.debug then
+        game.print(debug.traceback("get_loader_filter_settings found inserter not dropping on a lane ".. inserter.unit_number))
+      end
+    elseif not have_lanes[inserter_lane] then
       if inserter.inserter_filter_mode == nil then error("nil inserter mode") end
       settings.mode[inserter_lane] = inserter.inserter_filter_mode
       for i=1,inserter.filter_slot_count do
@@ -277,11 +304,9 @@ function util.get_loader_filter_settings(entity)
       end
     end
   end
-  for i=1,#inserters do
-    if global.split_lane_configuration[inserters[i].unit_number] ~= nil then
-      settings.split = global.split_lane_configuration[inserters[i].unit_number]
-      break
-    end
+  if global.debug and not (have_lanes.left and have_lanes.right) then
+    game.print("get_loader_filter_settings did not find inserters for both lanes")
+    game.print("#inserters: ".. #inserters .." hvl: ".. serpent.line(have_lanes))
   end
   return settings
 end
@@ -333,8 +358,10 @@ function util.update_miniloader(entity, direction, type)
   util.update_inserters(entity)
 end
 
-function util.update_inserters(entity)
-  local filter_settings = util.get_loader_filter_settings(entity)
+function util.update_inserters(entity, filter_settings)
+  if filter_settings == nil then
+    filter_settings = util.get_loader_filter_settings(entity)
+  end
   local inserters = util.get_loader_inserters(entity)
   local pickup = util.pickup_position(entity)
   local drop = util.drop_positions(entity)
@@ -347,15 +374,14 @@ function util.update_inserters(entity)
   local swapped_items = { left = {}, right = {} }
   for i=1,#inserters do
     local original_lane = nil
-    if inserters[i].drop_position ~= drop[i] then
-      if inserters[i].held_stack.count ~= 0 then
-        original_lane = util.get_inserter_lane(inserters[i])
-      end
-      inserters[i].drop_position = drop[i]
+    if inserters[i].held_stack.count ~= 0 then
+      original_lane = util.get_inserter_lane(inserters[i])
     end
-
+    -- Assigning direction will change drop/pickup positions so assign it first
     inserters[i].direction = direction
+    inserters[i].drop_position = drop[i]
     inserters[i].pickup_position = pickup
+
     if loader_type == "input" then
       inserters[i].pickup_target = entity
     else
@@ -436,7 +462,7 @@ function util.update_filters(entity, settings)
     local lane = util.get_inserter_lane(inserters[i])
     if lane == nil then
       if global.debug then
-        game.print("update_filters got inserter not assigned to a lane")
+        game.print("update_filters got inserter not assigned to a lane ".. inserters[i].unit_number)
       end
       lane = "left"
     end

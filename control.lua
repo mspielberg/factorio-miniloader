@@ -58,7 +58,7 @@ end
 -- Event Handlers
 
 local function on_init()
-  global.debug = true
+  global.debug = false
   global.player_placed_blueprint = {}
   global.previous_opened_blueprint_for = {}
   global.split_lane_configuration = {}
@@ -99,9 +99,7 @@ local function on_built_miniloader(entity, orientation, tags)
   and fast_replace_miniloader_state.position.x == entity.position.x
   and fast_replace_miniloader_state.position.y == entity.position.y
   then
-    tags = {
-      right_lane_settings = fast_replace_miniloader_state.right_lane_settings,
-    }
+    tags = fast_replace_miniloader_state.tags
     fast_replace_miniloader_state = nil
   end
   return miniloader.fixup(entity, orientation, tags)
@@ -167,10 +165,14 @@ local function on_rotated(ev)
       position = entity.position,
       force = entity.force,
     }[1]
+    local filter_settings = util.get_loader_filter_settings(miniloader)
+    filter_settings.split = false
     miniloader.rotate{ by_player = game.players[ev.player_index] }
-    util.update_inserters(miniloader)
+    util.update_inserters(miniloader, filter_settings)
   elseif util.is_miniloader(entity) then
-    util.update_inserters(entity)
+    local filter_settings = util.get_loader_filter_settings(entity)
+    filter_settings.split = false
+    util.update_inserters(entity, filter_settings)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
   end
@@ -218,16 +220,17 @@ local function on_miniloader_inserter_mined(ev)
   end
 
   local inserters = util.get_loader_inserters(entity)
-  if util.is_output_miniloader_inserter(entity)
-  and util.get_split_configuration(entity) then
-    fast_replace_miniloader_state = {
-      position = entity.position,
+  fast_replace_miniloader_state = {
+    position = entity.position,
+    surface = entity.surface,
+    tick = ev.tick,
+    tags = {
+      filter_settings = util.get_loader_filter_settings(entity),
+      -- FIXME: following is using order dependence for control behavior
       right_lane_settings = util.capture_settings(inserters[2]),
-      surface = entity.surface,
-      tick = ev.tick,
     }
-    util.set_split_configuration(entity, nil)
-  end
+  }
+  util.set_split_configuration(entity, nil)
   for i=1,#inserters do
     if inserters[i] ~= entity then
       -- return items in inserter hand to player / robot if mined
@@ -265,11 +268,34 @@ local function on_placed_blueprint(ev, player, bp_entities)
     ev.position
   )
 
+  local from_center = {
+    x = -bp_area.center.x,
+    y = -bp_area.center.y
+  }
+  local place_position = {
+    x = math.floor(ev.position.x) + 0.5,
+    y = math.floor(ev.position.y) + 0.5
+  }
   local blueprint_contained_miniloader = false
   for _, bp_entity in pairs(bp_entities) do
     if util.is_miniloader_inserter_name(bp_entity.name) then
       blueprint_contained_miniloader = true
-      break
+      if bp_entity.tags ~= nil then
+        local relative_position = util.moveposition(bp_entity.position, from_center)
+        if ev.flip_horizontal then
+          relative_position.x = -relative_position.x
+        end
+        if ev.flip_vertical then
+          relative_position.y = -relative_position.y
+        end
+        relative_position = util.rotate_position(relative_position, ev.direction)
+        local build_position = util.moveposition(relative_position, place_position)
+        if not global.placed_blueprint_tags then global.placed_blueprint_tags = {} end
+        position_str = build_position.x.."p"..build_position.y
+        global.placed_blueprint_tags[position_str] = bp_entity.tags
+      elseif global.debug and bp_entity.filter_slot_count then
+        game.print("blueprint placed filter miniloader without tags")
+      end
     end
   end
 
@@ -295,14 +321,22 @@ local function check_placed_blueprints_for_miniloaders()
         area = area,
         type = "inserter",
       }
+      -- FIXME: This ends up running over every inserter for each miniloader
+      -- it should really only run for one each
       for _, e in pairs(inserter_entities) do
         if util.is_miniloader_inserter(e) then
-          miniloader.fixup(e, util.orientation_from_inserters(e))
+          position_str = e.position.x.."p"..e.position.y
+          tags = global.placed_blueprint_tags[position_str]
+          if tags == nil and global.debug then
+            game.print("No tags found for blueprint stamped miniloader".. e.unit_number)
+          end
+          miniloader.fixup(e, util.orientation_from_inserters(e), tags)
         end
       end
     end
   end
 
+  global.placed_blueprint_tags = {}
   global.placed_blueprint_areas = {}
 end
 
@@ -317,12 +351,12 @@ end
 
 local function on_pre_player_mined_item(ev)
   local entity = ev.entity
-  if entity.name == "entity-ghost" and entity.tags and entity.tags.right_lane_settings then
+  if entity.name == "entity-ghost" and entity.tags then
     fast_replace_miniloader_state = {
       position = entity.position,
-      right_lane_settings = entity.tags.right_lane_settings,
       surface = entity.surface,
       tick = ev.tick,
+      tags = entity.tags,
     }
   end
 end
@@ -341,13 +375,12 @@ local function on_entity_settings_pasted(ev)
       dst_loader.loader_type = src_loader.loader_type
       util.update_inserters(dst_loader)
     end
-    if util.is_output_miniloader_inserter(src) then
-      local right_src = util.get_loader_inserters(src)[2]
-      local right_dst = util.get_loader_inserters(dst)[2]
-      if right_src and right_dst then
-        util.set_split_configuration(dst, util.get_split_configuration(src))
-        circuit.copy_inserter_settings(right_src, right_dst)
-        util.propagate_filters(right_dst)
+    if src.filter_slot_count > 0 then
+      local filter_settings = util.get_loader_filter_settings(src)
+      if filter_settings ~= nil then
+        util.update_filters(dst, filter_settings)
+      elseif global.debug then
+        game.print("on_entity_settings_pasted could not get filter settings from source")
       end
     end
     circuit.sync_behavior(dst)

@@ -20,19 +20,29 @@ end
 local function tag_with_configuration(surface, bp_entity)
   local inserters = surface.find_entities_filtered{ type = "inserter", position = bp_entity.position }
   if not inserters[1] then return end
-  if not global.split_lane_configuration[inserters[1].unit_number] then return end
-  local right_lane_inserter = inserters[2]
-  if right_lane_inserter and util.is_output_miniloader_inserter(right_lane_inserter) then
-    bp_entity.tags = {
-      right_lane_settings = util.capture_settings(right_lane_inserter),
-    }
+  tags = {}
+  tags.filter_settings = util.get_loader_filter_settings(inserters[1])
+  local right_inserter = nil
+  for i=1,#inserters do
+    if util.get_inserter_lane(inserters[i]) == "right" then
+      right_inserter = inserters[i]
+      break
+    end
   end
+  if right_inserter ~= nil then
+    tags.right_lane_settings = util.capture_settings(right_inserter)
+  elseif global.debug then
+    game.print("tag_with_configuration could not find right inserter ".. bp_entity.entity_number)
+  end
+  bp_entity.tags = tags
 end
 
-local function find_slaves(miniloader_inserters, to_remove)
-  for i = 2, #miniloader_inserters do
+local function find_slaves(miniloader_inserters, saved, to_remove)
+  for i = 1, #miniloader_inserters do
     local inserter = miniloader_inserters[i]
-    to_remove[inserter.entity_number] = true
+    if inserter.entity_number ~= saved.entity_number then
+      to_remove[inserter.entity_number] = true
+    end
   end
 end
 
@@ -107,6 +117,7 @@ function M.bounding_box(bp_entities)
   return {
     left_top = {x = left - center_x, y = top - center_y},
     right_bottom = {x = right - center_x, y = bottom - center_y},
+    center = {x = center_x, y = center_y},
   }
 end
 
@@ -156,8 +167,22 @@ function M.filter_miniloaders(bp, surface)
     local ent = bp_entities[i]
     if util.is_miniloader_inserter(ent) then
       local overlapping = inserters_in_position(bp_entities, i)
-      tag_with_configuration(surface, overlapping[1])
-      find_slaves(overlapping, to_remove)
+      local left_inserter = nil
+      for i=1,#overlapping do
+        if util.get_inserter_lane(overlapping[i], true) == "left" then
+          left_inserter = overlapping[i]
+          break
+        end
+      end
+      if left_inserter == nil then
+        if global.debug then
+          game.print("blueprint.filter_miniloaders could not find left inserter")
+        end
+        left_inserter = overlapping[1]
+      end
+      tag_with_configuration(surface, left_inserter)
+      find_slaves(overlapping, left_inserter, to_remove)
+      -- FIXME: Is there any guarantee that same position entities will be consecutive?
       i = i + #overlapping
     else
       i = i + 1
