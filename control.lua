@@ -166,12 +166,12 @@ local function on_rotated(ev)
       force = entity.force,
     }[1]
     local filter_settings = util.get_loader_filter_settings(miniloader)
-    filter_settings.split = false
+    if filter_settings ~= nil then filter_settings.split = false end
     miniloader.rotate{ by_player = game.players[ev.player_index] }
     util.update_inserters(miniloader, filter_settings)
   elseif util.is_miniloader(entity) then
     local filter_settings = util.get_loader_filter_settings(entity)
-    filter_settings.split = false
+    if filter_settings ~= nil then filter_settings.split = false end
     util.update_inserters(entity, filter_settings)
   elseif use_snapping then
     snapping.check_for_loaders(ev)
