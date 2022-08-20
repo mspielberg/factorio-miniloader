@@ -180,6 +180,30 @@ function M.filter_miniloaders(bp, surface)
         end
         left_inserter = overlapping[1]
       end
+      if left_inserter ~= overlapping[1]
+      and overlapping[1].connections ~= nill
+      and next(overlapping[1].connections) then
+        -- FIXME: This depends on the first inserter having the external
+        -- circuit connections
+        local ext_connections = overlapping[1].connections
+        overlapping[1].connections = left_inserter.connections
+        left_inserter.connections = ext_connections
+        for _, bp_entity in ipairs(bp_entities) do
+          if bp_entity.connections ~= nil then
+            for _, wires in pairs(bp_entity.connections) do
+              for wire_type, wire_connections in pairs(wires) do
+                for _, connection in ipairs(wire_connections) do
+                  if connection.entity_id == overlapping[1].entity_number then
+                    connection.entity_id = left_inserter.entity_number
+                  elseif connection.entity_id == left_inserter.entity_number then
+                    connection.entity_id = overlapping[1].entity_number
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
       tag_with_configuration(surface, left_inserter)
       find_slaves(overlapping, left_inserter, to_remove)
       -- FIXME: Is there any guarantee that same position entities will be consecutive?

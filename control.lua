@@ -280,6 +280,7 @@ local function on_placed_blueprint(ev, player, bp_entities)
   for _, bp_entity in pairs(bp_entities) do
     if util.is_miniloader_inserter_name(bp_entity.name) then
       blueprint_contained_miniloader = true
+      if not global.placed_blueprint_tags then global.placed_blueprint_tags = {} end
       if bp_entity.tags ~= nil then
         local relative_position = util.moveposition(bp_entity.position, from_center)
         if ev.flip_horizontal then
@@ -290,7 +291,6 @@ local function on_placed_blueprint(ev, player, bp_entities)
         end
         relative_position = util.rotate_position(relative_position, ev.direction)
         local build_position = util.moveposition(relative_position, place_position)
-        if not global.placed_blueprint_tags then global.placed_blueprint_tags = {} end
         position_str = build_position.x.."p"..build_position.y
         global.placed_blueprint_tags[position_str] = bp_entity.tags
       elseif global.debug and bp_entity.filter_slot_count then
