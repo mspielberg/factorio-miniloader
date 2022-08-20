@@ -88,6 +88,27 @@ local function remove_entities(bp_entities, to_remove_set)
   end
 end
 
+local function swap_connections(bp_entities, entity1, entity2)
+  local tmp_connections = entity1.connections
+  entity1.connections = entity2.connections
+  entity2.connections = tmp_connections
+  for _, bp_entity in ipairs(bp_entities) do
+    if bp_entity.connections ~= nil then
+      for _, wires in pairs(bp_entity.connections) do
+        for wire_type, wire_connections in pairs(wires) do
+          for _, connection in ipairs(wire_connections) do
+            if connection.entity_id == entity1.entity_number then
+              connection.entity_id = entity2.entity_number
+            elseif connection.entity_id == entity2.entity_number then
+              connection.entity_id = entity1.entity_number
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 function M.is_setup_bp(stack)
   return stack and
     stack.valid and
@@ -180,28 +201,25 @@ function M.filter_miniloaders(bp, surface)
         end
         left_inserter = overlapping[1]
       end
-      if left_inserter ~= overlapping[1]
-      and overlapping[1].connections ~= nill
-      and next(overlapping[1].connections) then
-        -- FIXME: This depends on the first inserter having the external
-        -- circuit connections
-        local ext_connections = overlapping[1].connections
-        overlapping[1].connections = left_inserter.connections
-        left_inserter.connections = ext_connections
-        for _, bp_entity in ipairs(bp_entities) do
-          if bp_entity.connections ~= nil then
-            for _, wires in pairs(bp_entity.connections) do
-              for wire_type, wire_connections in pairs(wires) do
-                for _, connection in ipairs(wire_connections) do
-                  if connection.entity_id == overlapping[1].entity_number then
-                    connection.entity_id = left_inserter.entity_number
-                  elseif connection.entity_id == left_inserter.entity_number then
-                    connection.entity_id = overlapping[1].entity_number
-                  end
-                end
-              end
-            end
+      if left_inserter.connections ~= nil
+      and next(left_inserter.connections) then
+        local extcon_inserter = nil
+        for _, inserter in ipairs(overlapping) do
+          if inserter.connections ~= nil
+          and inserter.connections["1"] ~= nil
+          and ((inserter.connections["1"].green ~= nil
+                and #inserter.connections["1"].green > 1)
+              or (inserter.connections["1"].red ~= nil
+                and #inserter.connections["1"].red > 1)) then
+            extcon_inserter = inserter
+            break
           end
+        end
+        if extcon_inserter == nil and global.debug then
+          game.print("Could not find miniloader inserter with external connections.")
+        end
+        if extcon_inserter ~= nil and left_inserter ~= extcon_inserter then
+          swap_connections(bp_entities, extcon_inserter, left_inserter)
         end
       end
       tag_with_configuration(surface, left_inserter)
