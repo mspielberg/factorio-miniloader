@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.15.7
+Date: 2022-02-12
+  Bugfixes:
+    - Quick work-around for nil exception in on_rotate. (https://mods.factorio.com/mod/miniloader/discussion/632100b0acf726e913783edf)
+---------------------------------------------------------------------------------------------------
 Version: 1.15.6
 Date: 2022-02-12
   Bugfixes:
