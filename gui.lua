@@ -56,7 +56,7 @@ end
 local function monitor_open_guis(_)
   for k, entity in pairs(monitored_entities) do
     if entity.valid then
-      circuit.sync_filters(entity)
+      util.propagate_filters(entity)
       circuit.sync_behavior(entity)
     else
       monitored_entities[k] = nil
@@ -66,8 +66,6 @@ local function monitor_open_guis(_)
     ontick.unregister(monitor_open_guis)
   end
 end
-
-local opening_filter_gui = false
 
 local function on_gui_opened(ev)
   local entity = ev.entity
@@ -80,10 +78,16 @@ local function on_gui_opened(ev)
   if util.is_output_miniloader_inserter(entity) then
     local player = game.get_player(ev.player_index)
     local relative = player.gui.relative
-    local inserters = util.get_loader_inserters(entity)
-    local switch_state = (entity == inserters[2]) and "right"
-      or (global.split_lane_configuration[entity.unit_number]) and "left"
-      or "none"
+    local switch_state = "none"
+    local split_cfg = util.get_split_configuration(entity)
+    if split_cfg then
+      local lane = util.get_inserter_lane(entity)
+      if lane ~= nil then
+        switch_state = lane
+      elseif global.debug then
+        game.print("on_gui_opened got inserter not set to lane")
+      end
+    end
     create_lane_swap_gui(relative, entity, switch_state)
   end
 end
@@ -96,7 +100,7 @@ local function on_gui_closed(ev)
   end
 
   circuit.sync_behavior(entity)
-  circuit.sync_filters(entity)
+  util.propagate_filters(entity)
   monitored_entities[ev.player_index] = nil
 
   local player = game.get_player(ev.player_index)
@@ -114,10 +118,16 @@ local function on_gui_checked_state_changed(ev)
   if not util.is_output_miniloader_inserter(entity) then return end
 
   local inserters = util.get_loader_inserters(entity)
-  local main_inserter = inserters[1]
-  global.split_lane_configuration[main_inserter.unit_number] = element.state and true or nil
+  util.set_split_configuration(inserters[1], element.state and true or nil)
   element.parent.miniloader_lane_switch.switch_state = element.state and "left" or "none"
-  player.opened = main_inserter
+  local new_opened = inserters[1]
+  for i=1,#inserters do
+    if util.get_inserter_lane(inserters[i]) == "left" then
+      new_opened = inserters[i]
+      break
+    end
+  end
+  player.opened = new_opened
 end
 
 local function on_gui_switch_state_changed(ev)
@@ -130,9 +140,17 @@ local function on_gui_switch_state_changed(ev)
 
   local inserters = util.get_loader_inserters(entity)
   local main_inserter = inserters[1]
-  global.split_lane_configuration[main_inserter.unit_number] = element.switch_state ~= "none" and true or nil
+  util.set_split_configuration(entity, element.switch_state ~= "none" and true or nil)
   element.parent.miniloader_split_lane_checkbox.state = element.switch_state ~= "none"
-  player.opened = element.switch_state == "right" and inserters[2] or inserters[1]
+  local lane = element.switch_state == "none" and "left" or element.switch_state
+  local new_opened = main_inserter
+  for i=1,#inserters do
+    if util.get_inserter_lane(inserters[i]) == lane then
+      new_opened = inserters[i]
+      break
+    end
+  end
+  player.opened = new_opened
 end
 
 local M = {}

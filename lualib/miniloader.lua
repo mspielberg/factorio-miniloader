@@ -144,17 +144,32 @@ local function fixup(main_inserter, orientation, tags)
     end
   end
   local loader = ensure_loader(main_inserter, orientation)
+  local filter_settings = nil
+  if tags then
+    if tags.filter_settings then
+      filter_settings = tags.filter_settings
+    elseif tags.right_lane_settings then
+      filter_settings = util.get_loader_filter_settings(loader)
+      if filter_settings then
+        game.print("Using miniloader filter settings from legacy tag")
+        filter_settings.filters.right = tags.right_lane_settings.filters
+      end
+    end
+  else
+    filter_settings = util.get_loader_filter_settings(loader)
+    if global.debug and main_inserter.filter_slot_count > 0 then
+      game.print("fixup without tags found filter settings:\n".. serpent.line(filter_settings))
+    end
+  end
   local inserters = ensure_inserters(util.num_inserters(loader), main_inserter)
   circuit.copy_inserter_settings(main_inserter, inserters[1])
   ensure_chest(main_inserter)
 
-  util.update_inserters(loader)
+  util.update_inserters(loader, filter_settings)
   if tags and tags.right_lane_settings then
-    global.split_lane_configuration[inserters[1].unit_number] = true
     util.apply_settings(tags.right_lane_settings, inserters[2])
   end
   circuit.sync_behavior(main_inserter)
-  circuit.sync_filters(main_inserter)
   circuit.sync_partner_connections(main_inserter)
 
   return loader

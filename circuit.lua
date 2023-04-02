@@ -30,26 +30,6 @@ local function copy_inserter_filters(source_inserter, dest_inserter, filters)
   end
 end
 
-function M.sync_filters(entity)
-  local inserters = util.get_loader_inserters(entity)
-  local source_inserter = inserters[1]
-
-  if #inserters < 2 then return end
-
-  if not util.is_output_miniloader_inserter(entity)
-  or not global.split_lane_configuration[source_inserter.unit_number] then
-    -- sync left and right lanes
-    copy_inserter_filters(entity, inserters[2])
-  end
-  for i = 1, #inserters, 2 do
-    copy_inserter_filters(source_inserter, inserters[i])
-  end
-  source_inserter = inserters[2]
-  for i = 4, #inserters, 2 do
-    copy_inserter_filters(source_inserter, inserters[i])
-  end
-end
-
 local function copy_inserter_behavior(source_inserter, target)
   local source_behavior = source_inserter.get_or_create_control_behavior()
   local behavior = target.get_or_create_control_behavior()
@@ -80,7 +60,7 @@ function M.sync_behavior(inserter)
 
   local source_inserter = inserters[1]
   if not util.is_output_miniloader_inserter(source_inserter)
-  or not global.split_lane_configuration[source_inserter.unit_number] then
+  or not util.get_split_configuration(source_inserter) then
     -- sync left and right lanes
     copy_inserter_behavior(source_inserter, inserters[2])
   end
