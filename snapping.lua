@@ -91,20 +91,49 @@ local function axis_distance(p1, p2, dir)
   end
 end
 
--- Idiot snapping, face away from non belt entity
-local function idiot_snap(loader, entity)
-  local lp = loader.position
-  local ep = entity.position
-  local direction = loader.direction
-  local distance = axis_distance(ep, lp, direction)
-  if axis_distance(ep, lp, util.opposite_direction(direction)) > distance then
-    direction = util.opposite_direction(direction)
-  end
-  if loader.direction ~= direction or loader.type == "entity-ghost" or loader.loader_type ~= "output" then
-    util.update_miniloader(loader, direction, "output")
+local function is_source_dir(ent1, ent2)
+  local e1dir = ent1.direction
+  local e1p = ent1.position
+  local e2p = ent2.position
+  local distance = axis_distance(e2p, e1p, e1dir)
+  local opp_distance = axis_distance(e2p, e1p, util.opposite_direction(e1dir))
+  if  opp_distance > distance then
+    return false
+  else
     return true
   end
-  return false
+end
+
+-- Face away from non belt entities and set to output
+local function snap_loader_to_entities(loader, entities)
+  local direction = loader.direction
+  local source_dir_filled = false
+  local dest_dir_filled = false
+  for _, ent in ipairs(entities) do
+    if not is_belt(ent) then
+      if is_source_dir(loader, ent) then
+        source_dir_filled = true
+        if dest_dir_filled then
+          break
+        end
+      else
+        dest_dir_filled = true
+        if source_dir_filled then
+          break
+        end
+      end
+    end
+  end
+  if source_dir_filled and dest_dir_filled then
+    if loader.type ~= "entity-ghost" and loader.loader_type ~= "output" then
+      direction = util.opposite_direction(direction)
+    end
+  elseif dest_dir_filled then
+    direction = util.opposite_direction(direction)
+  end
+  if source_dir_filled or dest_dir_filled then
+    util.update_miniloader(loader, direction, "output")
+  end
 end
 
 -- returns loaders next to a given entity
@@ -202,11 +231,7 @@ function snapping.snap_loader(loader)
       return
     end
   end
-  for _, ent in ipairs(entities) do
-    if not is_belt(ent) and idiot_snap(loader, ent) then
-      return
-    end
-  end
+  snap_loader_to_entities(loader, entities)
 end
 
 return snapping
